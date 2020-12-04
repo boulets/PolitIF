@@ -1,10 +1,19 @@
-.profil-personnalite {
+.profil {
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
   gap: 24px;
+  min-height: 60vh;
 }
 
-.profil-personnalite .colonne-perso {
+.profil .colonne-perso {
+  order: 1;
+}
+.profil .colonne-politique {
+  order: 2;
+}
+
+.profil .colonne-perso {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -35,6 +44,6 @@
   border-radius: 2px;
 }
 
-.profil-personnalite .nom {
+.profil .nom {
   margin-bottom: 0.3em;
 }

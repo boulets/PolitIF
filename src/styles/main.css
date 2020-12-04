@@ -1,7 +1,11 @@
-body {
-  min-height: 100vh;
-  position: relative;
+html {
   background-color: #eee;
+}
+
+body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
@@ -9,12 +13,32 @@ header {
   padding: 16px 16px;
   background-color: #39434c;
   color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.2);
+  z-index: 3;
+}
+
+header .brand {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 30px;
-  box-shadow: 0 0 5px black;
-  z-index: 9;
+}
+
+header nav {
+  display: flex;
+  flex-direction: row;
+  gap: 14px;
+}
+
+header nav a,
+header nav a:visited {
+  color: inherit;
+  padding: 4px;
+  border-radius: 5px;
+}
+header nav a:focus-visible {
+  color: black;
+  background: white;
 }
 
 .drapeau-francais {
@@ -27,20 +51,23 @@ footer {
   width: 100%;
   display: flex;
   justify-content: center;
-  position: absolute;
-  bottom: 0;
+  margin-top: auto;
   padding: 24px;
 }
 
 main {
-  max-width: 1080px;
+  width: min(100vw, 800px);
   margin: auto;
-  margin-top: -1px;
-  padding: 24px;
+  flex-grow: 1;
 }
 
 .sheet {
   background-color: white;
   box-shadow: 0px 1px 4px -1px rgba(0, 0, 0, 0.25);
-  border-radius: 0px 0px 3px 3px;
+  border-radius: 3px;
+  padding: 24px;
+}
+
+main .sheet {
+  margin-top: 24px;
 }
