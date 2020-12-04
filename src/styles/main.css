@@ -1,0 +1,46 @@
+body {
+  min-height: 100vh;
+  position: relative;
+  background-color: #eee;
+}
+
+header {
+  position: sticky;
+  padding: 16px 16px;
+  background-color: #39434c;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 30px;
+  box-shadow: 0 0 5px black;
+  z-index: 9;
+}
+
+.drapeau-francais {
+  width: 160px;
+  height: 24px;
+  background: linear-gradient(90deg, #000091 0 33%, white 0 66%, #ef4135 66% 0);
+}
+
+footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  padding: 24px;
+}
+
+main {
+  max-width: 1080px;
+  margin: auto;
+  margin-top: -1px;
+  padding: 24px;
+}
+
+.sheet {
+  background-color: white;
+  box-shadow: 0px 1px 4px -1px rgba(0, 0, 0, 0.25);
+  border-radius: 0px 0px 3px 3px;
+}

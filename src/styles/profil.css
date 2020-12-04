@@ -1,0 +1,40 @@
+.profil-personnalite {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
+
+.profil-personnalite .colonne-perso {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 0 0 300px;
+}
+
+.biographie-attributs {
+  position: relative;
+  line-height: 1.1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+  font-size: 0.9rem;
+}
+
+.biographie-attributs dt {
+  font-weight: bold;
+  flex: 0 0 50%;
+}
+
+.biographie-attributs div {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5ch;
+}
+
+.colonne-perso img {
+  border-radius: 2px;
+}
+
+.profil-personnalite .nom {
+  margin-bottom: 0.3em;
+}
