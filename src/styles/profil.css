@@ -40,6 +40,32 @@
   gap: 0.5ch;
 }
 
+.famille-attributs div {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5ch;
+}
+
+.famille-attributs {
+  position: relative;
+  line-height: 1.1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+  font-size: 0.9rem;
+}
+
+.famille-attributs dt {
+  font-weight: bold;
+  flex: 0 0 50%;
+}
+
+.famille-attributs div {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5ch;
+}
+
 .colonne-perso img {
   border-radius: 2px;
 }

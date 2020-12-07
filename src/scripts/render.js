@@ -18,6 +18,11 @@ function renderProfil(profil) {
   const slotLieuDeces = document.querySelector('[data-key=lieu-deces]')
   const slotDescription = document.querySelector('[data-key=description]')
   const imageProfil = document.querySelector('[data-key=personne-image]')
+  const slotPere = document.querySelector('[data-key=pere]')
+  const slotMere = document.querySelector('[data-key=mere]')
+  const slotFratrie = document.querySelector('[data-key=fratrie]')
+  const slotConjoint = document.querySelector('[data-key=conjoint]')
+  const slotEnfants = document.querySelector('[data-key=enfants]')
 
   if ([slotNom, slotDateNaissance, slotDateDeces, slotLieuNaissance, slotLieuDeces, slotDescription, imageProfil].includes(null)) {
     console.error({ slotNom, slotDateNaissance, slotDateDeces, slotLieuNaissance, slotLieuDeces, slotDescription, imageProfil })
@@ -38,6 +43,11 @@ function renderProfil(profil) {
     slotDateDeces.innerHTML = dateToHtml(profil.dateDeces)
     slotLieuNaissance.innerText = profil.lieuNaissance
     slotLieuDeces.innerText = profil.lieuDeces
+    slotPere.innerText = profil.pere
+    slotMere.innerText = profil.mere
+    slotFratrie.innerText = profil.fratrie
+    slotConjoint.innerText = profil.conjoint
+    slotEnfants.innerText = profil.enfants
     slotDescription.innerText = 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Impedit, explicabo dolor! Nostrum facilis blanditiis inventore vero debitis temporibus culpa cupiditate accusantium ipsam? Quam rem inventore delectus amet minus itaque nemo.'.replace(/[^\S\n]+/g, ' ')
     slotDescription.innerHTML = '<p>' + slotDescription.innerHTML.split('\n\n').join('</p><p>') + '</p>'
     imageProfil.setAttribute('src', profil.image)
