@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-function requete_recherche1(recherche) {
+function requete_recherche(recherche, n = 1) {
   const s = recherche.toLowerCase().replace(/"/g, ' ')
   return `SELECT DISTINCT ?politician ?NomPoliticien WHERE {
     # Tous les politiciens de nationalités françaises
@@ -13,8 +13,8 @@ function requete_recherche1(recherche) {
 
     # Filtres
     FILTER (LANG(?NomPoliticien)='fr' && YEAR(?DateEntreePosition) > 1789 && CONTAINS(LCASE(?NomPoliticien), "${s}")).
-  } LIMIT 1`
-};
+  } LIMIT ${n}`
+}
 
 
 function requete_profil_biographie(idProfil) {
