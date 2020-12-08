@@ -31,6 +31,7 @@
     <main class="recherche">
       <label for="search">Rechercher une personnalité, un parti, une idéologie politique.</label>
       <div id="search-input-container">
+        <div id="search-autocomplete"></div>
         <input pattern=".+" id="search" type="text" inputmode="search" placeholder="Valéry Giscard d'Estaing" />
         <button id="searchButton">
           <div class="sr-only">
@@ -38,6 +39,10 @@
           </div>
           <span aria-hidden="true">→</span>
         </button>
+
+        <ul id="searchResults">
+
+        </ul>
       </div>
     </main>
 
