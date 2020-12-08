@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 
 /** Durée de vie en cache (en secondes) */
-const CACHE_TTL = 60
+const CACHE_TTL = 0
+const API_URL = 'https://query.wikidata.org/sparql'
 
 async function fetchProfil(id) {
   const now = Date.now()
@@ -23,8 +24,22 @@ async function fetchProfil(id) {
   }
 
   console.log(`Fetching ${id}`)
+  const req1 = requete_profil_biographie(id);
+  const url1 = API_URL + '?format=json&query=' + encodeURIComponent(req1)
+  fetch(url1)
+    .then(res => res.json())
+    .then((resultats) => {
+      console.log(resultats)
+    })
 
-  await new Promise(x => setTimeout(x, 3000))
+  console.log(`Fetching ${id}`)
+  const req2 = requete_profil_mandats(id);
+  const url2 = API_URL + '?format=json&query=' + encodeURIComponent(req2)
+  fetch(url2)
+    .then(res => res.json())
+    .then((resultats) => {
+      console.log(resultats)
+    })
 
   const res = {
     nom: 'Valéry Giscard d\'Estaing',
