@@ -1,5 +1,38 @@
 /* eslint-disable no-unused-vars */
 
+function getSlot(key) {
+  const element = document.querySelector(`[data-key=${key}]`)
+  if (element !== null) {
+    return element
+  } else {
+    throw new Error(`Élément HTML [data-key=${key}] manquant.`)
+  }
+}
+
+function slotSetHtml(key, value) {
+  const element = getSlot(key)
+  element.innerHTML = value
+  element.removeAttribute('loading')
+}
+function slotSetText(key, value) {
+  const element = getSlot(key)
+  element.innerText = value
+  element.removeAttribute('loading')
+}
+function slotSetAttribute(key, attribute, value) {
+  const element = getSlot(key)
+  element.setAttribute(attribute, value)
+  element.removeAttribute('loading')
+}
+function slotSetLoading(key) {
+  const element = getSlot(key)
+  element.innerHTML = ''
+  element.setAttribute('loading', 'true')
+}
+function slotSetLoaded(key) {
+  getSlot(key).removeAttribute('loading')
+}
+
 function dateToHtml(/** @type Date */ date) {
   const formatMachine = date.toISOString().slice(0, 10)
   const formatHumain = date.toLocaleString('fr-FR', {
@@ -11,46 +44,33 @@ function dateToHtml(/** @type Date */ date) {
 }
 
 function renderProfil(profil) {
-  const slotNom = document.querySelector('[data-key=nom]')
-  const slotDateNaissance = document.querySelector('[data-key=date-naissance]')
-  const slotDateDeces = document.querySelector('[data-key=date-deces]')
-  const slotLieuNaissance = document.querySelector('[data-key=lieu-naissance]')
-  const slotLieuDeces = document.querySelector('[data-key=lieu-deces]')
-  const slotDescription = document.querySelector('[data-key=description]')
-  const imageProfil = document.querySelector('[data-key=personne-image]')
-  const slotPere = document.querySelector('[data-key=pere]')
-  const slotMere = document.querySelector('[data-key=mere]')
-  const slotFratrie = document.querySelector('[data-key=fratrie]')
-  const slotConjoint = document.querySelector('[data-key=conjoint]')
-  const slotEnfants = document.querySelector('[data-key=enfants]')
-
-  if ([slotNom, slotDateNaissance, slotDateDeces, slotLieuNaissance, slotLieuDeces, slotDescription, imageProfil].includes(null)) {
-    console.error({ slotNom, slotDateNaissance, slotDateDeces, slotLieuNaissance, slotLieuDeces, slotDescription, imageProfil })
-    throw new Error('Affichage de la page Profil impossible: certains éléments HTML sont manquants')
-  }
-
   if (profil === null) {
-    slotNom.innerText = 'Chargement...'
-    slotDateNaissance.innerHTML = 'Chargement...'
-    slotDateDeces.innerHTML = 'Chargement...'
-    slotLieuNaissance.innerText =  'Chargement...'
-    slotLieuDeces.innerText = 'Chargement...'
-    slotDescription.innerText = ''
-    imageProfil.setAttribute('src', '')
+    slotSetLoading('nom')
+    slotSetLoading('date-naissance')
+    slotSetLoading('date-deces')
+    slotSetLoading('lieu-naissance')
+    slotSetLoading('lieu-deces')
+    slotSetLoading('description')
+    slotSetLoading('pere')
+    slotSetLoading('mere')
+    slotSetLoading('fratrie')
+    slotSetLoading('conjoint')
+    slotSetLoading('enfants')
+    slotSetAttribute('image-personne', 'src', '')
+    slotSetLoading('image-personne')
   } else {
-    slotNom.innerText = profil.nom
-    slotDateNaissance.innerHTML = dateToHtml(profil.dateNaissance)
-    slotDateDeces.innerHTML = dateToHtml(profil.dateDeces)
-    slotLieuNaissance.innerText = profil.lieuNaissance
-    slotLieuDeces.innerText = profil.lieuDeces
-    slotPere.innerText = profil.pere
-    slotMere.innerText = profil.mere
-    slotFratrie.innerText = profil.fratrie
-    slotConjoint.innerText = profil.conjoint
-    slotEnfants.innerText = profil.enfants
-    slotDescription.innerText = 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Impedit, explicabo dolor! Nostrum facilis blanditiis inventore vero debitis temporibus culpa cupiditate accusantium ipsam? Quam rem inventore delectus amet minus itaque nemo.'.replace(/[^\S\n]+/g, ' ')
-    slotDescription.innerHTML = '<p>' + slotDescription.innerHTML.split('\n\n').join('</p><p>') + '</p>'
-    imageProfil.setAttribute('src', profil.image)
+    slotSetText('nom', profil.nom)
+    slotSetHtml('date-naissance', dateToHtml(profil.dateNaissance))
+    slotSetHtml('date-deces', dateToHtml(profil.dateDeces))
+    slotSetText('lieu-naissance', profil.lieuNaissance)
+    slotSetText('lieu-deces', profil.lieuDeces)
+    slotSetText('pere', profil.pere)
+    slotSetText('mere', profil.mere)
+    slotSetText('fratrie', profil.fratrie)
+    slotSetText('conjoint', profil.conjoint)
+    slotSetText('enfants', profil.enfants)
+    slotSetHtml('description', '<p>' + 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Impedit, explicabo dolor! Nostrum facilis blanditiis inventore vero debitis temporibus culpa cupiditate accusantium ipsam? Quam rem inventore delectus amet minus itaque nemo.'.replace(/[^\S\n]+/g, ' ').split('\n\n').join('</p><p>') + '</p>')
+    slotSetAttribute('image-personne', 'src', profil.image)
   }
 }
 
