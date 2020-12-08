@@ -3,22 +3,28 @@
 /** Durée de vie en cache (en secondes) */
 const CACHE_TTL = 60
 
-const fetchProfil_cache = {}
 async function fetchProfil(id) {
   const now = Date.now()
-  if (fetchProfil_cache[id] !== undefined) {
-    const { timestamp, value } = fetchProfil_cache[id]
-    if (timestamp + CACHE_TTL * 1000 > now) {
-      console.log(`Fetching ${id} -> returning cached response`)
-      return value
-    } else {
-      console.log(`Staled cache for ${id}`)
+  const item = localStorage.getItem(id)
+  if (item !== undefined) {
+    try {
+      const { timestamp, value } = JSON.parse(item)
+      if (timestamp + CACHE_TTL * 1000 > now) {
+        console.log(`Fetching ${id} -> returning cached response`)
+        value.dateNaissance = new Date(value.dateNaissance)
+        value.dateDeces = new Date(value.dateDeces)
+        return value
+      } else {
+        console.log(`Staled cache for ${id}`)
+      }
+    } catch (error) {
+      console.log(`Invalid cache for ${id}`)
     }
   }
 
   console.log(`Fetching ${id}`)
 
-  await new Promise(x => setTimeout(x, 600))
+  await new Promise(x => setTimeout(x, 3000))
 
   const res = {
     nom: 'Valéry Giscard d\'Estaing',
@@ -34,6 +40,6 @@ async function fetchProfil(id) {
     enfants: 'Louis, Valérie-Anne, Henri, Jacinthe'
   }
 
-  fetchProfil_cache[id] = { timestamp: now, value: res }
+  localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
   return res
 }

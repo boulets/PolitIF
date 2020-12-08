@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="styles/main.css" />
     <link rel="stylesheet" href="styles/profil.css" />
     <link rel="stylesheet" href="styles/recherche.css" />
-    <link rel="stylesheet" href="styles/router.css" />
   </head>
 
   <body>
@@ -24,72 +23,22 @@
       </div>
 
       <nav>
-        <a href="#/recherche">Recherche</a>
-        <a href="#/profil/Q2124">Giscard</a>
+        <a href="index.html">Recherche</a>
+        <a href="profil.html#Q2124-Valéry Giscard d'Estaing">Giscard</a>
       </nav>
     </header>
 
-    <main>
-
-      <article route="profil" class="sheet profil">
-        <div class="colonne-politique">
-          <h2 class="nom" data-key="nom"></h2>
-          <div data-key="description"></div>
-        </div>
-
-        <div class="colonne-perso">
-          <img data-key="image-personne" src="" alt="Valéry Giscard d'Estaing">
-
-          <dl class="biographie-attributs">
-            <div>
-              <dt>Date de naissance</dt>
-              <dd data-key="date-naissance"></dd>
-            </div>
-            <div>
-              <dt>Lieu de naissance</dt>
-              <dd data-key="lieu-naissance"></dd>
-            </div>
-            <div>
-              <dt>Date de décès</dt>
-              <dd data-key="date-deces"></dd>
-            </div>
-            <div>
-              <dt>Lieu de décès</dt>
-              <dd data-key="lieu-deces"></dd>
-            </div>
-          </dl>
-          <dl class="famille-attributs">
-            <div>
-              <dt>Père</dt>
-              <dd data-key="pere"></dd>
-            </div>
-            <div>
-              <dt>Mère</dt>
-              <dd data-key="mere"></dd>
-            </div>
-            <div>
-              <dt>Fratrie</dt>
-              <dd data-key="fratrie"></dd>
-            </div>
-            <div>
-              <dt>Conjoint</dt>
-              <dd data-key="conjoint"></dd>
-            </div>
-            <div>
-              <dt>Enfants</dt>
-              <dd data-key="enfants"></dd>
-            </div>
-          </dl>
-        </div>
-      </article>
-
-      <article route="recherche" class="recherche">
-        <label for="search">Rechercher une personnalité, un parti, une idéologie politique.</label>
-        <div id="search-input-container">
-          <input pattern=".+" id="search" type="text" inputmode="search" placeholder="Valéry Giscard d'Estaing" />
-          <button id="searchButton">→</button>
-        </div>
-      </article>
+    <main class="recherche">
+      <label for="search">Rechercher une personnalité, un parti, une idéologie politique.</label>
+      <div id="search-input-container">
+        <input pattern=".+" id="search" type="text" inputmode="search" placeholder="Valéry Giscard d'Estaing" />
+        <button id="searchButton">
+          <div class="sr-only">
+            Accéder au meilleur résultat de recherche
+          </div>
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
     </main>
 
     <footer>
@@ -100,7 +49,7 @@
 
     <script src="scripts/fetchers.js"></script>
     <script src="scripts/render.js"></script>
-    <script src="scripts/main.js"></script>
+    <script src="scripts/recherche.js"></script>
   </body>
 
 </html>

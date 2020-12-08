@@ -56,7 +56,7 @@ footer {
 }
 
 main {
-  width: min(100vw, 800px);
+  width: min(100vw, 1100px);
   margin: auto;
   flex-grow: 1;
 }
@@ -69,5 +69,5 @@ main {
 }
 
 main .sheet {
-  margin-top: 24px;
+  border-radius: 0px 0px 3px 3px;
 }

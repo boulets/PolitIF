@@ -1,3 +1,0 @@
-[route]:not([is-current-route]) {
-  display: none;
-}
