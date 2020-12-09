@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-// https://stackoverflow.com/questions/6018611/smallest-data-uri-image-possible-for-a-transparent-image
-const EMPTY_IMAGE_DATA_URL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+import {EMPTY_IMAGE_DATA_URL} from '../constants'
 
 function getSlot(key) {
   const element = document.querySelector(`[data-key=${key}]`)

@@ -1,6 +1,5 @@
 /* global renderRecherche, requete_recherche */
-
-const API_URL = 'https://query.wikidata.org/sparql'
+import {API_URL} from '../constants'
 
 let resultatsDeRecherche = []
 

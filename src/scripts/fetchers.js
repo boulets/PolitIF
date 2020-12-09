@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 
+import {API_URL} from '../constants'
 /** Durée de vie en cache (en secondes) */
 const CACHE_TTL = 0
-const API_URL = 'https://query.wikidata.org/sparql'
 
 async function fetchProfil(id) {
   const now = Date.now()
