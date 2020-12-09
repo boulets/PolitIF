@@ -24,26 +24,30 @@ async function fetchProfil(id) {
     }
   }
 
+  var resultats1, resultats2;
+
   console.log(`Fetching ${id}`)
   const req1 = requete_profil_biographie(id);
   const url1 = API_URL + '?format=json&query=' + encodeURIComponent(req1)
-  fetch(url1)
+  await fetch(url1)
     .then(res => res.json())
     .then((resultats) => {
-      console.log(resultats)
+      resultats1 = resultats
     })
+    console.log(resultats1)
 
   console.log(`Fetching ${id}`)
   const req2 = requete_profil_mandats(id);
   const url2 = API_URL + '?format=json&query=' + encodeURIComponent(req2)
-  fetch(url2)
+  await fetch(url2)
     .then(res => res.json())
     .then((resultats) => {
-      console.log(resultats)
+      resultats2 = resultats
     })
 
   const res = {
-    nom: 'Valéry Giscard d\'Estaing',
+    nom: resultats1.results.bindings[0].NomPoliticien.value,
+    //dateNaissance : resultats1.results.bindings[0].DateDeNaissance.value,
     dateNaissance: new Date('1926-02-02'),
     lieuNaissance: 'Coblence, Allemagne (RFA)',
     dateDeces: new Date('2020-12-02'),
