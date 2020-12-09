@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 
-import {API_URL} from '../constants'
+//import {API_URL} from '../constants'
+const API_URL = 'https://query.wikidata.org/sparql'
 /** Durée de vie en cache (en secondes) */
 const CACHE_TTL = 0
 
