@@ -51,7 +51,7 @@ async function fetchProfil(id) {
     lieuNaissance: resultats1.results.bindings[0].NomLieuDeNaissance.value,
     dateDeces: new Date(resultats1.results.bindings[0].DateDeDeces.value),
     lieuDeces: resultats1.results.bindings[0].NomLieuDeDeces.value,
-    image: 'img/vge.jpg',
+    image: resultats1.results.bindings[0].Image.value,
     pere: resultats1.results.bindings[0].NomPere.value,
     mere: resultats1.results.bindings[0].NomMere.value,
     fratrie: 'TODO',
@@ -62,3 +62,4 @@ async function fetchProfil(id) {
   localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
   return res
 }
+

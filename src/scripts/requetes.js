@@ -18,7 +18,7 @@ function requete_recherche(recherche, n = 1) {
 
 
 function requete_profil_biographie(idProfil) {
-  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomLieuDeNaissance ?NomLieuDeDeces ?NomPere ?NomMere ?NomConjoint WHERE {
+  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomLieuDeNaissance ?NomLieuDeDeces ?NomPere ?NomMere ?NomConjoint ?Image WHERE {
     BIND(wd:${idProfil} AS ?politician).
 
     # Nom prénom
@@ -28,6 +28,9 @@ function requete_profil_biographie(idProfil) {
     ?politician wdt:P569 ?DateDeNaissance.
     ?politician wdt:P19 ?LieuDeNaissance.
     ?LieuDeNaissance rdfs:label ?NomLieuDeNaissance.
+    OPTIONAL {
+      ?politician wdt:P18 ?Image.
+    }
 
     OPTIONAL {
       ?politician wdt:P570 ?DateDeDeces.
