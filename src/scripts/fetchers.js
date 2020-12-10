@@ -47,11 +47,10 @@ async function fetchProfil(id) {
 
   const res = {
     nom: resultats1.results.bindings[0].NomPoliticien.value,
-    //dateNaissance : resultats1.results.bindings[0].DateDeNaissance.value,
-    dateNaissance: new Date('1926-02-02'),
-    lieuNaissance: 'Coblence, Allemagne (RFA)',
-    dateDeces: new Date('2020-12-02'),
-    lieuDeces: 'Loir-et-Cher, France',
+    dateNaissance : new Date(resultats1.results.bindings[0].DateDeNaissance.value),
+    lieuNaissance: resultats1.results.bindings[0].NomLieuDeNaissance.value,
+    dateDeces: new Date(resultats1.results.bindings[0].DateDeDeces.value),
+    lieuDeces: resultats1.results.bindings[0].NomLieuDeDeces.value,
     image: 'img/vge.jpg',
     pere: resultats1.results.bindings[0].NomPere.value,
     mere: resultats1.results.bindings[0].NomMere.value,
