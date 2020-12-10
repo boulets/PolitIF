@@ -60,7 +60,7 @@ function requete_profil_biographie(idProfil) {
 
 function requete_profil_mandats(idProfil) {
   return `SELECT ?politician ?Position ?DateEntreePosition ?DateSortiePosition WHERE {
-    BIND(wd:Q2124 AS ?politician).
+    BIND(wd:${idProfil} AS ?politician).
 
     # Les positions qu'ils ont occuppé
     ?politician p:P39 ?posStat.

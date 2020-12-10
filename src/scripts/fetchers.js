@@ -5,6 +5,8 @@ const API_URL = 'https://query.wikidata.org/sparql'
 /** Durée de vie en cache (en secondes) */
 const CACHE_TTL = 0
 
+
+
 async function fetchProfil(id) {
   const now = Date.now()
   const item = localStorage.getItem(id)
@@ -24,7 +26,7 @@ async function fetchProfil(id) {
     }
   }
 
-  var resultats1, resultats2;
+  var resultats1
 
   console.log(`Fetching ${id}`)
   const req1 = requete_profil_biographie(id);
@@ -35,15 +37,6 @@ async function fetchProfil(id) {
       resultats1 = resultats
     })
     console.log(resultats1)
-
-  console.log(`Fetching ${id}`)
-  const req2 = requete_profil_mandats(id);
-  const url2 = API_URL + '?format=json&query=' + encodeURIComponent(req2)
-  await fetch(url2)
-    .then(res => res.json())
-    .then((resultats) => {
-      resultats2 = resultats
-    })
 
   const res = {
     nom: resultats1.results.bindings[0].NomPoliticien === undefined ? "" : resultats1.results.bindings[0].NomPoliticien.value,
@@ -63,10 +56,18 @@ async function fetchProfil(id) {
   return res
 }
 
-function isUndefined(value) {
-  if(value === undefined) {
-    return "";
-  } else {
-    return value;
-  }
+async function fetchPositions(id) {
+  var resultats
+  const req = requete_profil_mandats(id);
+  const url = API_URL + '?format=json&query=' + encodeURIComponent(req)
+  await fetch(url)
+    .then(res => res.json())
+    .then((results) => {
+      resultats = results
+    })
+  var mandats = []
+  resultats.results.bindings.forEach(element =>(mandats.push(element.Position.value)))
+  console.log(mandats)
+  return mandats
 }
+

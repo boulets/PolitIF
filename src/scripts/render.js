@@ -5,6 +5,8 @@
 const EMPTY_IMAGE_DATA_URL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
 const EMPTY_PLACEHOLDER = "-"
 
+const positionsList = document.getElementById('positionsList')
+
 function getSlot(key) {
   const element = document.querySelector(`[data-key=${key}]`)
   if (element !== null) {
@@ -91,4 +93,14 @@ function renderRecherche(search) {
     throw new Error('Affichage de la page Recherche impossible: éléments #search manquant')
   }
   entreeRecherche.value = search
+}
+
+function renderPositions(positions) {
+
+  positionsList.innerHTML = ''
+  positions.forEach(element => {
+    const li = document.createElement('li')
+    li.innerText = element;
+    positionsList.appendChild(li)
+  })
 }
