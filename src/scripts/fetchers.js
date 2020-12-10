@@ -53,11 +53,11 @@ async function fetchProfil(id) {
     dateDeces: new Date('2020-12-02'),
     lieuDeces: 'Loir-et-Cher, France',
     image: 'img/vge.jpg',
-    pere: 'Edmond Giscard d\'Estaing',
-    mere: 'May Bardoux',
-    fratrie: 'Olivier Giscard d\'Estaing, Sylvie Giscard d\'Estaing',
-    conjoint : 'Anne-Aymone Giscard d\'Estaing',
-    enfants: 'Louis, Valérie-Anne, Henri, Jacinthe'
+    pere: resultats1.results.bindings[0].NomPere.value,
+    mere: resultats1.results.bindings[0].NomMere.value,
+    fratrie: 'TODO',
+    conjoint : resultats1.results.bindings[0].NomConjoint.value,
+    enfants: 'TODO'
   }
 
   localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))

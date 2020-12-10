@@ -18,7 +18,7 @@ function requete_recherche(recherche, n = 1) {
 
 
 function requete_profil_biographie(idProfil) {
-  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces WHERE {
+  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomPere ?NomMere ?NomConjoint WHERE {
     BIND(wd:${idProfil} AS ?politician).
 
     # Nom prénom
@@ -29,6 +29,22 @@ function requete_profil_biographie(idProfil) {
     OPTIONAL {
       ?politician wdt:P570 ?DateDeDeces.
     }
+    OPTIONAL {
+      ?politician wdt:P22 ?Pere.
+      ?Pere rdfs:label ?NomPere.
+      FILTER(LANG(?NomPere)='fr').
+     }
+     OPTIONAL {
+       ?politician wdt:P25 ?Mere.
+       ?Mere rdfs:label ?NomMere.
+       FILTER(LANG(?NomMere)='fr').
+     }
+     OPTIONAL {
+      ?politician wdt:P26 ?Conjoint.
+      ?Conjoint rdfs:label ?NomConjoint.
+      FILTER(LANG(?NomConjoint)='fr').
+    }
+
     FILTER(LANG(?NomPoliticien)='fr').
   }`
 };
