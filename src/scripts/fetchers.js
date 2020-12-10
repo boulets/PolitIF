@@ -5,6 +5,8 @@ const API_URL = 'https://query.wikidata.org/sparql'
 /** Durée de vie en cache (en secondes) */
 const CACHE_TTL = 0
 
+
+
 async function fetchProfil(id) {
   const now = Date.now()
   const item = localStorage.getItem(id)
@@ -24,7 +26,7 @@ async function fetchProfil(id) {
     }
   }
 
-  var resultats1, resultats2;
+  var resultats1
 
   console.log(`Fetching ${id}`)
   const req1 = requete_profil_biographie(id);
@@ -36,30 +38,36 @@ async function fetchProfil(id) {
     })
     console.log(resultats1)
 
-  console.log(`Fetching ${id}`)
-  const req2 = requete_profil_mandats(id);
-  const url2 = API_URL + '?format=json&query=' + encodeURIComponent(req2)
-  await fetch(url2)
-    .then(res => res.json())
-    .then((resultats) => {
-      resultats2 = resultats
-    })
-
   const res = {
-    nom: resultats1.results.bindings[0].NomPoliticien.value,
-    //dateNaissance : resultats1.results.bindings[0].DateDeNaissance.value,
-    dateNaissance: new Date('1926-02-02'),
-    lieuNaissance: 'Coblence, Allemagne (RFA)',
-    dateDeces: new Date('2020-12-02'),
-    lieuDeces: 'Loir-et-Cher, France',
-    image: 'img/vge.jpg',
-    pere: 'Edmond Giscard d\'Estaing',
-    mere: 'May Bardoux',
-    fratrie: 'Olivier Giscard d\'Estaing, Sylvie Giscard d\'Estaing',
-    conjoint : 'Anne-Aymone Giscard d\'Estaing',
-    enfants: 'Louis, Valérie-Anne, Henri, Jacinthe'
+    nom: resultats1.results.bindings[0].NomPoliticien === undefined ? "" : resultats1.results.bindings[0].NomPoliticien.value,
+    dateNaissance : resultats1.results.bindings[0].DateDeNaissance === undefined ? "" : new Date(resultats1.results.bindings[0].DateDeNaissance.value),
+    lieuNaissance: resultats1.results.bindings[0].NomLieuDeNaissance === undefined ? "" : resultats1.results.bindings[0].NomLieuDeNaissance.value,
+    dateDeces: resultats1.results.bindings[0].DateDeDeces === undefined ? "" : new Date(resultats1.results.bindings[0].DateDeDeces.value),
+    lieuDeces: resultats1.results.bindings[0].NomLieuDeDeces === undefined ? "" : resultats1.results.bindings[0].NomLieuDeDeces.value,
+    image: resultats1.results.bindings[0].Image.value,
+    pere: resultats1.results.bindings[0].NomPere === undefined ? "" : resultats1.results.bindings[0].NomPere.value,
+    mere: resultats1.results.bindings[0].NomMere === undefined ? "" : resultats1.results.bindings[0].NomMere.value,
+    fratrie: 'TODO',
+    conjoint : resultats1.results.bindings[0].NomConjoint.value === undefined ? "" : resultats1.results.bindings[0].NomConjoint.value,
+    enfants: 'TODO'
   }
 
   localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
   return res
 }
+
+async function fetchPositions(id) {
+  var resultats
+  const req = requete_profil_mandats(id);
+  const url = API_URL + '?format=json&query=' + encodeURIComponent(req)
+  await fetch(url)
+    .then(res => res.json())
+    .then((results) => {
+      resultats = results
+    })
+  var mandats = []
+  resultats.results.bindings.forEach(element =>(mandats.push(element.Position.value)))
+  console.log(mandats)
+  return mandats
+}
+

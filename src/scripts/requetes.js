@@ -18,7 +18,7 @@ function requete_recherche(recherche, n = 1) {
 
 
 function requete_profil_biographie(idProfil) {
-  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces WHERE {
+  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomLieuDeNaissance ?NomLieuDeDeces ?NomPere ?NomMere ?NomConjoint ?Image WHERE {
     BIND(wd:${idProfil} AS ?politician).
 
     # Nom prénom
@@ -26,16 +26,41 @@ function requete_profil_biographie(idProfil) {
 
     # Dates
     ?politician wdt:P569 ?DateDeNaissance.
+    ?politician wdt:P19 ?LieuDeNaissance.
+    ?LieuDeNaissance rdfs:label ?NomLieuDeNaissance.
+    OPTIONAL {
+      ?politician wdt:P18 ?Image.
+    }
+
     OPTIONAL {
       ?politician wdt:P570 ?DateDeDeces.
+      ?politician wdt:P20 ?LieuDeDeces.
+      ?LieuDeDeces rdfs:label ?NomLieuDeDeces.
+      FILTER(LANG(?NomLieuDeDeces)='fr').
     }
-    FILTER(LANG(?NomPoliticien)='fr').
+    OPTIONAL {
+      ?politician wdt:P22 ?Pere.
+      ?Pere rdfs:label ?NomPere.
+      FILTER(LANG(?NomPere)='fr').
+     }
+     OPTIONAL {
+       ?politician wdt:P25 ?Mere.
+       ?Mere rdfs:label ?NomMere.
+       FILTER(LANG(?NomMere)='fr').
+     }
+     OPTIONAL {
+      ?politician wdt:P26 ?Conjoint.
+      ?Conjoint rdfs:label ?NomConjoint.
+      FILTER(LANG(?NomConjoint)='fr').
+    }
+
+    FILTER(LANG(?NomPoliticien)='fr' && LANG(?NomLieuDeNaissance)='fr').
   }`
 };
 
 function requete_profil_mandats(idProfil) {
   return `SELECT ?politician ?Position ?DateEntreePosition ?DateSortiePosition WHERE {
-    BIND(wd:Q2124 AS ?politician).
+    BIND(wd:${idProfil} AS ?politician).
 
     # Les positions qu'ils ont occuppé
     ?politician p:P39 ?posStat.

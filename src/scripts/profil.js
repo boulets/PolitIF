@@ -16,6 +16,7 @@ function update() {
     renderProfilPartial({ nom: nameWhileLoading })
   }
   fetchProfil(id).then(renderProfilOrLoading)
+  fetchPositions(id).then(renderPositions)
 }
 
 function init() {
