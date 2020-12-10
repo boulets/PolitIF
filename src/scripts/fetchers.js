@@ -48,7 +48,7 @@ async function fetchProfil(id) {
   const res = {
     nom: resultats1.results.bindings[0].NomPoliticien === undefined ? "" : resultats1.results.bindings[0].NomPoliticien.value,
     dateNaissance : resultats1.results.bindings[0].DateDeNaissance === undefined ? "" : new Date(resultats1.results.bindings[0].DateDeNaissance.value),
-    lieuNaissance: resultats1.results.bindings[0].DateDeDeces === undefined ? "" : resultats1.results.bindings[0].NomLieuDeNaissance.value,
+    lieuNaissance: resultats1.results.bindings[0].NomLieuDeNaissance === undefined ? "" : resultats1.results.bindings[0].NomLieuDeNaissance.value,
     dateDeces: resultats1.results.bindings[0].DateDeDeces === undefined ? "" : new Date(resultats1.results.bindings[0].DateDeDeces.value),
     lieuDeces: resultats1.results.bindings[0].NomLieuDeDeces === undefined ? "" : resultats1.results.bindings[0].NomLieuDeDeces.value,
     image: resultats1.results.bindings[0].Image.value,
