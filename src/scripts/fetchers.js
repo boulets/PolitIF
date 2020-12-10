@@ -49,13 +49,13 @@ async function fetchProfil(id) {
     nom: resultats1.results.bindings[0].NomPoliticien.value,
     dateNaissance : new Date(resultats1.results.bindings[0].DateDeNaissance.value),
     lieuNaissance: resultats1.results.bindings[0].NomLieuDeNaissance.value,
-    dateDeces: new Date(resultats1.results.bindings[0].DateDeDeces.value),
-    lieuDeces: resultats1.results.bindings[0].NomLieuDeDeces.value,
+    dateDeces: resultats1.results.bindings[0].DateDeDeces === undefined ? "" : new Date(resultats1.results.bindings[0].DateDeDeces.value),
+    lieuDeces: resultats1.results.bindings[0].NomLieuDeDeces === undefined ? "" : resultats1.results.bindings[0].NomLieuDeDeces.value,
     image: resultats1.results.bindings[0].Image.value,
     pere: resultats1.results.bindings[0].NomPere.value,
     mere: resultats1.results.bindings[0].NomMere.value,
     fratrie: 'TODO',
-    conjoint : resultats1.results.bindings[0].NomConjoint.value,
+    conjoint : resultats1.results.bindings[0].NomConjoint.value === undefined ? "" : resultats1.results.bindings[0].NomConjoint.value,
     enfants: 'TODO'
   }
 
@@ -63,3 +63,10 @@ async function fetchProfil(id) {
   return res
 }
 
+function isUndefined(value) {
+  if(value === undefined) {
+    return "";
+  } else {
+    return value;
+  }
+}

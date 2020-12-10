@@ -60,9 +60,9 @@ function renderProfil(profil) {
   document.title = `Polit'IF – ${profil.nom}`
   slotSetText('nom', profil.nom)
   slotSetHtml('date-naissance', dateToHtml(profil.dateNaissance))
-  slotSetHtml('date-deces', dateToHtml(profil.dateDeces))
+  if(profil.dateDeces !== "") { slotSetHtml('date-deces', dateToHtml(profil.dateDeces))}
   slotSetText('lieu-naissance', profil.lieuNaissance)
-  slotSetText('lieu-deces', profil.lieuDeces)
+  if(profil.lieuDeces !== "") { slotSetText('lieu-deces', profil.lieuDeces)}
   slotSetText('pere', profil.pere)
   slotSetText('mere', profil.mere)
   slotSetText('fratrie', profil.fratrie)
