@@ -3,6 +3,7 @@
 //import {EMPTY_IMAGE_DATA_URL} from '../constants'
 // https://stackoverflow.com/questions/6018611/smallest-data-uri-image-possible-for-a-transparent-image
 const EMPTY_IMAGE_DATA_URL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+const EMPTY_PLACEHOLDER = "-"
 
 function getSlot(key) {
   const element = document.querySelector(`[data-key=${key}]`)
@@ -58,16 +59,16 @@ function renderLoadingProfil() {
 }
 function renderProfil(profil) {
   document.title = `Polit'IF – ${profil.nom}`
-  slotSetText('nom', profil.nom)
-  slotSetHtml('date-naissance', dateToHtml(profil.dateNaissance))
-  if(profil.dateDeces !== "") { slotSetHtml('date-deces', dateToHtml(profil.dateDeces))}
-  slotSetText('lieu-naissance', profil.lieuNaissance)
-  if(profil.lieuDeces !== "") { slotSetText('lieu-deces', profil.lieuDeces)}
-  slotSetText('pere', profil.pere)
-  slotSetText('mere', profil.mere)
-  slotSetText('fratrie', profil.fratrie)
-  slotSetText('conjoint', profil.conjoint)
-  slotSetText('enfants', profil.enfants)
+  profil.nom !== "" ? slotSetText('nom', profil.nom) : slotSetText('nom', "-")
+  profil.dateNaissance !== "" ? slotSetHtml('date-naissance', dateToHtml(profil.dateNaissance)) : slotSetText('date-naissance', EMPTY_PLACEHOLDER)
+  profil.dateDeces !== "" ? slotSetHtml('date-deces', dateToHtml(profil.dateDeces)) : slotSetHtml('date-deces', "-")
+  profil.lieuNaissance !== "" ? slotSetText('lieu-naissance', profil.lieuNaissance) : slotSetHtml('lieu-naissance', "-")
+  profil.lieuDeces !== "" ? slotSetText('lieu-deces', profil.lieuDeces) : slotSetHtml('lieu-deces',"-")
+  profil.pere !== "" ? slotSetText('pere', profil.pere) : slotSetText('pere', EMPTY_PLACEHOLDER)
+  profil.mere !== "" ? slotSetText('mere', profil.mere) : slotSetText('mere', EMPTY_PLACEHOLDER)
+  profil.fratrie !== "" ? slotSetText('fratrie', profil.fratrie) : slotSetText('fratrie', EMPTY_PLACEHOLDER)
+  profil.conjoint !== "" ? slotSetText('conjoint', profil.conjoint) : slotSetText('fratrie', EMPTY_PLACEHOLDER)
+  profil.enfants !== "" ? slotSetText('enfants', profil.enfants) : slotSetText('enfants', EMPTY_PLACEHOLDER)
   slotSetHtml('description', '<p>' + 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Impedit, explicabo dolor! Nostrum facilis blanditiis inventore vero debitis temporibus culpa cupiditate accusantium ipsam? Quam rem inventore delectus amet minus itaque nemo.'.replace(/[^\S\n]+/g, ' ').split('\n\n').join('</p><p>') + '</p>')
   slotSetAttribute('image-personne', 'src', profil.image)
 }
