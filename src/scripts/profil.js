@@ -1,4 +1,4 @@
-/* global renderProfilOrLoading, renderProfilPartial, fetchProfil */
+/* global renderProfilOrEmptySlots, renderProfilPartial, renderPositions, fetchProfil, fetchPositions */
 
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
@@ -11,13 +11,15 @@ function update() {
   const id = p.length > 0 ? p[0] : ''
   const nameWhileLoading = p.length > 1 ? p[1] : ''
 
-  renderProfilOrLoading(null)
+  renderProfilPartial(null)
   if (nameWhileLoading) {
     renderProfilPartial({ nom: nameWhileLoading })
   }
-  fetchProfil(id).then(renderProfilOrLoading)
-  fetchPositions(id).then(renderPositions)
-  fetchPartis(id).then(renderPartis)
+  Promise.all([
+    fetchProfil(id).then(renderProfilOrEmptySlots),
+    fetchPositions(id).then(renderPositions),
+    fetchPartis(id).then(renderPartis)
+  ])
 }
 
 function init() {

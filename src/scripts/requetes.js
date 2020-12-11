@@ -42,13 +42,13 @@ function requete_profil_biographie(idProfil) {
       ?politician wdt:P22 ?Pere.
       ?Pere rdfs:label ?NomPere.
       FILTER(LANG(?NomPere)='fr').
-     }
-     OPTIONAL {
-       ?politician wdt:P25 ?Mere.
-       ?Mere rdfs:label ?NomMere.
-       FILTER(LANG(?NomMere)='fr').
-     }
-     OPTIONAL {
+    }
+    OPTIONAL {
+      ?politician wdt:P25 ?Mere.
+      ?Mere rdfs:label ?NomMere.
+      FILTER(LANG(?NomMere)='fr').
+    }
+    OPTIONAL {
       ?politician wdt:P26 ?Conjoint.
       ?Conjoint rdfs:label ?NomConjoint.
       FILTER(LANG(?NomConjoint)='fr').
@@ -56,7 +56,7 @@ function requete_profil_biographie(idProfil) {
 
     FILTER(LANG(?NomPoliticien)='fr' && LANG(?NomLieuDeNaissance)='fr').
   }`
-};
+}
 
 function requete_profil_mandats(idProfil) {
   return `SELECT ?politician ?Position ?DateEntreePosition ?DateSortiePosition WHERE {
@@ -67,7 +67,7 @@ function requete_profil_mandats(idProfil) {
     ?posStat ps:P39 ?pos.
     ?pos rdfs:label ?Position.
     OPTIONAL {
-       ?posStat pq:P580 ?DateEntreePosition.
+      ?posStat pq:P580 ?DateEntreePosition.
     }
     OPTIONAL {
       ?posStat pq:P582 ?DateSortiePosition.
@@ -75,15 +75,42 @@ function requete_profil_mandats(idProfil) {
 
     FILTER(LANG(?Position)='fr').
   }`
-};
+}
 
 function requete_profil_description(nomPoliticien) {
-  return  `PREFIX dbo: <http://dbpedia.org/ontology/>
-  PREFIX dbr: <http://dbpedia.org/resource/>
+  return  `SELECT ?Description WHERE {
+    ?uri rdfs:label '${nomPoliticien.replace(/'/g, '\\\'')}'@fr .
+    OPTIONAL {
+      ?uri dbo:abstract ?Description .
+      FILTER(LANG(?Description)='fr') .
+    }
+  } LIMIT 1`
+}
 
-  SELECT ?Description WHERE {
-  dbr:${nomPoliticien} dbo:abstract ?Description.
-  FILTER(LANG(?Description)='fr').
+function requete_ideology(idIdeology) {
+  return `SELECT ?ideology ?ideologyDescription ?ideologyLabel ?image ?flagimage WHERE {
+    BIND(wd:${idIdeology} AS ?ideology).
+
+    # Opt : image
+    OPTIONAL {
+      ?ideology wdt:P18 ?image.
+    }
+    # Opt : flagimage
+    OPTIONAL {
+      ?ideology wdt:P41 ?flagimage.
+    }
+
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+  }`
+}
+
+function requete_superclass(idIdeology) {
+  return `SELECT ?ideology ?subclass ?subclassLabel ?subclassDescription WHERE {
+    BIND(wd:${idIdeology} AS ?ideology).
+
+    ?ideology wdt:P279 ?subclass.
+
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
   }`
 }
 

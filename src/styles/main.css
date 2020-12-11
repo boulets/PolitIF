@@ -41,6 +41,11 @@ header nav a:focus-visible {
   background: white;
 }
 
+header h1 a {
+  color: inherit !important;
+  text-decoration: none;
+}
+
 .drapeau-francais {
   width: 160px;
   height: 24px;
@@ -70,4 +75,8 @@ main {
 
 main .sheet {
   border-radius: 0px 0px 3px 3px;
+}
+
+[hidden] {
+  display: none !important;
 }
