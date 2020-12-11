@@ -92,6 +92,30 @@ function requete_profil_description(nomPoliticien) {
   } LIMIT 1`
 }
 
+function requete_profil_fratrie(idProfil) {
+  return  `SELECT ?nomFratrie WHERE {
+    BIND(wd:${idProfil} AS ?politician).
+
+    OPTIONAL {
+      ?politician wdt:P3373 ?Fratrie.
+      ?Fratrie rdfs:label ?nomFratrie.
+      FILTER(LANG(?nomFratrie)='fr').
+    }
+  }`
+}
+
+function requete_profil_enfants(idProfil) {
+  return  `SELECT ?nomEnfants WHERE {
+    BIND(wd:${idProfil} AS ?politician).
+
+    OPTIONAL {
+      ?politician wdt:P40 ?Enfants.
+      ?Enfants rdfs:label ?nomEnfants.
+      FILTER(LANG(?nomEnfants)='fr').
+    }
+  }`
+}
+
 function requete_ideology(idIdeology) {
   return `SELECT ?ideology ?ideologyDescription ?ideologyLabel ?image ?flagimage WHERE {
     BIND(wd:${idIdeology} AS ?ideology).
