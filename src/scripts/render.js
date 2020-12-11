@@ -144,6 +144,11 @@ function renderProfilOrEmptySlots(profil) {
   } else {
     hideSlot('image-personne')
   }
+  if (profil.signature) {
+    slotSetAttribute('signature-personne', 'src', profil.signature)
+  } else {
+    hideSlot('signature-personne')
+  }
 }
 function renderProfilPartial(profil) {
   if (profil === null) {
