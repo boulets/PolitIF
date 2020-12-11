@@ -6,6 +6,7 @@ const EMPTY_IMAGE_DATA_URL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5
 const EMPTY_PLACEHOLDER = "-"
 
 const positionsList = document.getElementById('positionsList')
+const partisList = document.getElementById('partisList')
 
 function getSlot(key) {
   const element = document.querySelector(`[data-key=${key}]`)
@@ -108,11 +109,19 @@ function renderPositions(positions) {
 
   positionsList.innerHTML = ''
   positions.forEach(element => {
-    console.log(element)
     const dateDebut = element.DateEntreePosition === undefined ? "Non connu" : dateToString(new Date(element.DateEntreePosition.value));
     const dateFin = element.DateSortiePosition === undefined ? "Non Connu" : dateToString(new Date(element.DateSortiePosition.value))
     const li = document.createElement('li')
     li.innerHTML = "<b>" + element.Position.value + "</b>" + " du " + dateDebut + " au " + dateFin;
     positionsList.appendChild(li)
+  })
+}
+
+function renderPartis(partis) {
+  partisList.innerHTML = ''
+  partis.forEach(element => {
+    const li = document.createElement('li')
+    li.innerText = element.NomParti.value
+    partisList.appendChild(li)
   })
 }

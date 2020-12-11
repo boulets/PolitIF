@@ -86,3 +86,17 @@ function requete_profil_description(nomPoliticien) {
   FILTER(LANG(?Description)='fr').
   }`
 }
+
+function requete_profil_partiPolitique(idProfil) {
+  return `SELECT ?politician ?NomPoliticien ?NomParti WHERE {
+    BIND(wd:${idProfil} AS ?politician).
+    # Nom prénom
+    ?politician rdfs:label ?NomPoliticien.
+
+    # Partis Politiques
+    ?politician wdt:P102 ?Parti.
+    ?Parti rdfs:label ?NomParti.
+
+    FILTER(LANG(?NomPoliticien)='fr' && LANG(?NomParti)='fr').
+  }`
+}

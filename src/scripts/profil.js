@@ -17,6 +17,7 @@ function update() {
   }
   fetchProfil(id).then(renderProfilOrLoading)
   fetchPositions(id).then(renderPositions)
+  fetchPartis(id).then(renderPartis)
 }
 
 function init() {
