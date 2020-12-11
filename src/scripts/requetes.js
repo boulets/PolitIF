@@ -127,3 +127,21 @@ function requete_profil_partiPolitique(idProfil) {
     FILTER(LANG(?NomPoliticien)='fr' && LANG(?NomParti)='fr').
   }`
 }
+
+function requete_parti_alignement(idParty) {
+  return `SELECT ?party ?alignement ?alignementLabel ?alignementDescription ?ideology ?ideologyLabel ?ideologyDescription ?colors WHERE {
+    BIND(wd:${idParty} AS ?party).
+
+    OPTIONAL {
+      ?party wdt:P1387 ?alignement.
+    }
+    OPTIONAL {
+      ?party wdt:P1142 ?ideology.
+    }
+    OPTIONAL {
+      ?party wdt:P465 ?colors.
+    }
+
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }.
+  }`
+}
