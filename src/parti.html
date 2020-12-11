@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Polit'IF</title>
+
+    <link rel="stylesheet" href="styles/reset.css" />
+    <link rel="stylesheet" href="styles/typography.css" />
+    <link rel="stylesheet" href="styles/colors.css" />
+    <link rel="stylesheet" href="styles/utility.css" />
+    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="styles/profil.css" />
+    <link rel="stylesheet" href="styles/recherche.css" />
+  </head>
+
+  <body>
+    <header>
+      <div class="brand">
+        <h1>Polit’IF</h1>
+        <p class="h3">Le moteur de recherche de la politique française</p>
+      </div>
+
+      <nav>
+        <a href="index.html">Recherche</a>
+        <a href="profil.html#Q2124-Valéry Giscard d'Estaing">Giscard</a>
+      </nav>
+    </header>
+
+    <main class="sheet profil">
+      <div class="colonne-politique">
+        <h2 class="nom" data-key="nom"></h2>
+        <div data-key="description"></div>
+        <div>
+          <ul id="positionsList">
+
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="colonne-perso">
+        <img data-key="image-personne" src="" alt="Valéry Giscard d'Estaing">
+
+        <dl class="biographie-attributs">
+          <div>
+            <dt>Date de naissance</dt>
+            <dd data-key="date-naissance"></dd>
+          </div>
+          <div>
+            <dt>Lieu de naissance</dt>
+            <dd data-key="lieu-naissance"></dd>
+          </div>
+          <div>
+            <dt>Date de décès</dt>
+            <dd data-key="date-deces"></dd>
+          </div>
+          <div>
+            <dt>Lieu de décès</dt>
+            <dd data-key="lieu-deces"></dd>
+          </div>
+        </dl>
+        <dl class="famille-attributs">
+          <div>
+            <dt>Père</dt>
+            <dd data-key="pere"></dd>
+          </div>
+          <div>
+            <dt>Mère</dt>
+            <dd data-key="mere"></dd>
+          </div>
+          <div>
+            <dt>Fratrie</dt>
+            <dd data-key="fratrie"></dd>
+          </div>
+          <div>
+            <dt>Conjoint</dt>
+            <dd data-key="conjoint"></dd>
+          </div>
+          <div>
+            <dt>Enfants</dt>
+            <dd data-key="enfants"></dd>
+          </div>
+        </dl>
+      </div>
+    </main>
+
+    <footer>
+      <div class="drapeau-francais">
+        <span class="sr-only">Drapeau français</span>
+      </div>
+    </footer>
+
+    <script src="scripts/fetchers.js"></script>
+    <script src="scripts/render.js"></script>
+    <script src="scripts/requetes.js"></script>
+    <script src="scripts/profil.js"></script>
+  </body>
+
+</html>
