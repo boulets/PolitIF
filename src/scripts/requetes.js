@@ -74,7 +74,9 @@ function requete_profil_mandats(idProfil) {
     }
 
     FILTER(LANG(?Position)='fr').
-  }`
+  }
+  ORDER BY DESC (?DateEntreePosition)
+  `
 }
 
 function requete_profil_description(nomPoliticien) {
