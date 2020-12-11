@@ -159,7 +159,6 @@ function renderProfilPartial(profil) {
 }
 
 function renderRecherche(search) {
-  console.log('renderRecherche')
   const entreeRecherche = document.getElementById('search')
   if (entreeRecherche === null) {
     throw new Error('Affichage de la page Recherche impossible: éléments #search manquant')

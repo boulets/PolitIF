@@ -34,7 +34,7 @@ async function fetchProfil(id) {
   //   }
   // }
 
-  console.log(`Fetching ${id}`)
+  // console.log(`Fetching ${id}`)
   const url = wikidataUrl(requete_profil_biographie(id))
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
@@ -77,6 +77,5 @@ async function fetchPositions(id) {
     debut: element.DateEntreePosition?.value,
     fin: element.DateSortiePosition?.value,
   }))
-  console.log(mandats)
   return mandats
 }
