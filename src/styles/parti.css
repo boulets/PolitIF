@@ -1,0 +1,7 @@
+.parti {
+  border-left: 5px solid var(--couleur-parti, white);
+}
+
+.parti .nom {
+  margin-bottom: 0.3em;
+}
