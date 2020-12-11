@@ -82,15 +82,10 @@ async function fetchPositions(id) {
 
 async function fetchPartis(id) {
   var resultats
-  const req=requete_profil_partiPolitique(id);
-  const url = API_URL + '?format=json&query=' + encodeURIComponent(req)
-  await fetch(url)
-    .then(res => res.json())
-    .then((results) => {
-      resultats = results
-    })
-  var partis = []
-  resultats.results.bindings.forEach(element =>(partis.push(element)))
+  const url = wikidataUrl(requete_profil_partiPolitique(id))
+  const reponse = await fetch(url).then(res => res.json())
+  console.log(reponse)
+  const partis = reponse.results.bindings
   console.log(partis)
   return partis
 }
