@@ -8,7 +8,7 @@ const WIKIDATA_API = 'https://query.wikidata.org/sparql'
 const CACHE_TTL = 0
 
 function nullableDate(string) {
-  string === null || string === undefined ? null : new Date(string)
+  return string === null || string === undefined ? null : new Date(string)
 }
 
 function wikidataUrl(req) {
@@ -38,6 +38,8 @@ async function fetchProfil(id) {
   const url = wikidataUrl(requete_profil_biographie(id))
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
+
+  console.log(donnees)
 
   const nomPoliticien = donnees.NomPoliticien.value
   const description = await fetchDescription(nomPoliticien)

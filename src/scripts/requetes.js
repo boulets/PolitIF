@@ -102,7 +102,7 @@ function requete_ideology(idIdeology) {
 
     SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
   }`
-};
+}
 
 function requete_superclass(idIdeology) {
   return `SELECT ?ideology ?subclass ?subclassLabel ?subclassDescription WHERE {
@@ -112,4 +112,4 @@ function requete_superclass(idIdeology) {
 
     SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
   }`
-};
+}
