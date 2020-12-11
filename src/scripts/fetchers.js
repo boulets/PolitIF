@@ -79,3 +79,19 @@ async function fetchPositions(id) {
   }))
   return mandats
 }
+
+async function fetchPartis(id) {
+  var resultats
+  const req=requete_profil_partiPolitique(id);
+  const url = API_URL + '?format=json&query=' + encodeURIComponent(req)
+  await fetch(url)
+    .then(res => res.json())
+    .then((results) => {
+      resultats = results
+    })
+  var partis = []
+  resultats.results.bindings.forEach(element =>(partis.push(element)))
+  console.log(partis)
+  return partis
+}
+

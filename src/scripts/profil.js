@@ -15,10 +15,10 @@ function update() {
   if (nameWhileLoading) {
     renderProfilPartial({ nom: nameWhileLoading })
   }
-
   Promise.all([
     fetchProfil(id).then(renderProfilOrEmptySlots),
     fetchPositions(id).then(renderPositions),
+    fetchPartis(id).then(renderPartis)
   ])
 }
 

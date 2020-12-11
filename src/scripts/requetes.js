@@ -113,3 +113,17 @@ function requete_superclass(idIdeology) {
     SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
   }`
 }
+
+function requete_profil_partiPolitique(idProfil) {
+  return `SELECT ?politician ?NomPoliticien ?NomParti WHERE {
+    BIND(wd:${idProfil} AS ?politician).
+    # Nom prénom
+    ?politician rdfs:label ?NomPoliticien.
+
+    # Partis Politiques
+    ?politician wdt:P102 ?Parti.
+    ?Parti rdfs:label ?NomParti.
+
+    FILTER(LANG(?NomPoliticien)='fr' && LANG(?NomParti)='fr').
+  }`
+}
