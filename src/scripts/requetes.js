@@ -78,13 +78,13 @@ function requete_profil_mandats(idProfil) {
 }
 
 function requete_profil_description(nomPoliticien) {
-  return  `PREFIX dbo: <http://dbpedia.org/ontology/>
-  PREFIX dbr: <http://dbpedia.org/resource/>
-
-  SELECT ?Description WHERE {
-  dbr:${nomPoliticien.replace(/\s/g, '_').replace(/'/g, '\\\'')} dbo:abstract ?Description.
-  FILTER(LANG(?Description)='fr').
-  }`
+  return  `SELECT ?Description WHERE {
+    ?uri rdfs:label '${nomPoliticien.replace(/'/g, '\\\'')}'@fr .
+    OPTIONAL {
+      ?uri dbo:abstract ?Description .
+      FILTER(LANG(?Description)='fr') .
+    }
+  } LIMIT 1`
 }
 
 function requete_ideology(idIdeology) {
