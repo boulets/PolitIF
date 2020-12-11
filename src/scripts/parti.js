@@ -30,13 +30,6 @@ function update() {
       siteWeb: 'https://en-marche.fr/index.html',
     })
   }, 900)
-
-  // renderProfilOrLoading(null)
-  // if (nameWhileLoading) {
-  //   renderProfilPartial({ nom: nameWhileLoading })
-  // }
-  // fetchProfil(id).then(renderProfilOrLoading)
-  // fetchPositions(id).then(renderPositions)
 }
 
 function init() {
