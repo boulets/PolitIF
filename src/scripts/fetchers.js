@@ -39,22 +39,20 @@ async function fetchProfil(id) {
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
 
-  console.log(donnees)
-
   const nomPoliticien = donnees.NomPoliticien.value
   const description = await fetchDescription(nomPoliticien)
 
   const res = {
-    nom: donnees.NomPoliticien?.value,
-    dateNaissance : nullableDate(donnees.DateDeNaissance?.value),
-    lieuNaissance: donnees.NomLieuDeNaissance?.value,
-    dateDeces: nullableDate(donnees.DateDeDeces?.value),
-    lieuDeces: donnees.NomLieuDeDeces?.value,
-    image: donnees.Image?.value,
-    pere: donnees.NomPere?.value,
-    mere: donnees.NomMere?.value,
+    nom: donnees?.NomPoliticien?.value,
+    dateNaissance : nullableDate(donnees?.DateDeNaissance?.value),
+    lieuNaissance: donnees?.NomLieuDeNaissance?.value,
+    dateDeces: nullableDate(donnees?.DateDeDeces?.value),
+    lieuDeces: donnees?.NomLieuDeDeces?.value,
+    image: donnees?.Image?.value,
+    pere: donnees?.NomPere?.value,
+    mere: donnees?.NomMere?.value,
     fratrie: 'TODO',
-    conjoint : donnees.NomConjoint?.value,
+    conjoint : donnees?.NomConjoint?.value,
     enfants: 'TODO',
     description : description === undefined ? 'Pas de description' : description
   }
@@ -68,7 +66,7 @@ async function fetchDescription(nomPoliticien) {
   const url = DBPEDIA_URL + '?format=json&query=' + encodeURIComponent(req)
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
-  return donnees.Description.value
+  return donnees?.Description?.value
 }
 
 async function fetchPositions(id) {
