@@ -157,6 +157,17 @@ function requete_parti_general(idParti) {
   `
 }
 
+function requete_parti_ideologies(idParti) {
+  return `SELECT ?ideologie ?nomIdeologie WHERE {
+    BIND(wd:${idParti} AS ?parti).
+
+    ?parti wdt:P1142 ?ideologie.
+    ?ideologie rdfs:label ?nomIdeologie.
+
+    FILTER(LANG(?nomIdeologie)='fr').
+  }`
+}
+
 function requete_ideology(idIdeology) {
   return `SELECT ?ideology ?ideologyDescription ?ideologyLabel ?image ?flagimage WHERE {
     BIND(wd:${idIdeology} AS ?ideology).
