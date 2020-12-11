@@ -95,7 +95,7 @@ async function fetchEnfants(id) {
   const url = wikidataUrl(requete_profil_enfants(id))
   const reponse = await fetch(url).then(res => res.json())
   var enfants = []
-  reponse.results.bindings.map(element => enfants.push(element.nomEnfants.value))
+  reponse.results.bindings.map(element => enfants.push(element.nomEnfants?.value))
   return enfants
 }
 
@@ -103,7 +103,7 @@ async function fetchFratrie(id) {
   const url = wikidataUrl(requete_profil_fratrie(id))
   const reponse = await fetch(url).then(res => res.json())
   var fratrie = []
-  reponse.results.bindings.map(element => fratrie.push(element.nomFratrie.value))
+  reponse.results.bindings.map(element => fratrie.push(element.nomFratrie?.value))
   return fratrie
 }
 
