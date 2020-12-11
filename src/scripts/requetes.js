@@ -76,3 +76,30 @@ function requete_profil_mandats(idProfil) {
     FILTER(LANG(?Position)='fr').
   }`
 };
+
+function requete_ideology(idIdeology) {
+  return `SELECT ?ideology ?ideologyDescription ?ideologyLabel ?image ?flagimage WHERE {
+    BIND(wd:${idIdeology} AS ?ideology).
+
+    # Opt : image
+    OPTIONAL {
+      ?ideology wdt:P18 ?image.
+    }
+    # Opt : flagimage
+    OPTIONAL {
+      ?ideology wdt:P41 ?flagimage.
+    }
+
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+  }`
+};
+
+function requete_superclass(idIdeology) {
+  return `SELECT ?ideology ?subclass ?subclassLabel ?subclassDescription WHERE {
+    BIND(wd:${idIdeology} AS ?ideology).
+
+    ?ideology wdt:P279 ?subclass.
+
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+  }`
+};
