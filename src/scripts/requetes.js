@@ -76,3 +76,13 @@ function requete_profil_mandats(idProfil) {
     FILTER(LANG(?Position)='fr').
   }`
 };
+
+function requete_profil_description(nomPoliticien) {
+  return  `PREFIX dbo: <http://dbpedia.org/ontology/>
+  PREFIX dbr: <http://dbpedia.org/resource/>
+
+  SELECT ?Description WHERE {
+  dbr:${nomPoliticien} dbo:abstract ?Description.
+  FILTER(LANG(?Description)='fr').
+  }`
+}

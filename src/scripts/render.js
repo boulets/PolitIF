@@ -71,7 +71,7 @@ function renderProfil(profil) {
   profil.fratrie !== "" ? slotSetText('fratrie', profil.fratrie) : slotSetText('fratrie', EMPTY_PLACEHOLDER)
   profil.conjoint !== "" ? slotSetText('conjoint', profil.conjoint) : slotSetText('fratrie', EMPTY_PLACEHOLDER)
   profil.enfants !== "" ? slotSetText('enfants', profil.enfants) : slotSetText('enfants', EMPTY_PLACEHOLDER)
-  slotSetHtml('description', '<p>' + 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Impedit, explicabo dolor! Nostrum facilis blanditiis inventore vero debitis temporibus culpa cupiditate accusantium ipsam? Quam rem inventore delectus amet minus itaque nemo.'.replace(/[^\S\n]+/g, ' ').split('\n\n').join('</p><p>') + '</p>')
+  slotSetHtml('description', '<p>' + profil.description.replace(/[^\S\n]+/g, ' ').split('\n\n').join('</p><p>') + '</p>')
   slotSetAttribute('image-personne', 'src', profil.image)
 }
 function renderProfilOrLoading(profil) {
