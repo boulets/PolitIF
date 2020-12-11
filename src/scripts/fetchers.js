@@ -54,7 +54,8 @@ async function fetchProfil(id) {
     fratrie: 'TODO',
     conjoint : donnees?.NomConjoint?.value,
     enfants: 'TODO',
-    description : description === undefined ? 'Pas de description' : description
+    description : description === undefined ? 'Pas de description' : description,
+    signature : donnees?.Signature?.value
   }
 
   // localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
