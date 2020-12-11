@@ -12,7 +12,9 @@ function requete_recherche(recherche, n = 1) {
     ?posStat pq:P580 ?DateEntreePosition.
 
     # Filtres
-    FILTER (LANG(?NomPoliticien)='fr' && YEAR(?DateEntreePosition) > 1789 && CONTAINS(LCASE(?NomPoliticien), "${s}")).
+    filter(lang(?NomPoliticien) = 'fr').
+    filter(year(?DateEntreePosition) > 1789).
+    filter(contains(lcase(?NomPoliticien), "${s}")).
   } LIMIT ${n}`
 }
 
@@ -54,7 +56,8 @@ function requete_profil_biographie(idProfil) {
       FILTER(LANG(?NomConjoint)='fr').
     }
 
-    FILTER(LANG(?NomPoliticien)='fr' && LANG(?NomLieuDeNaissance)='fr').
+    FILTER(LANG(?NomPoliticien)='fr').
+    FILTER(LANG(?NomLieuDeNaissance)='fr').
   }`
 }
 
@@ -126,7 +129,8 @@ function requete_profil_partiPolitique(idProfil) {
     ?politician wdt:P102 ?Parti.
     ?Parti rdfs:label ?NomParti.
 
-    FILTER(LANG(?NomPoliticien)='fr' && LANG(?NomParti)='fr').
+    FILTER(LANG(?NomPoliticien)='fr').
+    FILTER(LANG(?NomParti)='fr').
   }`
 }
 
