@@ -16,7 +16,28 @@ function getSlot(key) {
   }
 }
 
+function hideSlot(key) {
+  const container = document.querySelector(`[data-contains-slot=${key}]`)
+  if (container) {
+    container.setAttribute('hidden', 'hidden')
+  } else {
+    const slot = document.querySelector(`[data-key=${key}]`)
+    slot?.setAttribute('hidden', 'hidden')
+  }
+}
+
+function showSlot(key) {
+  const container = document.querySelector(`[data-contains-slot=${key}]`)
+  if (container) {
+    container.removeAttribute('hidden')
+  } else {
+    const slot = document.querySelector(`[data-key=${key}]`)
+    slot?.removeAttribute('hidden')
+  }
+}
+
 function slotSetHtmlOrMissing(key, value) {
+  showSlot(key)
   const element = getSlot(key)
   if (value === null || value === undefined) {
     element.innerHTML = EMPTY_PLACEHOLDER
@@ -26,6 +47,7 @@ function slotSetHtmlOrMissing(key, value) {
   element.removeAttribute('loading')
 }
 function slotSetTextOrMissing(key, value) {
+  showSlot(key)
   const element = getSlot(key)
   if (value === null || value === undefined) {
     element.innerHTML = EMPTY_PLACEHOLDER
@@ -36,6 +58,7 @@ function slotSetTextOrMissing(key, value) {
 }
 
 function slotSetHtml(key, value) {
+  showSlot(key)
   if (value === null || value === undefined) {
     return slotSetLoading(value)
   } else {
@@ -45,6 +68,7 @@ function slotSetHtml(key, value) {
   }
 }
 function slotSetText(key, value) {
+  showSlot(key)
   if (value === null || value === undefined) {
     return slotSetLoading(value)
   } else {
@@ -96,28 +120,18 @@ function renderLoadingProfil() {
   slotSetLoading('image-personne')
 }
 
-function renderProfil(profil) {
-  document.title = `Polit'IF – ${profil.nom}`
-  slotSetText('nom', profil.nom)
-  slotSetHtml('date-naissance', profil.dateNaissance && dateToHtml(profil.dateNaissance))
-  slotSetHtml('date-deces', profil.dateDeces && dateToHtml(profil.dateDeces))
-  slotSetText('lieu-naissance', profil.lieuNaissance)
-  slotSetText('lieu-deces', profil.lieuDeces)
-  slotSetText('pere', profil.pere)
-  slotSetText('mere', profil.mere)
-  slotSetText('fratrie', profil.fratrie)
-  slotSetText('conjoint', profil.conjoint)
-  slotSetText('enfants', profil.enfants)
-  slotSetHtml('description', '<p>' + profil.description.replace(/[^\S\n]+/g, ' ').split('\n\n').join('</p><p>') + '</p>')
-  slotSetAttribute('image-personne', 'src', profil.image)
-}
 function renderProfilOrEmptySlots(profil) {
   document.title = `Polit'IF – ${profil.nom}`
   slotSetTextOrMissing('nom', profil.nom)
   slotSetHtmlOrMissing('date-naissance', profil.dateNaissance && dateToHtml(profil.dateNaissance))
-  slotSetHtmlOrMissing('date-deces', profil.dateDeces && dateToHtml(profil.dateDeces))
   slotSetTextOrMissing('lieu-naissance', profil.lieuNaissance)
-  slotSetTextOrMissing('lieu-deces', profil.lieuDeces)
+  if (profil.dateDeces || profil.lieuDeces) {
+    slotSetHtmlOrMissing('date-deces', profil.dateDeces && dateToHtml(profil.dateDeces))
+    slotSetTextOrMissing('lieu-deces', profil.lieuDeces)
+  } else {
+    hideSlot('date-deces')
+    hideSlot('lieu-deces')
+  }
   slotSetTextOrMissing('pere', profil.pere)
   slotSetTextOrMissing('mere', profil.mere)
   slotSetTextOrMissing('fratrie', profil.fratrie)
@@ -127,14 +141,7 @@ function renderProfilOrEmptySlots(profil) {
   if (profil.image) {
     slotSetAttribute('image-personne', 'src', profil.image)
   } else {
-    slotSetAttribute('image-personne', 'hidden', 'hidden')
-  }
-}
-function renderProfilOrLoading(profil) {
-  if (profil === null) {
-    renderLoadingProfil()
-  } else {
-    renderProfil(profil)
+    hideSlot('image-personne')
   }
 }
 function renderProfilPartial(profil) {
