@@ -2,6 +2,7 @@
 
 //import {API_URL} from '../constants'
 const API_URL = 'https://query.wikidata.org/sparql'
+const DBPEDIA_URL = 'https://dbpedia.org/sparql'
 /** Durée de vie en cache (en secondes) */
 const CACHE_TTL = 0
 
@@ -38,6 +39,17 @@ async function fetchProfil(id) {
     })
     console.log(resultats1)
 
+  var resultats2
+  const nomPoliticien = resultats1.results.bindings[0].NomPoliticien.value.replace(" ", "_")
+  const reqDesc = requete_profil_description(nomPoliticien)
+  const urlDesc = DBPEDIA_URL + '?format=json&query=' + encodeURIComponent(reqDesc)
+  await fetch(urlDesc)
+    .then(res => res.json())
+    .then((resultats) => {
+      resultats2 = resultats
+    })
+  console.log(resultats2)
+
   const res = {
     nom: resultats1.results.bindings[0].NomPoliticien === undefined ? "" : resultats1.results.bindings[0].NomPoliticien.value,
     dateNaissance : resultats1.results.bindings[0].DateDeNaissance === undefined ? "" : new Date(resultats1.results.bindings[0].DateDeNaissance.value),
@@ -48,9 +60,12 @@ async function fetchProfil(id) {
     pere: resultats1.results.bindings[0].NomPere === undefined ? "" : resultats1.results.bindings[0].NomPere.value,
     mere: resultats1.results.bindings[0].NomMere === undefined ? "" : resultats1.results.bindings[0].NomMere.value,
     fratrie: 'TODO',
-    conjoint : resultats1.results.bindings[0].NomConjoint.value === undefined ? "" : resultats1.results.bindings[0].NomConjoint.value,
-    enfants: 'TODO'
+    conjoint : resultats1.results.bindings[0].NomConjoint === undefined ? "" : resultats1.results.bindings[0].NomConjoint.value,
+    enfants: 'TODO',
+    description : resultats2.results.bindings[0].Description === undefined ? "Pas de description" : resultats2.results.bindings[0].Description.value
   }
+
+
 
   localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
   return res
@@ -66,7 +81,7 @@ async function fetchPositions(id) {
       resultats = results
     })
   var mandats = []
-  resultats.results.bindings.forEach(element =>(mandats.push(element.Position.value)))
+  resultats.results.bindings.forEach(element =>(mandats.push(element)))
   console.log(mandats)
   return mandats
 }
