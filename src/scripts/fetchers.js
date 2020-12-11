@@ -49,7 +49,7 @@ async function fetchProfil(id) {
       resultats2 = resultats
     })
   console.log(resultats2)
-  
+
   const res = {
     nom: resultats1.results.bindings[0].NomPoliticien === undefined ? "" : resultats1.results.bindings[0].NomPoliticien.value,
     dateNaissance : resultats1.results.bindings[0].DateDeNaissance === undefined ? "" : new Date(resultats1.results.bindings[0].DateDeNaissance.value),
@@ -81,7 +81,7 @@ async function fetchPositions(id) {
       resultats = results
     })
   var mandats = []
-  resultats.results.bindings.forEach(element =>(mandats.push(element.Position.value)))
+  resultats.results.bindings.forEach(element =>(mandats.push(element)))
   console.log(mandats)
   return mandats
 }

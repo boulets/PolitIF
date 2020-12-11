@@ -51,6 +51,15 @@ function dateToHtml(/** @type Date */ date) {
   return `<time datetime="${formatMachine}">${formatHumain}</time>`
 }
 
+function dateToString(date) {
+  const formatHumain = date.toLocaleString('fr-FR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+  return formatHumain
+}
+
 function renderLoadingProfil() {
   [
     'nom', 'date-naissance', 'date-deces', 'lieu-naissance', 'lieu-deces',
@@ -99,8 +108,11 @@ function renderPositions(positions) {
 
   positionsList.innerHTML = ''
   positions.forEach(element => {
+    console.log(element)
+    const dateDebut = element.DateEntreePosition === undefined ? "Non connu" : dateToString(new Date(element.DateEntreePosition.value));
+    const dateFin = element.DateSortiePosition === undefined ? "Non Connu" : dateToString(new Date(element.DateSortiePosition.value))
     const li = document.createElement('li')
-    li.innerText = element;
+    li.innerHTML = "<b>" + element.Position.value + "</b>" + " du " + dateDebut + " au " + dateFin;
     positionsList.appendChild(li)
   })
 }
