@@ -1,6 +1,4 @@
-/* global renderRecherche, requete_recherche */
-//import {API_URL} from '../constants'
-//const API_URL = 'https://query.wikidata.org/sparql'
+/* global renderRecherche, requete_recherche, wikidataUrl */
 
 let resultatsDeRecherche = []
 
@@ -13,10 +11,8 @@ function submitSearch(q, n = 1) {
   if (q === 0) {
     return rechercheAfficherResultats([])
   }
-  const req = requete_recherche(q, n)
-  const url = API_URL + '?format=json&query=' + encodeURIComponent(req)
-  fetch(url)
-    .then(res => res.json())
+  const url = wikidataUrl(requete_recherche(q, n))
+  fetch(url).then(res => res.json())
     .then((res) => {
       // if (q === search.value) {
       const resultats = res.results.bindings.map((x) => ({

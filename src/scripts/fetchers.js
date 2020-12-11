@@ -1,88 +1,82 @@
 /* eslint-disable no-unused-vars */
+/* global requete_profil_biographie, requete_profil_mandats, requete_profil_description */
 
 //import {API_URL} from '../constants'
-const API_URL = 'https://query.wikidata.org/sparql'
 const DBPEDIA_URL = 'https://dbpedia.org/sparql'
+const WIKIDATA_API = 'https://query.wikidata.org/sparql'
 /** Durée de vie en cache (en secondes) */
 const CACHE_TTL = 0
 
+function nullableDate(string) {
+  string === null || string === undefined ? null : new Date(string)
+}
 
+function wikidataUrl(req) {
+  return WIKIDATA_API + '?format=json&query=' + encodeURIComponent(req)
+}
 
 async function fetchProfil(id) {
-  const now = Date.now()
-  const item = localStorage.getItem(id)
-  if (item !== undefined) {
-    try {
-      const { timestamp, value } = JSON.parse(item)
-      if (timestamp + CACHE_TTL * 1000 > now) {
-        console.log(`Fetching ${id} -> returning cached response`)
-        value.dateNaissance = new Date(value.dateNaissance)
-        value.dateDeces = new Date(value.dateDeces)
-        return value
-      } else {
-        console.log(`Staled cache for ${id}`)
-      }
-    } catch (error) {
-      console.log(`Invalid cache for ${id}`)
-    }
-  }
-
-  var resultats1
+  // const now = Date.now()
+  // const item = localStorage.getItem(id)
+  // if (item !== undefined) {
+  //   try {
+  //     const { timestamp, value } = JSON.parse(item)
+  //     if (timestamp + CACHE_TTL * 1000 > now) {
+  //       console.log(`Fetching ${id} -> returning cached response`)
+  //       value.dateNaissance = new Date(value.dateNaissance)
+  //       value.dateDeces = new Date(value.dateDeces)
+  //       return value
+  //     } else {
+  //       console.log(`Staled cache for ${id}`)
+  //     }
+  //   } catch (error) {
+  //     console.log(`Invalid cache for ${id}`)
+  //   }
+  // }
 
   console.log(`Fetching ${id}`)
-  const req1 = requete_profil_biographie(id);
-  const url1 = API_URL + '?format=json&query=' + encodeURIComponent(req1)
-  await fetch(url1)
-    .then(res => res.json())
-    .then((resultats) => {
-      resultats1 = resultats
-    })
-    console.log(resultats1)
+  const url = wikidataUrl(requete_profil_biographie(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
 
-  var resultats2
-  const nomPoliticien = resultats1.results.bindings[0].NomPoliticien.value.replace(" ", "_")
-  const reqDesc = requete_profil_description(nomPoliticien)
-  const urlDesc = DBPEDIA_URL + '?format=json&query=' + encodeURIComponent(reqDesc)
-  await fetch(urlDesc)
-    .then(res => res.json())
-    .then((resultats) => {
-      resultats2 = resultats
-    })
-  console.log(resultats2)
+  const nomPoliticien = donnees.NomPoliticien.value
+  const description = await fetchDescription(nomPoliticien)
 
   const res = {
-    nom: resultats1.results.bindings[0].NomPoliticien === undefined ? "" : resultats1.results.bindings[0].NomPoliticien.value,
-    dateNaissance : resultats1.results.bindings[0].DateDeNaissance === undefined ? "" : new Date(resultats1.results.bindings[0].DateDeNaissance.value),
-    lieuNaissance: resultats1.results.bindings[0].NomLieuDeNaissance === undefined ? "" : resultats1.results.bindings[0].NomLieuDeNaissance.value,
-    dateDeces: resultats1.results.bindings[0].DateDeDeces === undefined ? "" : new Date(resultats1.results.bindings[0].DateDeDeces.value),
-    lieuDeces: resultats1.results.bindings[0].NomLieuDeDeces === undefined ? "" : resultats1.results.bindings[0].NomLieuDeDeces.value,
-    image: resultats1.results.bindings[0].Image.value,
-    pere: resultats1.results.bindings[0].NomPere === undefined ? "" : resultats1.results.bindings[0].NomPere.value,
-    mere: resultats1.results.bindings[0].NomMere === undefined ? "" : resultats1.results.bindings[0].NomMere.value,
+    nom: donnees.NomPoliticien?.value,
+    dateNaissance : nullableDate(donnees.DateDeNaissance?.value),
+    lieuNaissance: donnees.NomLieuDeNaissance?.value,
+    dateDeces: nullableDate(donnees.DateDeDeces?.value),
+    lieuDeces: donnees.NomLieuDeDeces?.value,
+    image: donnees.Image?.value,
+    pere: donnees.NomPere?.value,
+    mere: donnees.NomMere?.value,
     fratrie: 'TODO',
-    conjoint : resultats1.results.bindings[0].NomConjoint === undefined ? "" : resultats1.results.bindings[0].NomConjoint.value,
+    conjoint : donnees.NomConjoint?.value,
     enfants: 'TODO',
-    description : resultats2.results.bindings[0].Description === undefined ? "Pas de description" : resultats2.results.bindings[0].Description.value
+    description : description === undefined ? 'Pas de description' : description
   }
 
-
-
-  localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
+  // localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
   return res
 }
 
+async function fetchDescription(nomPoliticien) {
+  const req = requete_profil_description(nomPoliticien)
+  const url = DBPEDIA_URL + '?format=json&query=' + encodeURIComponent(req)
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
+  return donnees.Description.value
+}
+
 async function fetchPositions(id) {
-  var resultats
-  const req = requete_profil_mandats(id);
-  const url = API_URL + '?format=json&query=' + encodeURIComponent(req)
-  await fetch(url)
-    .then(res => res.json())
-    .then((results) => {
-      resultats = results
-    })
-  var mandats = []
-  resultats.results.bindings.forEach(element =>(mandats.push(element)))
+  const url = wikidataUrl(requete_profil_mandats(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const mandats = reponse.results.bindings.map(element => ({
+    nom: element.Position?.value,
+    debut: element.DateEntreePosition?.value,
+    fin: element.DateSortiePosition?.value,
+  }))
   console.log(mandats)
   return mandats
 }
-
