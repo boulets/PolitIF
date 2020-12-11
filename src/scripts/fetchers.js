@@ -81,7 +81,6 @@ async function fetchPositions(id) {
 }
 
 async function fetchPartis(id) {
-  var resultats
   const url = wikidataUrl(requete_profil_partiPolitique(id))
   const reponse = await fetch(url).then(res => res.json())
   console.log(reponse)
