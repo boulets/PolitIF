@@ -156,9 +156,14 @@ async function fetchPartiIdeologies(id) {
 async function fetchPartiPersonnalites(id) {
   const url = wikidataUrl(requete_parti_personnalites(id))
   const reponse = await fetch(url).then(res => res.json())
+  console.log(reponse.results.bindings)
   const personnalites = reponse.results.bindings
-    .map(personnalite => personnalite.NomPoliticien?.value)
+    .map(personnalite => ({
+      id: personnalite.politicien?.value.split("/")[4],
+      nom: personnalite.NomPoliticien?.value,
+    }))
     .filter(nom => nom) // filtrer null, undefined, vide
+  console.log(personnalites)
   return personnalites
 }
 

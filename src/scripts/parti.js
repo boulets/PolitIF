@@ -1,5 +1,7 @@
 /* global getSlot hideSlot slotSetTextOrMissing slotSetHtml slotSetAttribute slotSetLoading dateToHtml slotSetListOrMissing fetchParti fetchPartiIdeologies */
 
+const membresList = document.getElementById('membresList');
+
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
   return [first, rest.length > 0 ? rest.join(on) : null]
@@ -31,7 +33,7 @@ init()
 
 function renderParti(parti) {
   if (parti === null) {
-    const slots = ['nom', 'description', 'membres-importants', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'ideologies', 'site-web', 'siege']
+    const slots = ['nom', 'description', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'ideologies', 'site-web', 'siege']
     slots.forEach(key => slotSetLoading(key))
     slotSetAttribute('image-logo', 'src', '')
   } else {
@@ -106,5 +108,13 @@ function renderPartiIdeologies(ideologies) {
 }
 
 function renderPartiPersonnalites(personnalites) {
-  slotSetListOrMissing('membres-importants', personnalites.map(ucfirst))
+  //slotSetListOrMissing('membres-importants', personnalites.map(ucfirst))
+  membresList.innerHTML = ''
+  personnalites.forEach(personnalite => {
+    const { id, nom } = personnalite
+    const lien = "profil.html#" + id + "-" + nom
+    const li = document.createElement('li')
+    li.innerHTML = `<a href="${lien}">${nom}</a>`
+    membresList.appendChild(li)
+  })
 }
