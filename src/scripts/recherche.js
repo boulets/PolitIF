@@ -1,6 +1,6 @@
 /* global requete_recherche_partis, requete_recherche_politicien, wikidataUrl */
 
-let resultatsDeRecherche = []
+let meilleurResultat = null
 
 const searchAutocomplete = document.getElementById('search-autocomplete')
 const searchResultsContainer = document.getElementById('searchResultsContainer')
@@ -67,12 +67,11 @@ function rechercheAfficherResultatsPersonnalites(resultats) {
     searchResultsPersonnalites.appendChild(makeAnchorListItem(nom, `profil.html#${id}-${nom}`))
   }
 
-  resultatsDeRecherche = resultats
-
   if (resultats.length > 0) {
     const premier = resultats[0]
     if (search.value.length > 0) {
       searchAutocomplete.innerHTML = search.value + ' — ' + premier.nom
+      meilleurResultat = { ...premier, type: 'profil' }
     }
   } else {
     searchAutocomplete.innerHTML = ''
@@ -85,12 +84,21 @@ function rechercheAfficherResultatsPartis(resultats) {
   for (const {nom, id} of resultats) {
     searchResultsPartis.appendChild(makeAnchorListItem(nom, `parti.html#${id}-${nom}`))
   }
+
+  if (resultats.length > 0) {
+    const premier = resultats[0]
+    if (search.value.length > 0) {
+      searchAutocomplete.innerHTML = search.value + ' — ' + premier.nom
+      meilleurResultat = { ...premier, type: 'parti' }
+    }
+  } else {
+    searchAutocomplete.innerHTML = ''
+  }
 }
 
 function goToFirstResult() {
-  if (resultatsDeRecherche.length > 0) {
-    const premier = resultatsDeRecherche[0]
-    location.assign(`profil.html#${premier.id}-${premier.nom}`)
+  if (meilleurResultat) {
+    location.assign(`${meilleurResultat.type}.html#${meilleurResultat.id}-${meilleurResultat.nom}`)
   }
 }
 
