@@ -70,6 +70,10 @@ function renderParti(parti) {
     slotSetTextOrMissing('nombre-adherents', parti.nombreAdherents)
     slotSetAttribute('image-logo', 'src', parti.logo)
 
+    if(parti.couleur) {
+      getSlot("couleur").style.setProperty('--couleur-parti', "#" + parti.couleur)
+    }
+
     if (parti.siteWeb) {
       slotSetTextOrMissing('site-web', parti.siteWeb.replace(/^https?:\/\/([^/]+).+$/, '$1'))
       slotSetAttribute('site-web', 'href', parti.siteWeb)
