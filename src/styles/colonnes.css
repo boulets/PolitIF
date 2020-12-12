@@ -4,6 +4,7 @@
   justify-content: flex-start;
   gap: 24px;
   min-height: 60vh;
+  word-break: break-word;
 }
 
 .colonne-secondaire {

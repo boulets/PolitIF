@@ -1,7 +1,13 @@
 /* eslint-disable no-unused-vars */
 
+function filterRechercheParTexte(recherche, prop) {
+  const rech = recherche.toLocaleLowerCase().replace(/"/g, ' ')
+  return `filter(contains(lcase(${prop}), "${rech}")).`
+  // const segments = rech.split(/\s+/g)
+  // return segments.map(s => `filter(contains(lcase(${prop}), "${s}")).`).join('\n')
+}
+
 function requete_recherche_politicien(recherche, n = 1) {
-  const segments = recherche.toLowerCase().replace(/"/g, ' ').split(/\s+/g)
   return `SELECT DISTINCT ?politician ?NomPoliticien {
     # Tous les politiciens de nationalités françaises
     # ?politician wdt:P106 wd:Q82955.
@@ -15,28 +21,45 @@ function requete_recherche_politicien(recherche, n = 1) {
     # Filtres
     filter(langMatches(lang(?NomPoliticien), 'fr')).
     filter(year(?DateEntreePosition) > 1789).
-    ${segments.map(s => `filter(contains(lcase(?NomPoliticien), "${s}")).`).join('\n')}
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+    ${filterRechercheParTexte(recherche, '?NomPoliticien')}
   } LIMIT ${n}`
 }
 
-function requete_recherche_parti(recherche, n = 1) {
-  const s = recherche.toLowerCase().replace(/"/g, ' ')
+function requete_recherche_partis(recherche, n = 1) {
   return `SELECT DISTINCT ?parti ?NomParti WHERE {
     # Tous les partis
+    ?parti wdt:P31 wd:Q7278; wdt:P17 wd:Q142.
+
+    ?parti wdt:P571 ?DateInception.
+    filter(year(?DateInception) > 1789).
+
     ?parti rdfs:label ?NomParti.
-    ?politician wdt:P106 wd:Q82955; wdt:P27 wd:Q142.
-    ?politician rdfs:label ?NomPoliticien.
+    filter(lang(?NomParti) = 'fr').
 
-    # Les positions qu'ils ont occuppé
-    ?politician p:P39 ?posStat.
-    ?posStat pq:P580 ?DateEntreePosition.
+    OPTIONAL {
+      ${filterRechercheParTexte(recherche, '?NomParti')}
+      bind(true as ?matched).
+    }
 
-    # Filtres
-    filter(lang(?NomPoliticien) = 'fr').
-    filter(year(?DateEntreePosition) > 1789).
-    filter(contains(lcase(?NomPoliticien), "${s}")).
-  } LIMIT ${n}`
+    OPTIONAL {
+      ?parti p:P1813 [ ps:P1813 ?NomCourt ].
+      filter(lang(?NomCourt) = 'fr').
+      ${filterRechercheParTexte(recherche, '?NomCourt')}
+      bind(true as ?matched).
+    }
+
+    OPTIONAL {
+      ?parti p:P1448 [ ps:P1448 ?NomOfficiel ].
+      filter(lang(?NomOfficiel) = 'fr').
+      ${filterRechercheParTexte(recherche, '?NomOfficiel')}
+      bind(true as ?matched).
+    }
+
+    FILTER(?matched = true).
+  } ORDER BY
+    (!bound(?NomCourt)) asc(?NomCourt)
+    (!bound(?NomOfficiel)) asc(?NomOfficiel)
+  LIMIT ${n}`
 }
 
 
@@ -125,23 +148,27 @@ function requete_parti_general(idParti) {
     ?parti rdfs:label ?NomParti.
 
     # Président
-    ?parti wdt:P488 ?President.
-    ?parti p:P488 ?PresidentStatement.
-    OPTIONAL{?PresidentStatement pq:P580 ?PresidentStartTime.} # On  considère que le dernier président est celui qui a débuté son mandat en dernier
-    ?President rdfs:label ?NomPresident.
+    OPTIONAL {
+      ?parti wdt:P488 ?President.
+      ?President rdfs:label ?NomPresident.
+      FILTER(LANG(?NomPresident) = 'fr').
+    }
+    OPTIONAL {
+      ?parti p:P488 ?PresidentStatement.
+      # On considère que le dernier président est celui qui a débuté son mandat en dernier
+      ?PresidentStatement pq:P580 ?PresidentStartTime.
+    }
 
     # Fondateur
     OPTIONAL {
       ?parti wdt:P112 ?Fondateur.
       ?Fondateur rdfs:label ?NomFondateur.
-      FILTER(LANG(?NomFondateur)='fr').
+      FILTER(LANG(?NomFondateur) = 'fr').
     }
 
     # Dates
-    ?parti wdt:P571 ?DateCreation.
-    OPTIONAL {
-      ?parti wdt:P576 ?DateDissolution.
-    }
+    OPTIONAL { ?parti wdt:P571 ?DateCreation. }
+    OPTIONAL { ?parti wdt:P576 ?DateDissolution. }
 
     # Nombre d'adhérents
     OPTIONAL {
@@ -151,27 +178,25 @@ function requete_parti_general(idParti) {
     }
 
     # Couleur politique (code hexa RGB)
-    ?parti wdt:P465 ?Couleur.
+    OPTIONAL { ?parti wdt:P465 ?Couleur. }
 
     # Positionnement politique
     OPTIONAL {
       ?parti wdt:P1387/rdfs:label ?Positionnement.
-      FILTER(LANG(?Positionnement)='fr').
+      FILTER(LANG(?Positionnement) = 'fr').
     }
 
     # Siège
-    OPTIONAL {?parti p:P159 ?SiegeStatement.}
     OPTIONAL {
-      ?SiegeStatement pq:P669/rdfs:label ?SiegeRue.
-      FILTER(LANG(?SiegeRue)='fr').
-    }
-    OPTIONAL {?SiegeStatement pq:P670 ?SiegeNumero.}
-    OPTIONAL {?SiegeStatement pq:P281 ?SiegeCodePostal.}
-    OPTIONAL {
+      ?parti p:P159 ?SiegeStatement.
+      # ?SiegeStatement pq:P669/rdfs:label ?SiegeRue.
+      # ?SiegeStatement pq:P670 ?SiegeNumero.
+      # ?SiegeStatement pq:P281 ?SiegeCodePostal.
+      # ?SiegeStatement pq:P580 ?SiegeStartTime.
       ?SiegeStatement ps:P159/rdfs:label ?SiegeVille.
       FILTER(LANG(?SiegeVille)='fr').
+      # FILTER(LANG(?SiegeRue)='fr').
     }
-    OPTIONAL {?SiegeStatement pq:P580 ?SiegeStartTime.}
 
     # Logo
     OPTIONAL {
@@ -184,7 +209,6 @@ function requete_parti_general(idParti) {
     OPTIONAL { ?parti wdt:P856 ?SiteWeb. }
 
     FILTER(LANG(?NomParti)='fr').
-    FILTER(LANG(?NomPresident)='fr').
   }
   ORDER BY DESC (?PresidentStartTime) DESC(?DateNombreAdherents) DESC(?SiegeStartTime) DESC(?LogoStartTime)
   LIMIT 1

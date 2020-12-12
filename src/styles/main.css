@@ -73,7 +73,7 @@ main {
   padding: 24px;
 }
 
-main .sheet {
+main.sheet {
   border-radius: 0px 0px 3px 3px;
 }
 

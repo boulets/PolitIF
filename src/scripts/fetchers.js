@@ -110,7 +110,6 @@ async function fetchParti(id) {
 
   console.log(donnees)
 
-  const nomParti = donnees.NomParti.value
   const description = await fetchDescriptionParti(id)
 
   const res = {
