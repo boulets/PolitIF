@@ -70,6 +70,10 @@
   margin: 0px 6px;
   margin-top: -4px;
   padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
 }
 
 #searchResultsContainer ul {
@@ -77,17 +81,12 @@
   margin: 0px;
   padding: 0px;
 }
-#searchResultsContainer h4:not(:first-of-type) {
-  margin-top: 1em;
-}
 
 #searchResultsContainer[n-personnalites="0"][n-partis="0"] {
   display: none;
 }
 
-#searchResultsContainer[n-personnalites="0"] #searchResultsPersonnalitesTitle,
-#searchResultsContainer:not([n-personnalites]) #searchResultsPersonnalitesTitle,
-#searchResultsContainer[n-partis="0"] #searchResultsPartisTitle,
-#searchResultsContainer:not([n-partis]) #searchResultsPartisTitle {
+#searchResultsContainer[n-personnalites="0"] #resultats-personnalites,
+#searchResultsContainer[n-partis="0"] #resultats-partis {
   display: none;
 }
