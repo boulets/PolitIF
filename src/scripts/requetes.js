@@ -95,14 +95,18 @@ function requete_parti_general(idParti) {
     #?parti wdt:P1705 ?NomParti.
     ?parti rdfs:label ?NomParti.
 
-    # Président et fondateur
+    # Président
     ?parti wdt:P488 ?President.
     ?parti p:P488 ?PresidentStatement.
-    ?PresidentStatement pq:P580 ?PresidentStartTime. # On  considère que le dernier président est celui qui a débuté son mandat en dernier
+    OPTIONAL{?PresidentStatement pq:P580 ?PresidentStartTime.} # On  considère que le dernier président est celui qui a débuté son mandat en dernier
     ?President rdfs:label ?NomPresident.
 
-    ?parti wdt:P112 ?Fondateur.
-    ?Fondateur rdfs:label ?NomFondateur.
+    # Fondateur
+    OPTIONAL {
+      ?parti wdt:P112 ?Fondateur.
+      ?Fondateur rdfs:label ?NomFondateur.
+      FILTER(LANG(?NomFondateur)='fr').
+    }
 
     # Dates
     ?parti wdt:P571 ?DateCreation.
@@ -112,16 +116,19 @@ function requete_parti_general(idParti) {
 
     # Nombre d'adhérents
     OPTIONAL {
-    ?parti p:P2124 ?NombreAdherentsStatement.
-    ?NombreAdherentsStatement ps:P2124 ?NombreAdherents.
-    ?NombreAdherentsStatement pq:P585 ?DateNombreAdherents.
+      ?parti p:P2124 ?NombreAdherentsStatement.
+      ?NombreAdherentsStatement ps:P2124 ?NombreAdherents.
+      ?NombreAdherentsStatement pq:P585 ?DateNombreAdherents.
     }
 
     # Couleur politique (code hexa RGB)
     ?parti wdt:P465 ?Couleur.
 
     # Positionnement politique
-    ?parti wdt:P1387/rdfs:label ?Positionnement.
+    OPTIONAL {
+      ?parti wdt:P1387/rdfs:label ?Positionnement.
+      FILTER(LANG(?Positionnement)='fr').
+    }
 
     # Siège
     OPTIONAL {?parti p:P159 ?SiegeStatement.}
@@ -148,9 +155,7 @@ function requete_parti_general(idParti) {
     OPTIONAL { ?parti wdt:P856 ?SiteWeb. }
 
     FILTER(LANG(?NomParti)='fr').
-    FILTER(LANG(?NomFondateur)='fr').
     FILTER(LANG(?NomPresident)='fr').
-    FILTER(LANG(?Positionnement)='fr').
   }
   ORDER BY DESC (?PresidentStartTime) DESC(?DateNombreAdherents) DESC(?SiegeStartTime) DESC(?LogoStartTime)
   LIMIT 1
