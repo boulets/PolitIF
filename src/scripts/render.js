@@ -6,6 +6,7 @@ const EMPTY_IMAGE_DATA_URL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5
 const EMPTY_PLACEHOLDER = '?'
 
 const positionsList = document.getElementById('positionsList')
+const partisList = document.getElementById('partisList')
 
 function getSlot(key) {
   const element = document.querySelector(`[data-key=${key}]`)
@@ -160,6 +161,11 @@ function renderProfilOrEmptySlots(profil) {
   } else {
     hideSlot('image-personne')
   }
+  if (profil.signature) {
+    slotSetAttribute('signature-personne', 'src', profil.signature)
+  } else {
+    hideSlot('signature-personne')
+  }
 }
 function renderProfilPartial(profil) {
   if (profil === null) {
@@ -199,5 +205,14 @@ function renderPositions(positions) {
     const li = document.createElement('li')
     li.innerHTML = `<b>${nom}</b> du ${dateDebut} au ${dateFin}`
     positionsList.appendChild(li)
+  })
+}
+
+function renderPartis(partis) {
+  partisList.innerHTML = ''
+  partis.forEach(element => {
+    const li = document.createElement('li')
+    li.innerText = element.NomParti.value
+    partisList.appendChild(li)
   })
 }

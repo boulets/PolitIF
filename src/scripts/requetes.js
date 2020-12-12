@@ -12,13 +12,15 @@ function requete_recherche(recherche, n = 1) {
     ?posStat pq:P580 ?DateEntreePosition.
 
     # Filtres
-    FILTER (LANG(?NomPoliticien)='fr' && YEAR(?DateEntreePosition) > 1789 && CONTAINS(LCASE(?NomPoliticien), "${s}")).
+    filter(lang(?NomPoliticien) = 'fr').
+    filter(year(?DateEntreePosition) > 1789).
+    filter(contains(lcase(?NomPoliticien), "${s}")).
   } LIMIT ${n}`
 }
 
 
 function requete_profil_biographie(idProfil) {
-  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomLieuDeNaissance ?NomLieuDeDeces ?NomPere ?NomMere ?NomConjoint ?Image WHERE {
+  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomLieuDeNaissance ?NomLieuDeDeces ?NomPere ?NomMere ?NomConjoint ?Image ?Signature WHERE {
     BIND(wd:${idProfil} AS ?politician).
 
     # Nom prénom
@@ -53,8 +55,12 @@ function requete_profil_biographie(idProfil) {
       ?Conjoint rdfs:label ?NomConjoint.
       FILTER(LANG(?NomConjoint)='fr').
     }
+    OPTIONAL {
+      ?politician wdt:P109 ?Signature
+    }
 
-    FILTER(LANG(?NomPoliticien)='fr' && LANG(?NomLieuDeNaissance)='fr').
+    FILTER(LANG(?NomPoliticien)='fr').
+    FILTER(LANG(?NomLieuDeNaissance)='fr').
   }`
 }
 
@@ -74,7 +80,9 @@ function requete_profil_mandats(idProfil) {
     }
 
     FILTER(LANG(?Position)='fr').
-  }`
+  }
+  ORDER BY DESC (?DateEntreePosition)
+  `
 }
 
 function requete_profil_description(nomPoliticien) {
@@ -173,6 +181,30 @@ function requete_parti_ideologies(idParti) {
   }`
 }
 
+function requete_profil_fratrie(idProfil) {
+  return  `SELECT ?nomFratrie WHERE {
+    BIND(wd:${idProfil} AS ?politician).
+
+    OPTIONAL {
+      ?politician wdt:P3373 ?Fratrie.
+      ?Fratrie rdfs:label ?nomFratrie.
+      FILTER(LANG(?nomFratrie)='fr').
+    }
+  }`
+}
+
+function requete_profil_enfants(idProfil) {
+  return  `SELECT ?nomEnfants WHERE {
+    BIND(wd:${idProfil} AS ?politician).
+
+    OPTIONAL {
+      ?politician wdt:P40 ?Enfants.
+      ?Enfants rdfs:label ?nomEnfants.
+      FILTER(LANG(?nomEnfants)='fr').
+    }
+  }`
+}
+
 function requete_ideology(idIdeology) {
   return `SELECT ?ideology ?ideologyDescription ?ideologyLabel ?image ?flagimage WHERE {
     BIND(wd:${idIdeology} AS ?ideology).
@@ -197,5 +229,38 @@ function requete_superclass(idIdeology) {
     ?ideology wdt:P279 ?subclass.
 
     SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+  }`
+}
+
+function requete_profil_partiPolitique(idProfil) {
+  return `SELECT ?politician ?NomPoliticien ?NomParti WHERE {
+    BIND(wd:${idProfil} AS ?politician).
+    # Nom prénom
+    ?politician rdfs:label ?NomPoliticien.
+
+    # Partis Politiques
+    ?politician wdt:P102 ?Parti.
+    ?Parti rdfs:label ?NomParti.
+
+    FILTER(LANG(?NomPoliticien)='fr').
+    FILTER(LANG(?NomParti)='fr').
+  }`
+}
+
+function requete_parti_alignement(idParty) {
+  return `SELECT ?party ?alignement ?alignementLabel ?alignementDescription ?ideology ?ideologyLabel ?ideologyDescription ?colors WHERE {
+    BIND(wd:${idParty} AS ?party).
+
+    OPTIONAL {
+      ?party wdt:P1387 ?alignement.
+    }
+    OPTIONAL {
+      ?party wdt:P1142 ?ideology.
+    }
+    OPTIONAL {
+      ?party wdt:P465 ?colors.
+    }
+
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }.
   }`
 }
