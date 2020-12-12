@@ -191,6 +191,18 @@ function requete_parti_general(idParti) {
   `
 }
 
+function requete_parti_description(idParti) {
+  return `SELECT ?Description WHERE {
+    ?uri rdf:type dbo:PoliticalParty.
+    ?uri owl:sameAs ?wikidata.
+    FILTER(str(?wikidata)='http://www.wikidata.org/entity/${idParti}').
+    OPTIONAL {
+      ?uri dbo:abstract ?Description .
+      FILTER(LANG(?Description)='fr') .
+    }
+  } LIMIT 1`
+}
+
 function requete_parti_ideologies(idParti) {
   return `SELECT ?Ideologie ?NomIdeologie WHERE {
     BIND(wd:${idParti} AS ?parti).

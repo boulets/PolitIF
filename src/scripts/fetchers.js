@@ -111,7 +111,7 @@ async function fetchParti(id) {
   console.log(donnees)
 
   const nomParti = donnees.NomParti.value
-  const description = undefined // = await fetchDescription(nomPoliticien)
+  const description = await fetchDescriptionParti(id)
 
   const res = {
     nom: donnees?.NomParti?.value,
@@ -135,6 +135,14 @@ async function fetchParti(id) {
 
   // localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
   return res
+}
+
+async function fetchDescriptionParti(idParti) {
+  const req = requete_parti_description(idParti)
+  const url = DBPEDIA_URL + '?format=json&query=' + encodeURIComponent(req)
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
+  return donnees?.Description?.value
 }
 
 async function fetchPartiIdeologies(id) {
