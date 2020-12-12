@@ -1,4 +1,4 @@
-/* global renderRecherche, requete_recherche, wikidataUrl */
+/* global renderRecherche, requete_recherche_politicien, wikidataUrl */
 
 let resultatsDeRecherche = []
 
@@ -11,17 +11,24 @@ function submitSearch(q, n = 1) {
   if (q === 0) {
     return rechercheAfficherResultats([])
   }
-  const url = wikidataUrl(requete_recherche(q, n))
-  fetch(url).then(res => res.json())
-    .then((res) => {
-      // if (q === search.value) {
-      const resultats = res.results.bindings.map((x) => ({
-        nom: x.NomPoliticien.value,
-        id: x.politician.value.match(/\/entity\/(.+)$/)?.[1]
-      }))
-      rechercheAfficherResultats(resultats)
-      // }
-    })
+  const url = wikidataUrl(requete_recherche_politicien(q, n))
+  console.log(`fetch(${url})`)
+  fetch(url).then(async x => {
+    if (x.ok) {
+      console.log(search.value, q)
+      if (search.value.includes(q)) {
+        const res = await x.json()
+        console.log(res)
+        const resultats = res.results.bindings.map((x_1) => ({
+          nom: x_1.NomPoliticien.value,
+          id: x_1.politician.value.match(/\/entity\/(.+)$/)?.[1]
+        }))
+        rechercheAfficherResultats(resultats)
+      }
+    } else {
+      console.error(await x.text())
+    }
+  })
 }
 
 function rechercheAfficherResultats(resultats) {
@@ -59,6 +66,9 @@ function init() {
   update()
   window.addEventListener('hashchange', () => update())
 
+  const submit1 = throttle((x) => submitSearch(x, 1), 500, { leading: false, trailing: true })
+  const submit5 = throttle((x) => submitSearch(x, 5), 500, { leading: false, trailing: true })
+
   searchButton.addEventListener('click', () => {
     goToFirstResult()
   })
@@ -70,7 +80,46 @@ function init() {
   })
   search.addEventListener('input', () => {
     searchAutocomplete.innerHTML = ''
-    submitSearch(search.value)
+    submit1(search.value)
+    submit5(search.value)
   })
 }
 init()
+
+// https://stackoverflow.com/a/27078401
+// Returns a function, that, when invoked, will only be triggered at most once
+// during a given window of time. Normally, the throttled function will run
+// as much as it can, without ever going more than once per `wait` duration;
+// but if you'd like to disable the execution on the leading edge, pass
+// `{leading: false}`. To disable execution on the trailing edge, ditto.
+function throttle(func, wait, options) {
+  var context, args, result
+  var timeout = null
+  var previous = 0
+  if (!options) options = {}
+  var later = function() {
+    previous = options.leading === false ? 0 : Date.now()
+    timeout = null
+    result = func.apply(context, args)
+    if (!timeout) context = args = null
+  }
+  return function() {
+    var now = Date.now()
+    if (!previous && options.leading === false) previous = now
+    var remaining = wait - (now - previous)
+    context = this
+    args = arguments
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout)
+        timeout = null
+      }
+      previous = now
+      result = func.apply(context, args)
+      if (!timeout) context = args = null
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining)
+    }
+    return result
+  }
+}

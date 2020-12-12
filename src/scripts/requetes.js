@@ -1,9 +1,30 @@
 /* eslint-disable no-unused-vars */
 
-function requete_recherche(recherche, n = 1) {
-  const s = recherche.toLowerCase().replace(/"/g, ' ')
-  return `SELECT DISTINCT ?politician ?NomPoliticien WHERE {
+function requete_recherche_politicien(recherche, n = 1) {
+  const segments = recherche.toLowerCase().replace(/"/g, ' ').split(/\s+/g)
+  return `SELECT DISTINCT ?politician ?NomPoliticien {
     # Tous les politiciens de nationalités françaises
+    # ?politician wdt:P106 wd:Q82955.
+    ?politician wdt:P27 wd:Q142.
+    ?politician rdfs:label ?NomPoliticien.
+
+    # Les positions qu'ils ont occuppé
+    ?politician p:P39 ?posStat.
+    ?posStat pq:P580 ?DateEntreePosition.
+
+    # Filtres
+    filter(langMatches(lang(?NomPoliticien), 'fr')).
+    filter(year(?DateEntreePosition) > 1789).
+    ${segments.map(s => `filter(contains(lcase(?NomPoliticien), "${s}")).`).join('\n')}
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+  } LIMIT ${n}`
+}
+
+function requete_recherche_parti(recherche, n = 1) {
+  const s = recherche.toLowerCase().replace(/"/g, ' ')
+  return `SELECT DISTINCT ?parti ?NomParti WHERE {
+    # Tous les partis
+    ?parti rdfs:label ?NomParti.
     ?politician wdt:P106 wd:Q82955; wdt:P27 wd:Q142.
     ?politician rdfs:label ?NomPoliticien.
 
