@@ -81,8 +81,7 @@
   margin-top: 1em;
 }
 
-#searchResultsContainer[n-personnalites="0"][n-partis="0"],
-#searchResultsContainer:not([n-personnalites]):not([n-partis]) {
+#searchResultsContainer[n-personnalites="0"][n-partis="0"] {
   display: none;
 }
 

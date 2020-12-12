@@ -10,7 +10,7 @@ const searchButton = document.getElementById('searchButton')
 const search = document.getElementById('search')
 
 function submitSearchPersonnalites(q, n = 1) {
-  if (q === 0) {
+  if (q === '') {
     return rechercheAfficherResultatsPersonnalites([])
   }
   const url = wikidataUrl(requete_recherche_politicien(q, n))
@@ -31,13 +31,14 @@ function submitSearchPersonnalites(q, n = 1) {
 }
 
 function submitSearchPartis(q, n = 1) {
-  console.log(`submitSearchPartis('${q}', ${n})...`)
+  if (q === '') {
+    return rechercheAfficherResultatsPartis([])
+  }
   const url = wikidataUrl(requete_recherche_partis(q, n))
   fetch(url).then(async r => {
     if (r.ok) {
       if (search.value.includes(q)) {
         const res = await r.json()
-        console.log(`submitSearchPartis('${q}', ${n}) =`, res)
         const resultats = res.results.bindings.map((x) => ({
           nom: x.NomParti.value,
           id: x.parti.value.match(/\/entity\/(.+)$/)?.[1]
