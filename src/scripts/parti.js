@@ -19,6 +19,7 @@ function update() {
   return Promise.all([
     fetchParti(id).then(renderParti),
     fetchPartiIdeologies(id).then(renderPartiIdeologies),
+    fetchPartiPersonnalites(id).then(renderPartiPersonnalites),
   ])
 }
 
@@ -46,7 +47,6 @@ function renderParti(parti) {
     } else {
       hideSlot('date-dissolution')
     }
-    slotSetListOrMissing('membres-importants', parti.membresImportants)
     slotSetTextOrMissing('description', parti.description)
     slotSetTextOrMissing('president', parti.president)
     slotSetTextOrMissing('fondateur', parti.fondateur)
@@ -101,6 +101,10 @@ function ucfirst([first, ...rest]) {
   return first.toLocaleUpperCase() + rest.join('')
 }
 
-function renderPartiIdeologies(ideologies){
+function renderPartiIdeologies(ideologies) {
   slotSetListOrMissing('ideologies', ideologies.map(ucfirst))
+}
+
+function renderPartiPersonnalites(personnalites) {
+  slotSetListOrMissing('membres-importants', personnalites.map(ucfirst))
 }
