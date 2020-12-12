@@ -73,10 +73,36 @@ main {
   padding: 24px;
 }
 
-main .sheet {
+main.sheet {
   border-radius: 0px 0px 3px 3px;
 }
 
 [hidden] {
   display: none !important;
+}
+
+dl {
+  position: relative;
+  line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+  font-size: 0.9rem;
+}
+
+dl dt {
+  font-weight: bold;
+  flex: 0 0 50%;
+}
+
+dl div {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5ch;
+}
+
+dd ul {
+  list-style: none;
+  padding-left: 0px;
+  margin: 0px;
 }

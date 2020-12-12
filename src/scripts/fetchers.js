@@ -84,6 +84,84 @@ async function fetchPositions(id) {
   return mandats
 }
 
+async function fetchParti(id) {
+  // const now = Date.now()
+  // const item = localStorage.getItem(id)
+  // if (item !== undefined) {
+  //   try {
+  //     const { timestamp, value } = JSON.parse(item)
+  //     if (timestamp + CACHE_TTL * 1000 > now) {
+  //       console.log(`Fetching ${id} -> returning cached response`)
+  //       value.dateNaissance = new Date(value.dateNaissance)
+  //       value.dateDeces = new Date(value.dateDeces)
+  //       return value
+  //     } else {
+  //       console.log(`Staled cache for ${id}`)
+  //     }
+  //   } catch (error) {
+  //     console.log(`Invalid cache for ${id}`)
+  //   }
+  // }
+
+  // console.log(`Fetching ${id}`)
+  const url = wikidataUrl(requete_parti_general(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
+
+  console.log(donnees)
+
+  const description = await fetchDescriptionParti(id)
+
+  const res = {
+    nom: donnees?.NomParti?.value,
+    logo: donnees?.ImageLogo?.value,
+    president: donnees?.NomPresident?.value,
+    fondateur: donnees?.NomFondateur?.value,
+    dateCreation : nullableDate(donnees?.DateCreation?.value),
+    dateDissolution: nullableDate(donnees?.DateDissolution?.value),
+    nombreAdherents: {
+      compte: donnees?.NombreAdherents?.value,
+      date: nullableDate(donnees?.DateNombreAdherents?.value),
+    },
+    siege: donnees?.SiegeVille?.value,
+    couleur: donnees?.Couleur?.value,
+    siteWeb: donnees?.SiteWeb?.value,
+    positionnement: donnees?.Positionnement?.value,
+
+    description : description === undefined ? 'Pas de description' : description
+  }
+  console.log(res)
+
+  // localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
+  return res
+}
+
+async function fetchDescriptionParti(idParti) {
+  const req = requete_parti_description(idParti)
+  const url = DBPEDIA_URL + '?format=json&query=' + encodeURIComponent(req)
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
+  return donnees?.Description?.value
+}
+
+async function fetchPartiIdeologies(id) {
+  const url = wikidataUrl(requete_parti_ideologies(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const ideologies = reponse.results.bindings
+    .map(ideologie => ideologie.NomIdeologie?.value)
+    .filter(nom => nom) // filtrer null, undefined, vide
+  return ideologies
+}
+
+async function fetchPartiPersonnalites(id) {
+  const url = wikidataUrl(requete_parti_personnalites(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const personnalites = reponse.results.bindings
+    .map(personnalite => personnalite.NomPoliticien?.value)
+    .filter(nom => nom) // filtrer null, undefined, vide
+  return personnalites
+}
+
 async function fetchPartisOfProfil(id) {
   const url = wikidataUrl(requete_profil_partiPolitique(id))
   const reponse = await fetch(url).then(res => res.json())

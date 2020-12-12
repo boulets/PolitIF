@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="styles/colors.css" />
     <link rel="stylesheet" href="styles/utility.css" />
     <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="styles/colonnes.css" />
     <link rel="stylesheet" href="styles/profil.css" />
     <link rel="stylesheet" href="styles/recherche.css" />
   </head>
@@ -25,24 +26,34 @@
       <nav>
         <a href="index.html">Recherche</a>
         <a href="profil.html#Q2124-Valéry Giscard d'Estaing">Giscard</a>
+        <a href="parti.html#Q23731823-La République en marche">LREM</a>
       </nav>
     </header>
 
     <main class="recherche">
       <label for="search">Rechercher une personnalité, un parti, une idéologie politique.</label>
-      <div id="search-input-container">
-        <div id="search-autocomplete"></div>
-        <input pattern=".+" id="search" type="text" inputmode="search" placeholder="Valéry Giscard d'Estaing" />
-        <button id="searchButton">
-          <div class="sr-only">
-            Accéder au meilleur résultat de recherche
+      <div id="search-container">
+        <div id="search-input-container">
+          <div id="search-autocomplete"></div>
+          <input pattern=".+" id="search" type="text" inputmode="search" placeholder="Valéry Giscard d'Estaing" />
+          <button type="submit" id="searchButton">
+            <div class="sr-only">
+              Accéder au meilleur résultat de recherche
+            </div>
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        <div id="searchResultsContainer" n-personnalites="0" n-partis="0" n-ideologies="0">
+          <div id="resultats-personnalites">
+            <h4>Personnalités politiques</h4>
+            <ul id="searchResultsPersonnalites"></ul>
           </div>
-          <span aria-hidden="true">→</span>
-        </button>
-
-        <ul id="searchResults">
-
-        </ul>
+          <div id="resultats-partis">
+            <h4>Partis</h4>
+            <ul id="searchResultsPartis"></ul>
+          </div>
+        </div>
       </div>
     </main>
 

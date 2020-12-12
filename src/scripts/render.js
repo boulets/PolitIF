@@ -57,6 +57,23 @@ function slotSetTextOrMissing(key, value) {
   }
   element.removeAttribute('loading')
 }
+function slotSetListOrMissing(key, values, type = 'ul') {
+  showSlot(key)
+  const element = getSlot(key)
+  if (values === null || values === undefined || !Array.isArray(values)) {
+    element.innerHTML = EMPTY_PLACEHOLDER
+  } else {
+    element.innerHTML = ''
+    const listEl = document.createElement(type)
+    for (const x of values.slice(0, 5)) {
+      const li = document.createElement('li')
+      li.innerText = x
+      listEl.appendChild(li)
+    }
+    element.appendChild(listEl)
+  }
+  element.removeAttribute('loading')
+}
 
 function slotSetHtml(key, value) {
   showSlot(key)

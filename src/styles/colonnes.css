@@ -1,0 +1,29 @@
+.colonnes {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 24px;
+  min-height: 60vh;
+  word-break: break-word;
+}
+
+.colonne-secondaire {
+  order: 1;
+}
+
+.colonne-principale {
+  order: 2;
+}
+
+.colonne-secondaire {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 0 0 350px;
+}
+
+.colonne-secondaire img {
+  border-radius: 2px;
+  min-height: 300px;
+  object-fit: contain;
+}
