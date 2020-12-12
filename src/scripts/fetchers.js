@@ -110,8 +110,8 @@ async function fetchParti(id) {
 
   console.log(donnees)
 
-  const nomParti = donnees.NomParti.value
-  const description = undefined // = await fetchDescription(nomPoliticien)
+  const nomParti = donnees?.NomParti.value
+  const description = undefined // = await fetchDescription(nomParti)
 
   const res = {
     nom: donnees?.NomParti?.value,

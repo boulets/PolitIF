@@ -6,9 +6,14 @@
   margin-top: 64px;
 }
 
-#search-input-container {
+#search-container {
   position: relative;
   width: 70%;
+}
+
+#search-input-container {
+  z-index: 2;
+  position: relative;
 }
 
 #search,
@@ -16,7 +21,7 @@
   display: block;
   width: 100%;
   border: none;
-  border-radius: 99px;
+  border-radius: 5px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   font-size: 20px;
   line-height: 52px;
@@ -55,5 +60,35 @@
 }
 #search:invalid + #searchButton,
 #search:placeholder-shown + #searchButton {
+  display: none;
+}
+
+#searchResultsContainer {
+  z-index: 1;
+  position: relative;
+  background-color: white;
+  margin: 0px 6px;
+  margin-top: -4px;
+  padding: 16px;
+}
+
+#searchResultsContainer ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+#searchResultsContainer h4:not(:first-of-type) {
+  margin-top: 1em;
+}
+
+#searchResultsContainer[n-personnalites="0"][n-partis="0"],
+#searchResultsContainer:not([n-personnalites]):not([n-partis]) {
+  display: none;
+}
+
+#searchResultsContainer[n-personnalites="0"] #searchResultsPersonnalitesTitle,
+#searchResultsContainer:not([n-personnalites]) #searchResultsPersonnalitesTitle,
+#searchResultsContainer[n-partis="0"] #searchResultsPartisTitle,
+#searchResultsContainer:not([n-partis]) #searchResultsPartisTitle {
   display: none;
 }

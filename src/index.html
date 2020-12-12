@@ -32,19 +32,25 @@
 
     <main class="recherche">
       <label for="search">Rechercher une personnalité, un parti, une idéologie politique.</label>
-      <div id="search-input-container">
-        <div id="search-autocomplete"></div>
-        <input pattern=".+" id="search" type="text" inputmode="search" placeholder="Valéry Giscard d'Estaing" />
-        <button id="searchButton">
-          <div class="sr-only">
-            Accéder au meilleur résultat de recherche
-          </div>
-          <span aria-hidden="true">→</span>
-        </button>
+      <div id="search-container">
+        <div id="search-input-container">
+          <div id="search-autocomplete"></div>
+          <input pattern=".+" id="search" type="text" inputmode="search" placeholder="Valéry Giscard d'Estaing" />
+          <button type="submit" id="searchButton">
+            <div class="sr-only">
+              Accéder au meilleur résultat de recherche
+            </div>
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
 
-        <ul id="searchResults">
+        <div id="searchResultsContainer">
+          <h4 id="searchResultsPersonnalitesTitle">Personnalités politiques</h4>
+          <ul id="searchResultsPersonnalites"></ul>
 
-        </ul>
+          <h4 id="searchResultsPartisTitle">Partis</h4>
+          <ul id="searchResultsPartis"></ul>
+        </div>
       </div>
     </main>
 
