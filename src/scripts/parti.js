@@ -14,8 +14,6 @@ function update() {
   const id = p.length > 0 ? p[0] : ''
   const nameWhileLoading = p.length > 1 ? p[1] : ''
 
-  console.log({id, nameWhileLoading})
-
   renderParti(null)
   renderParti({ nom: nameWhileLoading })
 

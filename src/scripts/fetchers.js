@@ -108,8 +108,6 @@ async function fetchParti(id) {
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
 
-  console.log(donnees)
-
   const description = await fetchDescriptionParti(id)
 
   const res = {
@@ -130,7 +128,6 @@ async function fetchParti(id) {
 
     description : description === undefined ? 'Pas de description' : description
   }
-  console.log(res)
 
   // localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
   return res
