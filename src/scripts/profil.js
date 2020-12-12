@@ -18,7 +18,7 @@ function update() {
   Promise.all([
     fetchProfil(id).then(renderProfilOrEmptySlots),
     fetchPositions(id).then(renderPositions),
-    fetchPartis(id).then(renderPartis)
+    fetchPartisOfProfil(id).then(renderPartis)
   ])
 }
 

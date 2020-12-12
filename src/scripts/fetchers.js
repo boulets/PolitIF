@@ -42,7 +42,7 @@ async function fetchProfil(id) {
   const nomPoliticien = donnees.NomPoliticien.value
   const description = await fetchDescription(nomPoliticien)
 
-  const enfants = await fetchEnfants(id);
+  const enfants = await fetchEnfants(id)
   const fratrie = await fetchFratrie(id)
 
   const res = {
@@ -84,7 +84,7 @@ async function fetchPositions(id) {
   return mandats
 }
 
-async function fetchPartis(id) {
+async function fetchPartisOfProfil(id) {
   const url = wikidataUrl(requete_profil_partiPolitique(id))
   const reponse = await fetch(url).then(res => res.json())
   const partis = reponse.results.bindings
@@ -106,4 +106,3 @@ async function fetchFratrie(id) {
   reponse.results.bindings.map(element => fratrie.push(element.nomFratrie?.value))
   return fratrie
 }
-
