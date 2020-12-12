@@ -1,4 +1,4 @@
-`main [loading] {
+main [loading] {
   width: calc(30px + var(--random) * 20px);
   content: "";
   background: linear-gradient(
@@ -37,7 +37,6 @@ main img[src=""] {
 main [data-key="description"][loading] {
   width: 100%;
   height: 1em;
-  background-color: red;
   position: relative;
   margin-top: 2.5em;
 }
