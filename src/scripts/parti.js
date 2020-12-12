@@ -71,7 +71,7 @@ function renderParti(parti) {
     }
 
     if (parti.siteWeb) {
-      slotSetTextOrMissing('site-web', parti.siteWeb.replace(/^https?:\/\/([^/]+).+$/, '$1'))
+      slotSetTextOrMissing('site-web', parti.siteWeb.replace(/^https?:\/\/([^/]+).*$/, '$1'))
       slotSetAttribute('site-web', 'href', parti.siteWeb)
     } else {
       hideSlot('site-web')
