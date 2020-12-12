@@ -79,3 +79,53 @@ async function fetchPositions(id) {
   }))
   return mandats
 }
+
+async function fetchParti(id) {
+  // const now = Date.now()
+  // const item = localStorage.getItem(id)
+  // if (item !== undefined) {
+  //   try {
+  //     const { timestamp, value } = JSON.parse(item)
+  //     if (timestamp + CACHE_TTL * 1000 > now) {
+  //       console.log(`Fetching ${id} -> returning cached response`)
+  //       value.dateNaissance = new Date(value.dateNaissance)
+  //       value.dateDeces = new Date(value.dateDeces)
+  //       return value
+  //     } else {
+  //       console.log(`Staled cache for ${id}`)
+  //     }
+  //   } catch (error) {
+  //     console.log(`Invalid cache for ${id}`)
+  //   }
+  // }
+
+  // console.log(`Fetching ${id}`)
+  const url = wikidataUrl(requete_parti_general(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
+
+  console.log(donnees);
+
+  const nomParti = donnees.NomParti.value
+  const description = undefined // = await fetchDescription(nomPoliticien)
+
+  const res = {
+    nom: donnees?.NomParti?.value,
+    logo: donnees?.ImageLogo?.value,
+    president: donnees?.NomPresident?.value,
+    fondateur: donnees?.NomFondateur?.value,
+    dateCreation : nullableDate(donnees?.DateCreation?.value),
+    dateDissolution: nullableDate(donnees?.DateDissolution?.value),
+    nombreAdherents: donnees?.NombreAdherents?.value + " (" + dateToString(nullableDate(donnees?.DateNombreAdherents?.value)) + ")",
+    siege: donnees?.SiegeVille?.value,
+    couleur: donnees?.Couleur?.value,
+    siteWeb: donnees?.SiteWeb?.value,
+    positionnement: donnees?.Positionnement?.value,
+
+    description : description === undefined ? 'Pas de description' : description
+  }
+  console.log(res)
+
+  // localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
+  return res
+}

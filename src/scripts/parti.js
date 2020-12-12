@@ -15,7 +15,7 @@ function update() {
 
   renderParti(null)
   renderParti({ nom: nameWhileLoading })
-
+/*
   setTimeout(() => {
     renderParti({
       nom: 'La République en marche !',
@@ -30,6 +30,12 @@ function update() {
       siteWeb: 'https://en-marche.fr/index.html',
     })
   }, 900)
+*/
+
+  Promise.all([
+    fetchParti(id).then(renderParti),
+    //fetchPositions(id).then(renderPositions),
+  ])
 }
 
 function init() {
@@ -60,8 +66,10 @@ function renderParti(parti) {
     slotSetTextOrMissing('president', parti.president)
     slotSetTextOrMissing('fondateur', parti.fondateur)
     slotSetTextOrMissing('positionnement', parti.positionnement)
-    // slotSetTextOrMissing('siege', parti.siege)
+    slotSetTextOrMissing('siege', parti.siege)
+    slotSetTextOrMissing('nombre-adherents', parti.nombreAdherents)
     slotSetListOrMissing('ideologies', parti.ideologies)
+    slotSetAttribute('image-logo', 'src', parti.logo)
 
     if (parti.siteWeb) {
       slotSetTextOrMissing('site-web', parti.siteWeb.replace(/^https?:\/\/([^/]+).+$/, '$1'))
