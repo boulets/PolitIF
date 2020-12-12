@@ -129,3 +129,10 @@ async function fetchParti(id) {
   // localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
   return res
 }
+
+async function fetchPartiIdeologies(id) {
+  const url = wikidataUrl(requete_parti_ideologies(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const ideologies = reponse.results.bindings.map(element => (element.NomIdeologie?.value[0].toUpperCase() + element.NomIdeologie?.value.substring(1)))
+  return ideologies
+}

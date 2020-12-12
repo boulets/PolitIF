@@ -34,7 +34,7 @@ function update() {
 
   Promise.all([
     fetchParti(id).then(renderParti),
-    //fetchPositions(id).then(renderPositions),
+    fetchPartiIdeologies(id).then(renderPartiIdeologies),
   ])
 }
 
@@ -68,7 +68,6 @@ function renderParti(parti) {
     slotSetTextOrMissing('positionnement', parti.positionnement)
     slotSetTextOrMissing('siege', parti.siege)
     slotSetTextOrMissing('nombre-adherents', parti.nombreAdherents)
-    slotSetListOrMissing('ideologies', parti.ideologies)
     slotSetAttribute('image-logo', 'src', parti.logo)
 
     if (parti.siteWeb) {
@@ -78,4 +77,8 @@ function renderParti(parti) {
       hideSlot('site-web')
     }
   }
+}
+
+function renderPartiIdeologies(ideologies){
+  slotSetListOrMissing('ideologies', ideologies)
 }
