@@ -1,4 +1,4 @@
-main [loading] {
+`main [loading] {
   width: calc(30px + var(--random) * 20px);
   content: "";
   background: linear-gradient(
@@ -24,6 +24,14 @@ main img[loading]::after {
   background: inherit;
   animation: inherit;
   content: "";
+}
+
+main img {
+  transition: opacity 400ms ease 500ms;
+}
+main img[loading],
+main img[src=""] {
+  opacity: 0;
 }
 
 main [data-key="description"][loading] {

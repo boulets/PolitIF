@@ -1,5 +1,7 @@
 .parti {
-  border-left: 5px solid var(--couleur-parti, transparent);
+  border-left: 5px solid white;
+  border-left-color: var(--couleur-parti, white);
+  transition: border-left-color 400ms ease;
 }
 
 .parti .nom {

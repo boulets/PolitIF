@@ -83,7 +83,7 @@ main .sheet {
 
 dl {
   position: relative;
-  line-height: 1.1;
+  line-height: 1.2;
   display: flex;
   flex-direction: column;
   gap: 0.4em;
