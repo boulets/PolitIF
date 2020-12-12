@@ -1,4 +1,4 @@
-/* global getSlot hideSlot showSlot slotSetHtmlOrMissing slotSetTextOrMissing slotSetHtml slotSetText slotSetAttribute slotSetLoading slotSetLoaded dateToHtml dateToString renderLoadingProfil renderProfilOrEmptySlots renderProfilPartial renderRecherche renderPositions slotSetListOrMissing */
+/* global getSlot hideSlot slotSetTextOrMissing slotSetHtml slotSetAttribute slotSetLoading dateToHtml slotSetListOrMissing fetchParti fetchPartiIdeologies */
 
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
@@ -15,24 +15,8 @@ function update() {
 
   renderParti(null)
   renderParti({ nom: nameWhileLoading })
-/*
-  setTimeout(() => {
-    renderParti({
-      nom: 'La République en marche !',
-      membresImportants: ['Emmanuel Macron', 'Catherine Barbaroux', 'Christophe Castaner', 'Stanislas Guerini'],
-      description: 'La République en marche (abrégée en LREM ou LaREM, parfois REM, voire LRM) — également appelée par sa première dénomination En marche (EM) — est un parti politique français lancé en avril 2016 par Emmanuel Macron. Après avoir été élu président de la République en 2017, Emmanuel Macron démissionne de la présidence du mouvement qu\'il a fondé. Le parti remporte une majorité absolue aux élections législatives qui suivent. Son actuel délégué général est Stanislas Guerini. Le parti est classé du centre gauche au centre droit de l\'échiquier politique français et parfois présenté comme un parti attrape-tout.',
-      president: 'Stanislas Guerini',
-      fondateur: 'Emmanuel Macron',
-      dateCreation: new Date('2016-04-06'),
-      dateDissolution: null,
-      positionnement: 'Centre',
-      ideologies: ['Social-libéralisme', 'Progressisme', 'Troisième Voie', 'Europhilie', 'Transpartisianisme', 'Écologisme'],
-      siteWeb: 'https://en-marche.fr/index.html',
-    })
-  }, 900)
-*/
 
-  Promise.all([
+  return Promise.all([
     fetchParti(id).then(renderParti),
     fetchPartiIdeologies(id).then(renderPartiIdeologies),
   ])
@@ -48,6 +32,7 @@ function renderParti(parti) {
   if (parti === null) {
     const slots = ['nom', 'description', 'membres-importants', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'ideologies', 'site-web', 'siege']
     slots.forEach(key => slotSetLoading(key))
+    slotSetAttribute('image-logo', 'src', '')
   } else {
     document.title = `Polit'IF – ${parti.nom}`
     slotSetTextOrMissing('nom', parti.nom)
@@ -68,10 +53,15 @@ function renderParti(parti) {
     slotSetTextOrMissing('positionnement', parti.positionnement)
     slotSetTextOrMissing('siege', parti.siege)
     slotSetTextOrMissing('nombre-adherents', parti.nombreAdherents)
-    slotSetAttribute('image-logo', 'src', parti.logo)
 
-    if(parti.couleur) {
-      getSlot("couleur").style.setProperty('--couleur-parti', "#" + parti.couleur)
+    if (parti.logo) {
+      slotSetAttribute('image-logo', 'src', parti.logo)
+    } else {
+      slotSetAttribute('image-logo', 'src', '')
+    }
+
+    if (parti.couleur) {
+      getSlot('couleur').style.setProperty('--couleur-parti', '#' + parti.couleur)
     }
 
     if (parti.siteWeb) {
