@@ -88,83 +88,83 @@ function requete_profil_description(nomPoliticien) {
 }
 
 function requete_parti_general(idParti) {
-  return `SELECT ?nom ?dateCreation ?dateDissolution ?president ?PresidentStartTime ?fondateur ?nombreAdherents ?dateNombreAdherents ?couleur ?positionnement ?siegeNumero ?siegeRue ?siegeCodePostal ?siegeVille ?SiegeStartTime ?imageLogo ?LogoStartTime ?siteWeb WHERE {
+  return `SELECT ?NomParti ?DateCreation ?DateDissolution ?NomPresident ?PresidentStartTime ?NomFondateur ?NombreAdherents ?DateNombreAdherents ?Couleur ?Positionnement ?SiegeNumero ?SiegeRue ?SiegeCodePostal ?SiegeVille ?SiegeStartTime ?ImageLogo ?LogoStartTime ?SiteWeb WHERE {
     BIND(wd:${idParti} AS ?parti).
 
     # Nom
-    #?parti wdt:P1705 ?nom.
-    ?parti rdfs:label ?nom.
+    #?parti wdt:P1705 ?NomParti.
+    ?parti rdfs:label ?NomParti.
 
     # Président et fondateur
     ?parti wdt:P488 ?President.
     ?parti p:P488 ?PresidentStatement.
     ?PresidentStatement pq:P580 ?PresidentStartTime. # On  considère que le dernier président est celui qui a débuté son mandat en dernier
-    ?President rdfs:label ?president.
+    ?President rdfs:label ?NomPresident.
 
     ?parti wdt:P112 ?Fondateur.
-    ?Fondateur rdfs:label ?fondateur.
+    ?Fondateur rdfs:label ?NomFondateur.
 
     # Dates
-    ?parti wdt:P571 ?dateCreation.
+    ?parti wdt:P571 ?DateCreation.
     OPTIONAL {
-      ?parti wdt:P576 ?dateDissolution.
+      ?parti wdt:P576 ?DateDissolution.
     }
 
     # Nombre d'adhérents
     OPTIONAL {
-    ?parti p:P2124 ?nombreAdherentsStatement.
-    ?nombreAdherentsStatement ps:P2124 ?nombreAdherents.
-    ?nombreAdherentsStatement pq:P585 ?dateNombreAdherents.
+    ?parti p:P2124 ?NombreAdherentsStatement.
+    ?NombreAdherentsStatement ps:P2124 ?NombreAdherents.
+    ?NombreAdherentsStatement pq:P585 ?DateNombreAdherents.
     }
 
-    # couleur politique (code hexa RGB)
-    ?parti wdt:P465 ?couleur.
+    # Couleur politique (code hexa RGB)
+    ?parti wdt:P465 ?Couleur.
 
     # Positionnement politique
-    ?parti wdt:P1387/rdfs:label ?positionnement.
+    ?parti wdt:P1387/rdfs:label ?Positionnement.
 
     # Siège
     OPTIONAL {?parti p:P159 ?SiegeStatement.}
     OPTIONAL {
-      ?SiegeStatement pq:P669/rdfs:label ?siegeRue.
-      FILTER(LANG(?siegeRue)='fr').
+      ?SiegeStatement pq:P669/rdfs:label ?SiegeRue.
+      FILTER(LANG(?SiegeRue)='fr').
     }
-    OPTIONAL {?SiegeStatement pq:P670 ?siegeNumero.}
-    OPTIONAL {?SiegeStatement pq:P281 ?siegeCodePostal.}
+    OPTIONAL {?SiegeStatement pq:P670 ?SiegeNumero.}
+    OPTIONAL {?SiegeStatement pq:P281 ?SiegeCodePostal.}
     OPTIONAL {
-      ?SiegeStatement ps:P159/rdfs:label ?siegeVille.
-      FILTER(LANG(?siegeVille)='fr').
+      ?SiegeStatement ps:P159/rdfs:label ?SiegeVille.
+      FILTER(LANG(?SiegeVille)='fr').
     }
     OPTIONAL {?SiegeStatement pq:P580 ?SiegeStartTime.}
 
     # Logo
     OPTIONAL {
       ?parti p:P154 ?LogoStatement.
-      ?LogoStatement ps:P154 ?imageLogo.
+      ?LogoStatement ps:P154 ?ImageLogo.
       ?LogoStatement pq:P580 ?LogoStartTime.
     }
 
     # Site Web
-    OPTIONAL { ?parti wdt:P856 ?siteWeb. }
+    OPTIONAL { ?parti wdt:P856 ?SiteWeb. }
 
-    FILTER(LANG(?nom)='fr').
-    FILTER(LANG(?fondateur)='fr').
-    FILTER(LANG(?president)='fr').
-    FILTER(LANG(?positionnement)='fr').
+    FILTER(LANG(?NomParti)='fr').
+    FILTER(LANG(?NomFondateur)='fr').
+    FILTER(LANG(?NomPresident)='fr').
+    FILTER(LANG(?Positionnement)='fr').
   }
-  ORDER BY DESC (?PresidentStartTime) DESC(?dateNombreAdherents) DESC(?SiegeStartTime) DESC(?LogoStartTime)
+  ORDER BY DESC (?PresidentStartTime) DESC(?DateNombreAdherents) DESC(?SiegeStartTime) DESC(?LogoStartTime)
   LIMIT 1
   `
 }
 
 function requete_parti_ideologies(idParti) {
-  return `SELECT ?ideologie ?nomIdeologie WHERE {
+  return `SELECT ?Ideologie ?NomIdeologie WHERE {
     BIND(wd:${idParti} AS ?parti).
 
-    ?parti wdt:P1142 ?ideologie.
-    ?ideologie rdfs:label ?nomIdeologie.
+    ?parti wdt:P1142 ?Ideologie.
+    ?Ideologie rdfs:label ?NomIdeologie.
 
-    FILTER(LANG(?nomIdeologie)='fr').
+    FILTER(LANG(?NomIdeologie)='fr').
   }`
 }
 
