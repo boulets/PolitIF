@@ -116,7 +116,7 @@ async function fetchParti(id) {
     fondateur: donnees?.NomFondateur?.value,
     dateCreation : nullableDate(donnees?.DateCreation?.value),
     dateDissolution: nullableDate(donnees?.DateDissolution?.value),
-    nombreAdherents: donnees?.NombreAdherents?.value + " (" + dateToString(nullableDate(donnees?.DateNombreAdherents?.value)) + ")",
+    nombreAdherents: (donnees?.NombreAdherents?.value ? donnees?.NombreAdherents?.value + (donnees?.DateNombreAdherents?.value ? " (" + dateToString(nullableDate(donnees?.DateNombreAdherents?.value)) + ")" : "") : "N/A"),
     siege: donnees?.SiegeVille?.value,
     couleur: donnees?.Couleur?.value,
     siteWeb: donnees?.SiteWeb?.value,
