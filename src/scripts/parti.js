@@ -52,7 +52,13 @@ function renderParti(parti) {
     slotSetTextOrMissing('fondateur', parti.fondateur)
     slotSetTextOrMissing('positionnement', parti.positionnement)
     slotSetTextOrMissing('siege', parti.siege)
-    slotSetTextOrMissing('nombre-adherents', parti.nombreAdherents)
+
+    const nombreAdherentsStr = nombreAdherentsToHtml(parti.nombreAdherents)
+    if (nombreAdherentsStr) {
+      slotSetHtmlOrMissing('nombre-adherents', nombreAdherentsStr)
+    } else {
+      hideSlot('nombre-adherents')
+    }
 
     if (parti.logo) {
       slotSetAttribute('image-logo', 'src', parti.logo)
@@ -73,6 +79,28 @@ function renderParti(parti) {
   }
 }
 
+function formatNumber(x) {
+  return new Intl.NumberFormat().format(x)
+}
+
+function nombreAdherentsToHtml(nombreAdherents) {
+  if (nombreAdherents != null) {
+    const { compte, date } = nombreAdherents
+    if (compte != null) {
+      if (date != null) {
+        return `${formatNumber(+compte)} (${dateToHtml(date)})`
+      } else {
+        return formatNumber(+compte)
+      }
+    }
+  }
+}
+
+// Mettre la première lettre en majuscule, tout en faisant attention aux caractères accentués
+function ucfirst([first, ...rest]) {
+  return first.toLocaleUpperCase() + rest.join('')
+}
+
 function renderPartiIdeologies(ideologies){
-  slotSetListOrMissing('ideologies', ideologies)
+  slotSetListOrMissing('ideologies', ideologies.map(ucfirst))
 }

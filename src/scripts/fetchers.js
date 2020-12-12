@@ -108,7 +108,7 @@ async function fetchParti(id) {
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
 
-  console.log(donnees);
+  console.log(donnees)
 
   const nomParti = donnees.NomParti.value
   const description = undefined // = await fetchDescription(nomPoliticien)
@@ -120,7 +120,10 @@ async function fetchParti(id) {
     fondateur: donnees?.NomFondateur?.value,
     dateCreation : nullableDate(donnees?.DateCreation?.value),
     dateDissolution: nullableDate(donnees?.DateDissolution?.value),
-    nombreAdherents: (donnees?.NombreAdherents?.value ? donnees?.NombreAdherents?.value + (donnees?.DateNombreAdherents?.value ? " (" + dateToString(nullableDate(donnees?.DateNombreAdherents?.value)) + ")" : "") : "N/A"),
+    nombreAdherents: {
+      compte: donnees?.NombreAdherents?.value,
+      date: nullableDate(donnees?.DateNombreAdherents?.value),
+    },
     siege: donnees?.SiegeVille?.value,
     couleur: donnees?.Couleur?.value,
     siteWeb: donnees?.SiteWeb?.value,
@@ -137,7 +140,9 @@ async function fetchParti(id) {
 async function fetchPartiIdeologies(id) {
   const url = wikidataUrl(requete_parti_ideologies(id))
   const reponse = await fetch(url).then(res => res.json())
-  const ideologies = reponse.results.bindings.map(element => (element.NomIdeologie?.value[0].toUpperCase() + element.NomIdeologie?.value.substring(1)))
+  const ideologies = reponse.results.bindings
+    .map(ideologie => ideologie.NomIdeologie?.value)
+    .filter(nom => nom) // filtrer null, undefined, vide
   return ideologies
 }
 
