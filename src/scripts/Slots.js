@@ -31,6 +31,7 @@ function Slots_setHtmlOrMissing(key, value) {
   Slots_showSlot(key)
   const element = Slots_getSlot(key)
   if (value === null || value === undefined) {
+    console.warn('wtf')
     element.innerHTML = EMPTY_PLACEHOLDER
   } else {
     element.innerHTML = value
@@ -42,6 +43,7 @@ function Slots_setTextOrMissing(key, value) {
   Slots_showSlot(key)
   const element = Slots_getSlot(key)
   if (value === null || value === undefined) {
+    console.warn('wtf')
     element.innerHTML = EMPTY_PLACEHOLDER
   } else {
     element.innerText = value
@@ -53,6 +55,7 @@ function Slots_setListOrMissing(key, values, type = 'ul') {
   Slots_showSlot(key)
   const element = Slots_getSlot(key)
   if (values === null || values === undefined || !Array.isArray(values)) {
+    console.warn('wtf')
     element.innerHTML = EMPTY_PLACEHOLDER
   } else {
     element.innerHTML = ''
@@ -65,6 +68,30 @@ function Slots_setListOrMissing(key, values, type = 'ul') {
     element.appendChild(listEl)
   }
   element.removeAttribute('loading')
+}
+
+/**
+ * @param {String} key
+ * @param {Array<Record<'href' | 'text', string>>} values
+ * @param {'ul' | 'ol'} type
+ */
+function Slots_setListOfLinks(key, values, type = 'ul') {
+  if (values !== null && values !== undefined && Array.isArray(values)) {
+    Slots_showSlot(key)
+    const element = Slots_getSlot(key)
+    element.removeAttribute('loading')
+    element.innerHTML = ''
+    const listEl = document.createElement(type)
+    for (const { href, text } of values) {
+      const li = document.createElement('li')
+      const a = document.createElement('a')
+      a.href = href
+      a.innerText = text
+      li.appendChild(a)
+      listEl.appendChild(li)
+    }
+    element.appendChild(listEl)
+  }
 }
 
 function Slots_setHtml(key, value) {
@@ -112,6 +139,7 @@ const Slots = {
   setHtml: (key, html) => Slots_setHtmlOrMissing(key, html),
   setText: (key, text) => Slots_setTextOrMissing(key, text),
   setList: (key, list) => Slots_setListOrMissing(key, list),
+  setListOfLinks: Slots_setListOfLinks,
   setAttr: (key, attr, value) => Slots_setAttr(key, attr, value),
 
   markLoading: (key) => Slots_markLoading(key),

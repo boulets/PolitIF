@@ -137,7 +137,8 @@ async function fetchPartiIdeologies(id) {
   const reponse = await fetch(url).then(res => res.json())
   const ideologies = reponse.results.bindings
     .map(ideologie => ({
-      id: ideologie.Ideologie?.value.split("/")[4],
+      _: console.log(ideologie),
+      id: extractIdFromWikidataUrl(ideologie.Ideologie?.value),
       nom: ideologie.NomIdeologie?.value,
     }))
     .filter(nom => nom) // filtrer null, undefined, vide
@@ -149,7 +150,7 @@ async function fetchPartiPersonnalites(id) {
   const reponse = await fetch(url).then(res => res.json())
   const personnalites = reponse.results.bindings
     .map(personnalite => ({
-      id: personnalite.politicien?.value.split("/")[4],
+      id: extractIdFromWikidataUrl(personnalite.politicien?.value),
       nom: personnalite.NomPoliticien?.value,
     }))
     .filter(nom => nom) // filtrer null, undefined, vide
@@ -173,4 +174,8 @@ async function fetchFratrieOfProfil(id) {
   const url = wikidataUrl(requete_profil_fratrie(id))
   const reponse = await fetch(url).then(res => res.json())
   return reponse.results.bindings.map(x => x.nomFratrie?.value).filter(x => x)
+}
+
+function extractIdFromWikidataUrl(url) {
+  return url.match(/entity\/(Q\d+)$/)?.[1]
 }

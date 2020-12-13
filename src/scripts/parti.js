@@ -1,8 +1,5 @@
 /* global Slots dateToHtml fetchParti fetchPartiIdeologies */
 
-const membresList = document.getElementById('membresList')
-const ideologiesList = document.getElementById('ideologiesList')
-
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
   return [first, rest.length > 0 ? rest.join(on) : null]
@@ -100,27 +97,17 @@ function ucfirst([first, ...rest]) {
 }
 
 function renderPartiIdeologies(ideologies) {
-  //slotSetListOrMissing('ideologies', ideologies.map(ucfirst))
-  //slotSetLoaded('ideologies')
-  ideologiesList.innerHTML = ''
-  ideologies.forEach(ideologie => {
-    const {id, nom} = ideologie
-    const lien = 'ideologie.html#' + id + '-' + ucfirst(nom)
-    const li = document.createElement('li')
-    li.innerHTML = `<a href="${lien}">${ucfirst(nom)}</a>`
-    ideologiesList.appendChild(li)
-  })
+  const liens = ideologies.map(({ id, nom }) => ({
+    href: `ideologie.html#${id}-${ucfirst(nom)}`,
+    text: ucfirst(nom),
+  }))
+  Slots.setListOfLinks('ideologies', liens)
 }
 
 function renderPartiPersonnalites(personnalites) {
-  //slotSetListOrMissing('membres-importants', personnalites.map(ucfirst))
-  //slotSetLoaded('membres-importants')
-  membresList.innerHTML = ''
-  personnalites.forEach(personnalite => {
-    const {id, nom} = personnalite
-    const lien = 'profil.html#' + id + '-' + ucfirst(nom)
-    const li = document.createElement('li')
-    li.innerHTML = `<a href="${lien}">${ucfirst(nom)}</a>`
-    membresList.appendChild(li)
-  })
+  const liens = personnalites.map(({ id, nom }) => ({
+    href: `profil.html#${id}-${ucfirst(nom)}`,
+    text: ucfirst(nom),
+  }))
+  Slots.setListOfLinks('membres-importants', liens)
 }

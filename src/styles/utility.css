@@ -95,13 +95,6 @@ a:focus-visible {
   background-color: white;
 }
 
-a {
-  color: #19f;
-}
-a:visited {
-  color: #76f;
-}
-
 .Page__Title:focus-within,
 .Heading:focus-within,
 .TextBlock:focus-within {

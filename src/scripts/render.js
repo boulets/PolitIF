@@ -38,47 +38,36 @@ function renderLoadingProfil() {
 
 function renderProfilOrHide(profil) {
   document.title = `Polit'IF – ${profil.nom}`
-  Slots.setText('nom', profil.nom)
 
-  if (profil.dateNaissance) {
-    Slots.setHtml('date-naissance', profil.dateNaissance && dateToHtml(profil.dateNaissance))
-  } else {
-    Slots.hide('date-naissance')
-  }
+  profil.nom ? Slots.setText('nom', profil.nom) : Slots.setText('nom', '—')
 
-  if (profil.lieuNaissance) {
-    Slots.setText('lieu-naissance', profil.lieuNaissance)
-  } else {
-    Slots.hide('lieu-naissance')
-  }
+  profil.dateNaissance
+    ? Slots.setHtml('date-naissance', dateToHtml(profil.dateNaissance))
+    : Slots.hide('date-naissance')
 
-  if (profil.dateDeces) {
-    Slots.setHtml('date-deces', profil.dateDeces && dateToHtml(profil.dateDeces))
-  } else {
-    Slots.hide('date-deces')
-  }
+  profil.lieuNaissance
+    ? Slots.setText('lieu-naissance', profil.lieuNaissance)
+    : Slots.hide('lieu-naissance')
 
-  if (profil.lieuDeces) {
-    Slots.setText('lieu-deces', profil.lieuDeces)
-  } else {
-    Slots.hide('lieu-deces')
-  }
+  profil.dateDeces
+    ? Slots.setHtml('date-deces', dateToHtml(profil.dateDeces))
+    : Slots.hide('date-deces')
 
-  Slots.setText('pere', profil.pere)
-  Slots.setText('mere', profil.mere)
-  Slots.setText('conjoint', profil.conjoint)
+  profil.lieuDeces ? Slots.setText('lieu-deces', profil.lieuDeces) : Slots.hide('lieu-deces')
 
-  if (profil.image) {
-    Slots.setAttr('image-personne', 'src', profil.image)
-  } else {
-    Slots.hide('image-personne')
-  }
-  if (profil.signature) {
-    Slots.setAttr('signature-personne', 'src', profil.signature)
-  } else {
-    Slots.hide('signature-personne')
-  }
+  profil.pere ? Slots.setText('pere', profil.pere) : Slots.hide('pere')
+  profil.mere ? Slots.setText('mere', profil.mere) : Slots.hide('mere')
+  profil.conjoint ? Slots.setText('conjoint', profil.conjoint) : Slots.hide('conjoint')
+
+  profil.image
+    ? Slots.setAttr('image-personne', 'src', profil.image)
+    : Slots.hide('image-personne')
+
+  profil.signature
+    ? Slots.setAttr('signature-personne', 'src', profil.signature)
+    : Slots.hide('signature-personne')
 }
+
 function renderProfilPartial(profil) {
   if (profil === null) {
     renderLoadingProfil()
@@ -87,8 +76,8 @@ function renderProfilPartial(profil) {
       document.title = `Polit'IF – ${profil.nom}`
       Slots.setText('nom', profil.nom)
     }
-    profil.dateNaissance && Slots.setHtml('date-naissance', profil.dateNaissance && dateToHtml(profil.dateNaissance))
-    profil.dateDeces && Slots.setHtml('date-deces', profil.dateDeces && dateToHtml(profil.dateDeces))
+    profil.dateNaissance && Slots.setHtml('date-naissance', dateToHtml(profil.dateNaissance))
+    profil.dateDeces && Slots.setHtml('date-deces', dateToHtml(profil.dateDeces))
     profil.lieuNaissance && Slots.setText('lieu-naissance', profil.lieuNaissance)
     profil.lieuDeces && Slots.setText('lieu-deces', profil.lieuDeces)
     profil.pere && Slots.setText('pere', profil.pere)
@@ -96,7 +85,7 @@ function renderProfilPartial(profil) {
     profil.fratrie && Slots.setText('fratrie', profil.fratrie.join(', '))
     profil.conjoint && Slots.setText('conjoint', profil.conjoint)
     profil.enfants && Slots.setText('enfants', profil.enfants.join(', '))
-    profil.description && Slots.setHtml('description', `<p>${profil.description}</p>`)
+    profil.description && Slots.setHtml('description', profil.description)
   }
 }
 

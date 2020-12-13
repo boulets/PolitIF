@@ -28,7 +28,7 @@ function update() {
       }),
     fetchEnfantsOfProfil(id).then(enfants => {
       profilComplet = { ...profilComplet, enfants }
-      if (enfants) {
+      if (enfants && enfants.length > 0) {
         Slots.setText('enfants', enfants.join(', '))
       } else {
         Slots.hide('enfants')
@@ -36,7 +36,7 @@ function update() {
     }),
     fetchFratrieOfProfil(id).then(fratrie => {
       profilComplet = { ...profilComplet, fratrie }
-      if (fratrie) {
+      if (fratrie && fratrie.length > 0) {
         Slots.setText('fratrie', fratrie.join(', '))
       } else {
         Slots.hide('fratrie')
