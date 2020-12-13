@@ -239,25 +239,25 @@ function requete_parti_ideologies(idParti) {
 }
 
 function requete_parti_personnalites(idPArti) {
-  return `SELECT ?NomPoliticien (?nombreMandats + ?nombreCandidatures AS ?importance) WHERE {
+  return `SELECT ?politicien ?NomPoliticien (?nombreMandats + ?nombreCandidatures AS ?importance) WHERE {
     {
-      SELECT ?NomPoliticien (COUNT(?mandat) AS ?nombreMandats) WHERE {
+      SELECT ?politicien ?NomPoliticien (COUNT(?mandat) AS ?nombreMandats) WHERE {
         BIND(wd:${idPArti} as ?parti).
         ?politicien wdt:P102 ?parti.
         ?politicien wdt:P1559 ?NomPoliticien.
         OPTIONAL{?politicien wdt:P39 ?mandat.}
       }
-      GROUP BY ?NomPoliticien
+      GROUP BY ?politicien ?NomPoliticien
       ORDER BY DESC(?nombreMandats)
     }
     {
-      SELECT ?NomPoliticien (COUNT(?candidature) AS ?nombreCandidatures) WHERE {
+      SELECT ?politicien ?NomPoliticien (COUNT(?candidature) AS ?nombreCandidatures) WHERE {
         BIND(wd:${idPArti} as ?parti).
         ?politicien wdt:P102 ?parti.
         ?politicien wdt:P1559 ?NomPoliticien.
         OPTIONAL{?politicien wdt:P3602 ?candidature.}
       }
-      GROUP BY ?NomPoliticien
+      GROUP BY ?politicien ?NomPoliticien
       ORDER BY DESC(?nombreCandidatures)
     }
   }

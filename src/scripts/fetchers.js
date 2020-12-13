@@ -108,8 +108,6 @@ async function fetchParti(id) {
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
 
-  console.log(donnees)
-
   const description = await fetchDescriptionParti(id)
 
   const res = {
@@ -130,7 +128,6 @@ async function fetchParti(id) {
 
     description : description === undefined ? 'Pas de description' : description
   }
-  console.log(res)
 
   // localStorage.setItem(id, JSON.stringify({ timestamp: now, value: res }))
   return res
@@ -148,7 +145,10 @@ async function fetchPartiIdeologies(id) {
   const url = wikidataUrl(requete_parti_ideologies(id))
   const reponse = await fetch(url).then(res => res.json())
   const ideologies = reponse.results.bindings
-    .map(ideologie => ideologie.NomIdeologie?.value)
+    .map(ideologie => ({
+      id: ideologie.Ideologie?.value.split("/")[4],
+      nom: ideologie.NomIdeologie?.value,
+    }))
     .filter(nom => nom) // filtrer null, undefined, vide
   return ideologies
 }
@@ -157,7 +157,10 @@ async function fetchPartiPersonnalites(id) {
   const url = wikidataUrl(requete_parti_personnalites(id))
   const reponse = await fetch(url).then(res => res.json())
   const personnalites = reponse.results.bindings
-    .map(personnalite => personnalite.NomPoliticien?.value)
+    .map(personnalite => ({
+      id: personnalite.politicien?.value.split("/")[4],
+      nom: personnalite.NomPoliticien?.value,
+    }))
     .filter(nom => nom) // filtrer null, undefined, vide
   return personnalites
 }
