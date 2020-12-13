@@ -39,12 +39,6 @@ async function fetchProfil(id) {
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
 
-  const nomPoliticien = donnees.NomPoliticien.value
-  const description = await fetchDescription(nomPoliticien)
-
-  const enfants = await fetchEnfants(id)
-  const fratrie = await fetchFratrie(id)
-
   const res = {
     nom: donnees?.NomPoliticien?.value,
     dateNaissance : nullableDate(donnees?.DateDeNaissance?.value),
@@ -54,10 +48,7 @@ async function fetchProfil(id) {
     image: donnees?.Image?.value,
     pere: donnees?.NomPere?.value,
     mere: donnees?.NomMere?.value,
-    fratrie: fratrie,
     conjoint : donnees?.NomConjoint?.value,
-    enfants: enfants,
-    description : description === undefined ? 'Pas de description' : description,
     signature : donnees?.Signature?.value
   }
 
@@ -78,8 +69,8 @@ async function fetchPositions(id) {
   const reponse = await fetch(url).then(res => res.json())
   const mandats = reponse.results.bindings.map(element => ({
     nom: element.Position?.value,
-    debut: element.DateEntreePosition?.value,
-    fin: element.DateSortiePosition?.value,
+    debut: nullableDate(element.DateEntreePosition?.value),
+    fin: nullableDate(element.DateSortiePosition?.value),
   }))
   return mandats
 }
@@ -165,22 +156,18 @@ async function fetchPartiPersonnalites(id) {
 async function fetchPartisOfProfil(id) {
   const url = wikidataUrl(requete_profil_partiPolitique(id))
   const reponse = await fetch(url).then(res => res.json())
-  const partis = reponse.results.bindings
+  const partis = reponse.results.bindings.map(x => x.NomParti.value)
   return partis
 }
 
-async function fetchEnfants(id) {
+async function fetchEnfantsOfProfil(id) {
   const url = wikidataUrl(requete_profil_enfants(id))
   const reponse = await fetch(url).then(res => res.json())
-  var enfants = []
-  reponse.results.bindings.map(element => enfants.push(element.nomEnfants?.value))
-  return enfants
+  return reponse.results.bindings.map(x => x.nomEnfants?.value).filter(x => x)
 }
 
-async function fetchFratrie(id) {
+async function fetchFratrieOfProfil(id) {
   const url = wikidataUrl(requete_profil_fratrie(id))
   const reponse = await fetch(url).then(res => res.json())
-  var fratrie = []
-  reponse.results.bindings.map(element => fratrie.push(element.nomFratrie?.value))
-  return fratrie
+  return reponse.results.bindings.map(x => x.nomFratrie?.value).filter(x => x)
 }

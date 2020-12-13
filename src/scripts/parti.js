@@ -1,4 +1,4 @@
-/* global getSlot hideSlot slotSetTextOrMissing slotSetHtml slotSetAttribute slotSetLoading dateToHtml slotSetListOrMissing fetchParti fetchPartiIdeologies */
+/* global Slots dateToHtml fetchParti fetchPartiIdeologies */
 
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
@@ -32,49 +32,49 @@ init()
 function renderParti(parti) {
   if (parti === null) {
     const slots = ['nom', 'description', 'membres-importants', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'ideologies', 'site-web', 'siege']
-    slots.forEach(key => slotSetLoading(key))
-    slotSetAttribute('image-logo', 'src', '')
+    slots.forEach(key => Slots.markLoading(key))
+    Slots.setAttr('image-logo', 'src', '')
   } else {
     document.title = `Polit'IF – ${parti.nom}`
-    slotSetTextOrMissing('nom', parti.nom)
+    Slots.setText('nom', parti.nom)
     if (parti.dateCreation) {
-      slotSetHtml('date-creation', dateToHtml(parti.dateCreation))
+      Slots.setHtml('date-creation', dateToHtml(parti.dateCreation))
     } else {
-      hideSlot('date-creation')
+      Slots.hide('date-creation')
     }
     if (parti.dateDissolution) {
-      slotSetHtml('date-dissolution', dateToHtml(parti.dateDissolution))
+      Slots.setHtml('date-dissolution', dateToHtml(parti.dateDissolution))
     } else {
-      hideSlot('date-dissolution')
+      Slots.hide('date-dissolution')
     }
-    slotSetTextOrMissing('description', parti.description)
-    slotSetTextOrMissing('president', parti.president)
-    slotSetTextOrMissing('fondateur', parti.fondateur)
-    slotSetTextOrMissing('positionnement', parti.positionnement)
-    slotSetTextOrMissing('siege', parti.siege)
+    Slots.setText('description', parti.description)
+    Slots.setText('president', parti.president)
+    Slots.setText('fondateur', parti.fondateur)
+    Slots.setText('positionnement', parti.positionnement)
+    Slots.setText('siege', parti.siege)
 
     const nombreAdherentsStr = nombreAdherentsToHtml(parti.nombreAdherents)
     if (nombreAdherentsStr) {
-      slotSetHtmlOrMissing('nombre-adherents', nombreAdherentsStr)
+      Slots.setHtml('nombre-adherents', nombreAdherentsStr)
     } else {
-      hideSlot('nombre-adherents')
+      Slots.hide('nombre-adherents')
     }
 
     if (parti.logo) {
-      slotSetAttribute('image-logo', 'src', parti.logo)
+      Slots.setAttr('image-logo', 'src', parti.logo)
     } else {
-      slotSetAttribute('image-logo', 'src', '')
+      Slots.setAttr('image-logo', 'src', '')
     }
 
     if (parti.couleur) {
-      getSlot('couleur').style.setProperty('--couleur-parti', '#' + parti.couleur)
+      Slots.get('couleur').style.setProperty('--couleur-parti', '#' + parti.couleur)
     }
 
     if (parti.siteWeb) {
-      slotSetTextOrMissing('site-web', parti.siteWeb.replace(/^https?:\/\/([^/]+).*$/, '$1'))
-      slotSetAttribute('site-web', 'href', parti.siteWeb)
+      Slots.setText('site-web', parti.siteWeb.replace(/^https?:\/\/([^/]+).*$/, '$1'))
+      Slots.setAttr('site-web', 'href', parti.siteWeb)
     } else {
-      hideSlot('site-web')
+      Slots.hide('site-web')
     }
   }
 }
@@ -102,9 +102,9 @@ function ucfirst([first, ...rest]) {
 }
 
 function renderPartiIdeologies(ideologies) {
-  slotSetListOrMissing('ideologies', ideologies.map(ucfirst))
+  Slots.setList('ideologies', ideologies.map(ucfirst))
 }
 
 function renderPartiPersonnalites(personnalites) {
-  slotSetListOrMissing('membres-importants', personnalites.map(ucfirst))
+  Slots.setList('membres-importants', personnalites.map(ucfirst))
 }
