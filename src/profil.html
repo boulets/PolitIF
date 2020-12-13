@@ -36,7 +36,7 @@
         <div data-key="description"></div>
         <div>
           <br>
-          <h2>Mandats politiques</h2>
+          <h3>Mandats politiques</h3>
           <ul id="positionsList">
 
           </ul>
@@ -45,14 +45,16 @@
       </div>
 
       <div class="colonne-secondaire">
-        <img data-key="image-personne" src="" alt="Valéry Giscard d'Estaing">
+        <img data-key="image-personne" src="" alt="">
+
+        <h3>Biographie</h3>
 
         <dl class="biographie-attributs">
-          <div>
+          <div data-contains-slot="date-naissance">
             <dt>Date de naissance</dt>
             <dd data-key="date-naissance"></dd>
           </div>
-          <div>
+          <div data-contains-slot="lieu-naissance">
             <dt>Lieu de naissance</dt>
             <dd data-key="lieu-naissance"></dd>
           </div>
@@ -65,37 +67,36 @@
             <dd data-key="lieu-deces"></dd>
           </div>
         </dl>
+
         <dl class="famille-attributs">
-          <div>
+          <div data-contains-slot="pere">
             <dt>Père</dt>
             <dd data-key="pere"></dd>
           </div>
-          <div>
+          <div data-contains-slot="mere">
             <dt>Mère</dt>
             <dd data-key="mere"></dd>
           </div>
-          <div>
+          <div data-contains-slot="fratrie">
             <dt>Fratrie</dt>
             <dd data-key="fratrie"></dd>
           </div>
-          <div>
+          <div data-contains-slot="conjoint">
             <dt>Conjoint</dt>
             <dd data-key="conjoint"></dd>
           </div>
-          <div>
+          <div data-contains-slot="enfants">
             <dt>Enfants</dt>
             <dd data-key="enfants"></dd>
           </div>
         </dl>
 
-        <div>
-          <h2>Partis politiques</h2>
-          <ul id="partisList">
-
-          </ul>
+        <div data-contains-slot="partis">
+          <h3>Partis politiques</h3>
+          <ul data-key="profil-liste-partis"></ul>
         </div>
-        <div>
-          <h4>Signature</h4>
+        <div data-contains-slot="signature-personne">
+          <h3>Signature</h3>
           <img data-key="signature-personne" src="" alt="">
         </div>
       </div>
@@ -107,6 +108,7 @@
       </div>
     </footer>
 
+    <script src="scripts/Slots.js"></script>
     <script src="scripts/fetchers.js"></script>
     <script src="scripts/render.js"></script>
     <script src="scripts/requetes.js"></script>
