@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Polit'IF</title>
+
+    <link rel="stylesheet" href="styles/reset.css" />
+    <link rel="stylesheet" href="styles/typography.css" />
+    <link rel="stylesheet" href="styles/colors.css" />
+    <link rel="stylesheet" href="styles/utility.css" />
+    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="styles/colonnes.css" />
+    <link rel="stylesheet" href="styles/parti.css" />
+    <link rel="stylesheet" href="styles/loading.css" />
+  </head>
+
+  <body>
+    <header>
+      <div class="brand">
+        <h1>Polit’IF</h1>
+        <p class="h3">Le moteur de recherche de la politique française</p>
+      </div>
+
+      <nav>
+        <a href="index.html">Recherche</a>
+        <a href="profil.html#Q2124-Valéry Giscard d'Estaing">Giscard</a>
+        <a href="parti.html#Q23731823-La République en marche">LREM</a>
+      </nav>
+    </header>
+
+    <main class="sheet parti colonnes" data-key="couleur">
+      <div class="colonne-principale">
+        <h2 class="nom" data-key="nom"></h2>
+
+        <div data-key="description"></div>
+
+        <br />
+        <h3>Personnalités notables</h3>
+        <div data-key="membres-importants">
+          <ul id="membresList">
+
+          </ul>
+        </div>
+      </div>
+
+      <div class="colonne-secondaire">
+        <img data-key="image-logo" src="" alt="Logo du parti">
+
+        <dl class="biographie-attributs">
+          <div>
+            <dt>Présidé par</dt>
+            <dd data-key="president"></dd>
+          </div>
+          <div>
+            <dt>Fondé par</dt>
+            <dd data-key="fondateur"></dd>
+          </div>
+          <div data-contains-slot="date-creation">
+            <dt>Date de création</dt>
+            <dd data-key="date-creation"></dd>
+          </div>
+          <div data-contains-slot="date-dissolution">
+            <dt>Date de dissolution</dt>
+            <dd data-key="date-dissolution"></dd>
+          </div>
+
+        </dl>
+        <dl class="famille-attributs">
+          <div>
+            <dt>Nombre d'adhérents</dt>
+            <dd data-key="nombre-adherents">407 852<br />le 6 décembre 2018</dd>
+          </div>
+          <div>
+            <dt>Positionnement politique</dt>
+            <dd data-key="positionnement"></dd>
+          </div>
+          <div>
+            <dt>Idéologie(s) politique(s)</dt>
+            <dd data-key="ideologies">
+              <ul id="ideologiesList">
+
+              </ul>
+            </dd>
+          </div>
+          <div>
+            <dt>Site web</dt>
+            <dd><a data-key="site-web" href="https://en-marche.fr">en-marche.fr</a></dd>
+          </div>
+          <div>
+            <dt>Siège</dt>
+            <dd data-key="siege">63, rue Sainte Anne<br />75002 Paris</dd>
+          </div>
+        </dl>
+      </div>
+    </main>
+
+    <footer>
+      <div class="drapeau-francais">
+        <span class="sr-only">Drapeau français</span>
+      </div>
+    </footer>
+
+    <script src="scripts/Slots.js"></script>
+    <script src="scripts/fetchers.js"></script>
+    <script src="scripts/render.js"></script>
+    <script src="scripts/requetes.js"></script>
+    <script src="scripts/parti.js"></script>
+  </body>
+
+</html>
