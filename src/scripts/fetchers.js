@@ -159,7 +159,10 @@ async function fetchPartiPersonnalites(id) {
 async function fetchPartisOfProfil(id) {
   const url = wikidataUrl(requete_profil_partiPolitique(id))
   const reponse = await fetch(url).then(res => res.json())
-  const partis = reponse.results.bindings.map(x => x.NomParti.value)
+  const partis = reponse.results.bindings.map(parti => ({
+    id: extractIdFromWikidataUrl(parti.Parti?.value),
+    nom: parti.NomParti?.value,
+  }))
   return partis
 }
 

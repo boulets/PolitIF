@@ -145,10 +145,20 @@ function renderPositions(positions) {
   })
 }
 
+// Mettre la première lettre en majuscule, tout en faisant attention aux caractères accentués
+function ucfirst([first, ...rest]) {
+  return first.toLocaleUpperCase() + rest.join('')
+}
+
 function renderPartis(partis) {
-  if (partis && Array.isArray(partis) && partis.length > 0) {
-    Slots.setList('profil-liste-partis', partis)
-  } else {
-    Slots.hide('profil-liste-partis', partis)
-  }
+  // if (partis && Array.isArray(partis) && partis.length > 0) {
+  //   Slots.setList('profil-liste-partis', partis)
+  // } else {
+  //   Slots.hide('profil-liste-partis', partis)
+  // }
+  const liens = partis.map(({ id, nom }) => ({
+    href: `parti.html#${id}-${ucfirst(nom)}`,
+    text: ucfirst(nom),
+  }))
+  Slots.setListOfLinks('profil-liste-partis', liens)
 }
