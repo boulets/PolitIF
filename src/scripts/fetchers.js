@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/* global requete_profil_biographie, requete_profil_mandats, requete_profil_description */
+/* global requete_profil_biographie, requete_profil_mandats, requete_profil_description, requete_parti_description, requete_parti_general, requete_parti_ideologies, requete_parti_personnalites, requete_profil_partiPolitique, requete_profil_enfants, requete_profil_fratrie */
 
 //import {API_URL} from '../constants'
 const DBPEDIA_URL = 'https://dbpedia.org/sparql'
@@ -137,7 +137,6 @@ async function fetchPartiIdeologies(id) {
   const reponse = await fetch(url).then(res => res.json())
   const ideologies = reponse.results.bindings
     .map(ideologie => ({
-      _: console.log(ideologie),
       id: extractIdFromWikidataUrl(ideologie.Ideologie?.value),
       nom: ideologie.NomIdeologie?.value,
     }))
