@@ -1,3 +1,5 @@
+const EMPTY_PLACEHOLDER = '-'
+
 function Slots_getSlot(key) {
   const element = document.querySelector(`[data-key=${key}]`)
   if (element !== null) {
@@ -57,7 +59,7 @@ function Slots_setListOrMissing(key, values, type = 'ul') {
   } else {
     element.innerHTML = ''
     const listEl = document.createElement(type)
-    for (const x of values.slice(0, 5)) {
+    for (const x of values) {
       const li = document.createElement('li')
       li.innerText = x
       listEl.appendChild(li)
