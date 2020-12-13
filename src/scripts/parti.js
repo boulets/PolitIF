@@ -14,7 +14,9 @@ function update() {
   const id = p.length > 0 ? p[0] : ''
   const nameWhileLoading = p.length > 1 ? p[1] : ''
 
-  const slots = ['membres-importants', 'ideologies', 'description', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'site-web', 'siege']
+  console.log(nameWhileLoading)
+
+  const slots = ['description', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'site-web', 'siege']
   slots.forEach(key => slotSetLoading(key))
   slotSetAttribute('image-logo', 'src', '')
   renderParti({nom: nameWhileLoading})
@@ -101,7 +103,7 @@ function ucfirst([first, ...rest]) {
 
 function renderPartiIdeologies(ideologies) {
   //slotSetListOrMissing('ideologies', ideologies.map(ucfirst))
-  slotSetLoaded('ideologies')
+  //slotSetLoaded('ideologies')
   ideologiesList.innerHTML = ''
   ideologies.forEach(ideologie => {
     const {id, nom} = ideologie
@@ -114,7 +116,7 @@ function renderPartiIdeologies(ideologies) {
 
 function renderPartiPersonnalites(personnalites) {
   //slotSetListOrMissing('membres-importants', personnalites.map(ucfirst))
-  slotSetLoaded('membres-importants')
+  //slotSetLoaded('membres-importants')
   membresList.innerHTML = ''
   personnalites.forEach(personnalite => {
     const {id, nom} = personnalite
