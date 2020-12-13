@@ -129,9 +129,9 @@ function init() {
   search.addEventListener('input', () => {
     searchAutocomplete.innerHTML = ''
     submit1(search.value)
-    // submit5(search.value)
+    submit5(search.value)
     submitPartis1(search.value)
-    // submitPartis5(search.value)
+    submitPartis5(search.value)
   })
 }
 init()
