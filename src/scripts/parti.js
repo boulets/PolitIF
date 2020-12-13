@@ -14,8 +14,6 @@ function update() {
   const id = p.length > 0 ? p[0] : ''
   const nameWhileLoading = p.length > 1 ? p[1] : ''
 
-  console.log(nameWhileLoading)
-
   const slots = ['description', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'site-web', 'siege']
   slots.forEach(key => slotSetLoading(key))
   slotSetAttribute('image-logo', 'src', '')
