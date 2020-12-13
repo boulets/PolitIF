@@ -1,4 +1,4 @@
-/* global Slots dateToHtml fetchParti fetchPartiIdeologies */
+/* global Slots dateToHtml fetchParti fetchPartiIdeologies fetchPartiPersonnalites */
 
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
@@ -14,7 +14,8 @@ function update() {
   const slots = ['description', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'site-web', 'siege']
   slots.forEach(key => Slots.markLoading(key))
   Slots.setAttr('image-logo', 'src', '')
-  renderParti({nom: nameWhileLoading})
+  document.title = `Polit'IF – ${nameWhileLoading}`
+  Slots.setText('nom', nameWhileLoading)
 
   return Promise.all([
     fetchParti(id).then(renderParti),
@@ -45,7 +46,7 @@ function renderParti(parti) {
   }
   Slots.setText('description', parti.description)
   Slots.setText('president', parti.president)
-  Slots.setText('fondateur', parti.fondateur)
+  parti.fondateur ? Slots.setText('fondateur', parti.fondateur) : Slots.hide('fondateur')
   Slots.setText('positionnement', parti.positionnement)
   Slots.setText('siege', parti.siege)
 
