@@ -15,11 +15,38 @@ function update() {
   if (nameWhileLoading) {
     renderProfilPartial({ nom: nameWhileLoading })
   }
+
+  let profilComplet = {}
   Promise.all([
-    fetchProfil(id).then(renderProfilOrEmptySlots),
+    fetchProfil(id)
+      .then(async profil => {
+        profilComplet = { ...profilComplet, ...profil }
+        renderProfilOrHide(profilComplet)
+        const description = await fetchDescription(profil.nom)
+        profilComplet = { ...profilComplet, description }
+        description && Slots.setText('description', description)
+      }),
+    fetchEnfantsOfProfil(id).then(enfants => {
+      profilComplet = { ...profilComplet, enfants }
+      if (enfants) {
+        Slots.setText('enfants', enfants.join(', '))
+      } else {
+        Slots.hide('enfants')
+      }
+    }),
+    fetchFratrieOfProfil(id).then(fratrie => {
+      profilComplet = { ...profilComplet, fratrie }
+      if (fratrie) {
+        Slots.setText('fratrie', fratrie.join(', '))
+      } else {
+        Slots.hide('fratrie')
+      }
+    }),
     fetchPositions(id).then(renderPositions),
     fetchPartisOfProfil(id).then(renderPartis)
-  ])
+  ]).then(() => {
+    console.log(profilComplet)
+  })
 }
 
 function init() {
