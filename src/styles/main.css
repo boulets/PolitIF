@@ -86,19 +86,27 @@ dl {
   line-height: 1.2;
   display: flex;
   flex-direction: column;
-  gap: 0.4em;
   font-size: 0.9rem;
-}
-
-dl dt {
-  font-weight: bold;
-  flex: 0 0 50%;
+  gap: 0.4em;
 }
 
 dl div {
   display: flex;
   flex-direction: row;
   gap: 0.5ch;
+  cursor: initial;
+  transition: all 40ms ease-out;
+}
+
+dl div:hover {
+  background-color: hsla(190, 100%, 50%, 0.1);
+  box-shadow: 0 0 0 3px hsla(190, 100%, 50%, 0.1);
+  transition: all 20ms ease;
+}
+
+dl dt {
+  font-weight: bold;
+  flex: 0 0 50%;
 }
 
 dd ul {
