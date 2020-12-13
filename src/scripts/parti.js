@@ -1,5 +1,8 @@
 /* global Slots dateToHtml fetchParti fetchPartiIdeologies */
 
+const membresList = document.getElementById('membresList');
+const ideologiesList = document.getElementById('ideologiesList');
+
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
   return [first, rest.length > 0 ? rest.join(on) : null]
@@ -11,10 +14,10 @@ function update() {
   const id = p.length > 0 ? p[0] : ''
   const nameWhileLoading = p.length > 1 ? p[1] : ''
 
-  console.log({id, nameWhileLoading})
-
-  renderParti(null)
-  renderParti({ nom: nameWhileLoading })
+  const slots = ['description', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'site-web', 'siege']
+  slots.forEach(key => slotSetLoading(key))
+  slotSetAttribute('image-logo', 'src', '')
+  renderParti({nom: nameWhileLoading})
 
   return Promise.all([
     fetchParti(id).then(renderParti),
@@ -27,55 +30,50 @@ function init() {
   update()
   window.addEventListener('hashchange', () => update())
 }
+
 init()
 
 function renderParti(parti) {
-  if (parti === null) {
-    const slots = ['nom', 'description', 'membres-importants', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'ideologies', 'site-web', 'siege']
-    slots.forEach(key => Slots.markLoading(key))
-    Slots.setAttr('image-logo', 'src', '')
+  document.title = `Polit'IF – ${parti.nom}`
+  Slots.setText('nom', parti.nom)
+  if (parti.dateCreation) {
+    Slots.setHtml('date-creation', dateToHtml(parti.dateCreation))
   } else {
-    document.title = `Polit'IF – ${parti.nom}`
-    Slots.setText('nom', parti.nom)
-    if (parti.dateCreation) {
-      Slots.setHtml('date-creation', dateToHtml(parti.dateCreation))
-    } else {
-      Slots.hide('date-creation')
-    }
-    if (parti.dateDissolution) {
-      Slots.setHtml('date-dissolution', dateToHtml(parti.dateDissolution))
-    } else {
-      Slots.hide('date-dissolution')
-    }
-    Slots.setText('description', parti.description)
-    Slots.setText('president', parti.president)
-    Slots.setText('fondateur', parti.fondateur)
-    Slots.setText('positionnement', parti.positionnement)
-    Slots.setText('siege', parti.siege)
+    Slots.hide('date-creation')
+  }
+  if (parti.dateDissolution) {
+    Slots.setHtml('date-dissolution', dateToHtml(parti.dateDissolution))
+  } else {
+    Slots.hide('date-dissolution')
+  }
+  Slots.setText('description', parti.description)
+  Slots.setText('president', parti.president)
+  Slots.setText('fondateur', parti.fondateur)
+  Slots.setText('positionnement', parti.positionnement)
+  Slots.setText('siege', parti.siege)
 
-    const nombreAdherentsStr = nombreAdherentsToHtml(parti.nombreAdherents)
-    if (nombreAdherentsStr) {
-      Slots.setHtml('nombre-adherents', nombreAdherentsStr)
-    } else {
-      Slots.hide('nombre-adherents')
-    }
+  const nombreAdherentsStr = nombreAdherentsToHtml(parti.nombreAdherents)
+  if (nombreAdherentsStr) {
+    Slots.setHtml('nombre-adherents', nombreAdherentsStr)
+  } else {
+    Slots.hide('nombre-adherents')
+  }
 
-    if (parti.logo) {
-      Slots.setAttr('image-logo', 'src', parti.logo)
-    } else {
-      Slots.setAttr('image-logo', 'src', '')
-    }
+  if (parti.logo) {
+    Slots.setAttr('image-logo', 'src', parti.logo)
+  } else {
+    Slots.setAttr('image-logo', 'src', '')
+  }
 
-    if (parti.couleur) {
-      Slots.get('couleur').style.setProperty('--couleur-parti', '#' + parti.couleur)
-    }
+  if (parti.couleur) {
+    Slots.get('couleur').style.setProperty('--couleur-parti', '#' + parti.couleur)
+  }
 
-    if (parti.siteWeb) {
-      Slots.setText('site-web', parti.siteWeb.replace(/^https?:\/\/([^/]+).*$/, '$1'))
-      Slots.setAttr('site-web', 'href', parti.siteWeb)
-    } else {
-      Slots.hide('site-web')
-    }
+  if (parti.siteWeb) {
+    Slots.setText('site-web', parti.siteWeb.replace(/^https?:\/\/([^/]+).*$/, '$1'))
+    Slots.setAttr('site-web', 'href', parti.siteWeb)
+  } else {
+    Slots.hide('site-web')
   }
 }
 
@@ -85,7 +83,7 @@ function formatNumber(x) {
 
 function nombreAdherentsToHtml(nombreAdherents) {
   if (nombreAdherents != null) {
-    const { compte, date } = nombreAdherents
+    const {compte, date} = nombreAdherents
     if (compte != null) {
       if (date != null) {
         return `${formatNumber(+compte)} (${dateToHtml(date)})`
@@ -102,9 +100,27 @@ function ucfirst([first, ...rest]) {
 }
 
 function renderPartiIdeologies(ideologies) {
-  Slots.setList('ideologies', ideologies.map(ucfirst))
+  //slotSetListOrMissing('ideologies', ideologies.map(ucfirst))
+  //slotSetLoaded('ideologies')
+  ideologiesList.innerHTML = ''
+  ideologies.forEach(ideologie => {
+    const {id, nom} = ideologie
+    const lien = "ideologie.html#" + id + "-" + ucfirst(nom)
+    const li = document.createElement('li')
+    li.innerHTML = `<a href="${lien}">${ucfirst(nom)}</a>`
+    ideologiesList.appendChild(li)
+  })
 }
 
 function renderPartiPersonnalites(personnalites) {
-  Slots.setList('membres-importants', personnalites.map(ucfirst))
+  //slotSetListOrMissing('membres-importants', personnalites.map(ucfirst))
+  //slotSetLoaded('membres-importants')
+  membresList.innerHTML = ''
+  personnalites.forEach(personnalite => {
+    const {id, nom} = personnalite
+    const lien = "profil.html#" + id + "-" + ucfirst(nom)
+    const li = document.createElement('li')
+    li.innerHTML = `<a href="${lien}">${ucfirst(nom)}</a>`
+    membresList.appendChild(li)
+  })
 }
