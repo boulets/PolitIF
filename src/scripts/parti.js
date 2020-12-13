@@ -1,7 +1,7 @@
 /* global Slots dateToHtml fetchParti fetchPartiIdeologies */
 
-const membresList = document.getElementById('membresList');
-const ideologiesList = document.getElementById('ideologiesList');
+const membresList = document.getElementById('membresList')
+const ideologiesList = document.getElementById('ideologiesList')
 
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
@@ -15,8 +15,8 @@ function update() {
   const nameWhileLoading = p.length > 1 ? p[1] : ''
 
   const slots = ['description', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'site-web', 'siege']
-  slots.forEach(key => slotSetLoading(key))
-  slotSetAttribute('image-logo', 'src', '')
+  slots.forEach(key => Slots.markLoading(key))
+  Slots.setAttr('image-logo', 'src', '')
   renderParti({nom: nameWhileLoading})
 
   return Promise.all([
@@ -105,7 +105,7 @@ function renderPartiIdeologies(ideologies) {
   ideologiesList.innerHTML = ''
   ideologies.forEach(ideologie => {
     const {id, nom} = ideologie
-    const lien = "ideologie.html#" + id + "-" + ucfirst(nom)
+    const lien = 'ideologie.html#' + id + '-' + ucfirst(nom)
     const li = document.createElement('li')
     li.innerHTML = `<a href="${lien}">${ucfirst(nom)}</a>`
     ideologiesList.appendChild(li)
@@ -118,7 +118,7 @@ function renderPartiPersonnalites(personnalites) {
   membresList.innerHTML = ''
   personnalites.forEach(personnalite => {
     const {id, nom} = personnalite
-    const lien = "profil.html#" + id + "-" + ucfirst(nom)
+    const lien = 'profil.html#' + id + '-' + ucfirst(nom)
     const li = document.createElement('li')
     li.innerHTML = `<a href="${lien}">${ucfirst(nom)}</a>`
     membresList.appendChild(li)
