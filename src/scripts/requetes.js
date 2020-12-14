@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 
+const classesIdeologies = ['wd:Q12909644', 'wd:Q179805'].join(' ')
+
 function filterRechercheParTexte(recherche, prop) {
   const rech = recherche.toLocaleLowerCase().replace(/"/g, ' ')
   return `filter(contains(lcase(${prop}), "${rech}")).`
@@ -333,11 +335,8 @@ function requete_ideologie_description(idIdeologie) {
 function requete_ideologies_parentes(idIdeologie) {
   return `SELECT DISTINCT ?superClass ?superClassLabel WHERE {
     BIND(wd:${idIdeologie} AS ?ideology).
-
     ?ideology wdt:P279 ?superClass.
-    { ?superClass wdt:P31 wd:Q12909644. }
-    UNION
-    { ?superClass wdt:P31 wd:Q179805. }
+    ?superClass wdt:P31 ?c. VALUES ?c { ${classesIdeologies} }
     ?superClass rdfs:label ?superClassLabel.
     FILTER(LANG(?superClassLabel)='fr').
   }`
@@ -346,11 +345,8 @@ function requete_ideologies_parentes(idIdeologie) {
 function requete_ideologies_derivees(idIdeologie) {
   return `SELECT DISTINCT ?subClass ?subClassLabel WHERE {
     BIND(wd:${idIdeologie} AS ?ideology).
-
     ?subClass wdt:P279 ?ideology.
-    { ?subClass wdt:P31 wd:Q12909644. }
-    UNION
-    { ?subClass wdt:P31 wd:Q179805. }
+    ?subClass wdt:P31 ?c. VALUES ?c { ${classesIdeologies} }
     ?subClass rdfs:label ?subClassLabel.
     FILTER(LANG(?subClassLabel)='fr').
   }`
