@@ -1,3 +1,5 @@
+const EMPTY_PLACEHOLDER = '?'
+
 function Slots_getSlot(key) {
   const element = document.querySelector(`[data-key=${key}]`)
   if (element !== null) {
