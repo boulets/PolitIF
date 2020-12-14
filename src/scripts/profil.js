@@ -133,11 +133,6 @@ function renderPositions(positions) {
   })
 }
 
-// Mettre la première lettre en majuscule, tout en faisant attention aux caractères accentués
-function ucfirst([first, ...rest]) {
-  return first.toLocaleUpperCase() + rest.join('')
-}
-
 function renderPartis(partis) {
   if (partis && Array.isArray(partis) && partis.length > 0) {
     const liens = partis.map(({ id, nom }) => ({
