@@ -75,7 +75,8 @@ async function fetchIdeologie(id) {
   const inCache = PolitifCache.get(cacheKey)
   if (inCache) { return inCache }
 
-  const url = wikidataUrl(requete_ideologie)
+  const req = requete_ideologie(id)
+  const url = wikidataUrl()
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
 
