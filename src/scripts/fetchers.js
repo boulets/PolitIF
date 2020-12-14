@@ -6,7 +6,7 @@ const DBPEDIA_URL = 'https://dbpedia.org/sparql'
 const WIKIDATA_API = 'https://query.wikidata.org/sparql'
 
 /** Durée de vie en cache (en secondes) */
-let CACHE_TTL = 5 * 60
+let CACHE_TTL = 0 //5 * 60
 
 const checkDevToolsOpen = document.createElement('ignorez_ça')
 let ignoreCheck = false
@@ -264,4 +264,42 @@ async function fetchFratrieOfProfil(id) {
 
 function extractIdFromWikidataUrl(url) {
   return url.match(/entity\/(Q\d+)$/)?.[1]
+}
+
+async function fetchIdeologie(id) {
+  const cacheKey = `ideologie/${id}`
+  const inCache = cached(cacheKey)
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_ideologie_images(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
+
+  const res = {
+    nom: donnees?.Nom?.value,
+    image: donnees?.image?.value,
+    flag: donnees?.flagimage?.value,
+  }
+  console.log(res)
+
+  storeInCache(cacheKey, res)
+  return res
+}
+
+async function fetchIdeologieDescription(id) {
+  const cacheKey = `ideologie-description/${id}`
+  const inCache = cached(cacheKey)
+  if (inCache) { return inCache }
+
+  const req = requete_ideologie_description(id)
+  const url = DBPEDIA_URL + '?format=json&query=' + encodeURIComponent(req)
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
+
+  const res = {
+    description: donnees?.Description?.value ?? 'Pas de description',
+  }
+
+  storeInCache(cacheKey, res)
+  return res
 }

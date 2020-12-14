@@ -289,9 +289,12 @@ function requete_profil_enfants(idProfil) {
   }`
 }
 
-function requete_ideology(idIdeology) {
-  return `SELECT ?ideology ?ideologyDescription ?ideologyLabel ?image ?flagimage WHERE {
-    BIND(wd:${idIdeology} AS ?ideology).
+function requete_ideologie_images(idIdeologie) {
+  return `SELECT ?Nom ?image ?flagimage WHERE {
+    BIND(wd:${idIdeologie} AS ?ideology).
+
+    ?ideology rdfs:label ?Nom
+    FILTER(LANG(?Nom)='fr').
 
     # Opt : image
     OPTIONAL {
@@ -302,17 +305,40 @@ function requete_ideology(idIdeology) {
       ?ideology wdt:P41 ?flagimage.
     }
 
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
   }`
 }
 
-function requete_superclass(idIdeology) {
-  return `SELECT ?ideology ?subclass ?subclassLabel ?subclassDescription WHERE {
-    BIND(wd:${idIdeology} AS ?ideology).
+function requete_ideologie_description(idIdeologie) {
+  return `SELECT ?Description WHERE {
+    ?movement rdf:type dbo:Organisation.
+    ?movement dbo:ideology ?ideology.
+    ?ideology owl:sameAs ?wikidata.
+    FILTER(str(?wikidata)='http://www.wikidata.org/entity/${idIdeologie}').
+    OPTIONAL {
+      ?ideology dbo:abstract ?Description .
+      FILTER(LANG(?Description)='fr') .
+    }
+  }
+  LIMIT 1`
+}
 
-    ?ideology wdt:P279 ?subclass.
+function requete_ideologies_parentes(idIdeologie) {
+  return `SELECT ?superClass ?superClassLabel WHERE {
+    BIND(wd:${idIdeologie} AS ?ideology).
 
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+    ?ideology wdt:P279 ?superClass.
+    ?superClass rdfs:label ?superClassLabel.
+    FILTER(LANG(?superClassLabel)='fr').
+  }`
+}
+
+function requete_ideologies_derivees(idIdeologie) {
+  return `SELECT ?subClass ?subClassLabel WHERE {
+    BIND(wd:${idIdeologie} AS ?ideology).
+
+    ?subClass wdt:P279 ?ideology.
+    ?subClass rdfs:label ?subClassLabel.
+    FILTER(LANG(?subClassLabel)='fr').
   }`
 }
 
