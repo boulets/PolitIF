@@ -199,18 +199,16 @@ function requete_parti_general(idParti) {
     }
 
     # Logo
-    OPTIONAL {
-      ?parti p:P154 ?LogoStatement.
-      ?LogoStatement ps:P154 ?ImageLogo.
-      ?LogoStatement pq:P580 ?LogoStartTime.
-    }
+    OPTIONAL { ?parti p:P154 [ ps:P154 ?ImageLogo; pq:P580 ?LogoStartTime ]. }
+    OPTIONAL { ?parti p:P154 [ ps:P154 ?ImageLogo ]. }
+    OPTIONAL { ?parti p:P18 [ ps:P18 ?ImageLogo ]. }
 
     # Site Web
     OPTIONAL { ?parti wdt:P856 ?SiteWeb. }
 
     FILTER(LANG(?NomParti)='fr').
   }
-  ORDER BY DESC (?PresidentStartTime) DESC(?DateNombreAdherents) DESC(?SiegeStartTime) DESC(?LogoStartTime)
+  ORDER BY DESC(?PresidentStartTime) DESC(?DateNombreAdherents) DESC(?SiegeStartTime) DESC(?LogoStartTime) (!bound(?LogoStartTime))
   LIMIT 1
   `
 }
@@ -244,7 +242,8 @@ function requete_parti_personnalites(idPArti) {
       SELECT ?politicien ?NomPoliticien (COUNT(?mandat) AS ?nombreMandats) WHERE {
         BIND(wd:${idPArti} as ?parti).
         ?politicien wdt:P102 ?parti.
-        ?politicien wdt:P1559 ?NomPoliticien.
+        ?politicien rdfs:label ?NomPoliticien.
+        FILTER(LANG(?NomPoliticien) = 'fr').
         OPTIONAL{?politicien wdt:P39 ?mandat.}
       }
       GROUP BY ?politicien ?NomPoliticien
@@ -254,7 +253,8 @@ function requete_parti_personnalites(idPArti) {
       SELECT ?politicien ?NomPoliticien (COUNT(?candidature) AS ?nombreCandidatures) WHERE {
         BIND(wd:${idPArti} as ?parti).
         ?politicien wdt:P102 ?parti.
-        ?politicien wdt:P1559 ?NomPoliticien.
+        ?politicien rdfs:label ?NomPoliticien.
+        FILTER(LANG(?NomPoliticien) = 'fr').
         OPTIONAL{?politicien wdt:P3602 ?candidature.}
       }
       GROUP BY ?politicien ?NomPoliticien
