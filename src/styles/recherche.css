@@ -106,7 +106,7 @@
   display: grid;
   grid-template-columns: 4em 1fr;
   grid-template-rows: 2em 2em;
-  gap: 0px 0px;
+  gap: 0px 0.3em;
   grid-template-areas: "icon title" "icon subtitle";
   box-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.1);
   background-color: white;
@@ -122,10 +122,16 @@
 
 .home-card__icon {
   grid-area: icon;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: top center;
   height: 4em;
   width: 4em;
-  margin-right: 0.5em;
+}
+.home-card__icon[src$="svg"],
+.home-card__icon[src$="png"] {
+  object-fit: contain;
+  object-position: center;
+  padding: 8px;
 }
 
 .home-card__title,
