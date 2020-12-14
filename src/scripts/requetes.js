@@ -244,9 +244,9 @@ function requete_parti_personnalites(idPArti) {
       SELECT ?politicien ?NomPoliticien (COUNT(?mandat) AS ?nombreMandats) WHERE {
         BIND(wd:${idPArti} as ?parti).
         ?politicien wdt:P102 ?parti.
-        ?politicien rdfs:label ?NomPoliticien.
+        ?politicien wdt:P1559 ?NomPoliticien.
         FILTER(LANG(?NomPoliticien) = 'fr').
-        OPTIONAL{?politicien wdt:P39 ?mandat.}
+        OPTIONAL { ?politicien wdt:P39 ?mandat. }
       }
       GROUP BY ?politicien ?NomPoliticien
       ORDER BY DESC(?nombreMandats)
@@ -255,9 +255,9 @@ function requete_parti_personnalites(idPArti) {
       SELECT ?politicien ?NomPoliticien (COUNT(?candidature) AS ?nombreCandidatures) WHERE {
         BIND(wd:${idPArti} as ?parti).
         ?politicien wdt:P102 ?parti.
-        ?politicien rdfs:label ?NomPoliticien.
+        ?politicien wdt:P1559 ?NomPoliticien.
         FILTER(LANG(?NomPoliticien) = 'fr').
-        OPTIONAL{?politicien wdt:P3602 ?candidature.}
+        OPTIONAL { ?politicien wdt:P3602 ?candidature. }
       }
       GROUP BY ?politicien ?NomPoliticien
       ORDER BY DESC(?nombreCandidatures)
