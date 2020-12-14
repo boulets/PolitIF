@@ -80,10 +80,28 @@
   border-bottom-right-radius: 2px;
 }
 
-#searchResultsContainer ul {
+.recherche-categorie ul {
   list-style-type: none;
   margin: 0px;
   padding: 0px;
+}
+
+.recherche-categorie ul li {
+  position: relative;
+}
+.recherche-categorie ul li::before {
+  display: block;
+  content: "";
+  position: absolute;
+  width: 4px;
+  top: 20%;
+  height: 60%;
+  left: -10px;
+  border-radius: 4px;
+  background-color: transparent;
+}
+.recherche-categorie ul li:focus-within::before {
+  background-color: black;
 }
 
 #searchResultsContainer[n-profils="0"][n-partis="0"][n-ideologies="0"] {
