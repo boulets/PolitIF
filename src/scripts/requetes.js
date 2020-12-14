@@ -317,7 +317,7 @@ function requete_superclass(idIdeology) {
 }
 
 function requete_profil_partiPolitique(idProfil) {
-  return `SELECT ?politician ?NomPoliticien  ?Parti ?NomParti WHERE {
+  return `SELECT ?politician ?NomPoliticien ?Parti ?NomParti WHERE {
     BIND(wd:${idProfil} AS ?politician).
     # Nom prénom
     ?politician rdfs:label ?NomPoliticien.

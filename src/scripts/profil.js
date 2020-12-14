@@ -22,9 +22,13 @@ function update() {
       .then(async profil => {
         profilComplet = { ...profilComplet, ...profil }
         renderProfilOrHide(profilComplet)
-        const description = await fetchDescription(profil.nom)
-        profilComplet = { ...profilComplet, description }
-        description && Slots.setText('description', description)
+        try {
+          const description = await fetchDescription(profil.nom)
+          profilComplet = { ...profilComplet, description }
+          description ? Slots.setText('description', description) : Slots.hide('description')
+        } catch (error) {
+          Slots.hide('description')
+        }
       }),
     fetchEnfantsOfProfil(id).then(enfants => {
       profilComplet = { ...profilComplet, enfants }
@@ -151,14 +155,13 @@ function ucfirst([first, ...rest]) {
 }
 
 function renderPartis(partis) {
-  // if (partis && Array.isArray(partis) && partis.length > 0) {
-  //   Slots.setList('profil-liste-partis', partis)
-  // } else {
-  //   Slots.hide('profil-liste-partis', partis)
-  // }
-  const liens = partis.map(({ id, nom }) => ({
-    href: `parti.html#${id}-${ucfirst(nom)}`,
-    text: ucfirst(nom),
-  }))
-  Slots.setListOfLinks('profil-liste-partis', liens)
+  if (partis && Array.isArray(partis) && partis.length > 0) {
+    const liens = partis.map(({ id, nom }) => ({
+      href: `parti.html#${id}-${nom}`,
+      text: nom,
+    }))
+    Slots.setListOfLinks('profil-liste-partis', liens)
+  } else {
+    Slots.hide('profil-liste-partis')
+  }
 }
