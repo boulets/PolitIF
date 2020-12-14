@@ -60,7 +60,7 @@ function renderParti(parti) {
   parti.description ? Slots.setText('description', parti.description) : Slots.hide('description')
   parti.president ? Slots.setText('president', parti.president) : Slots.hide('president')
   parti.fondateur ? Slots.setText('fondateur', parti.fondateur) : Slots.hide('fondateur')
-  parti.positionnement ? Slots.setText('positionnement', parti.positionnement) : Slots.hide('positionnement')
+  parti.positionnement ? Slots.setText('positionnement', ucfirst(parti.positionnement)) : Slots.hide('positionnement')
   if (parti.siege) {
     const adr = adresseToText(parti.siege)
     const href = 'https://www.openstreetmap.org/search?query=' + encodeURIComponent(adr).replace(/%20/g, '+')
