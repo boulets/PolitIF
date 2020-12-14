@@ -1,28 +1,30 @@
-/* global requete_recherche_partis requete_recherche_politicien wikidataUrl */
+/* global Slots requete_recherche_partis requete_recherche_politicien wikidataUrl extractIdFromWikidataUrl */
+
+const tousLesResultats = {}
 
 let meilleurResultat = null
 
 const searchAutocomplete = document.getElementById('search-autocomplete')
 const searchResultsContainer = document.getElementById('searchResultsContainer')
-const searchResultsPersonnalites = document.getElementById('searchResultsPersonnalites')
-const searchResultsPartis = document.getElementById('searchResultsPartis')
 const searchButton = document.getElementById('searchButton')
 const search = document.getElementById('search')
 
-function submitSearchPersonnalites(q, n = 1) {
+function creerFonctionRecherche(type, fonctionRequete, mapper) {
+  return (q, n = 1) => submitSearch(q, n, type, fonctionRequete, mapper)
+}
+
+function submitSearch(q, n, type, fonctionRequete, mapper) {
   if (q === '') {
-    return rechercheAfficherResultatsPersonnalites([])
+    return afficherResultats(type, [])
   }
-  const url = wikidataUrl(requete_recherche_politicien(q, n))
+  const url = wikidataUrl(fonctionRequete(q, n))
   fetch(url).then(async r => {
     if (r.ok) {
       if (search.value.includes(q)) {
         const res = await r.json()
-        const resultats = res.results.bindings.map((x) => ({
-          nom: x.NomPoliticien.value,
-          id: x.politician.value.match(/\/entity\/(.+)$/)?.[1]
-        }))
-        rechercheAfficherResultatsPersonnalites(resultats)
+        const resultats = res.results.bindings.map(mapper)
+        tousLesResultats[type] = resultats
+        afficherResultats(type, resultats)
       }
     } else {
       console.error(await r.text())
@@ -30,70 +32,24 @@ function submitSearchPersonnalites(q, n = 1) {
   })
 }
 
-function submitSearchPartis(q, n = 1) {
-  if (q === '') {
-    return rechercheAfficherResultatsPartis([])
-  }
-  const url = wikidataUrl(requete_recherche_partis(q, n))
-  fetch(url).then(async r => {
-    if (r.ok) {
-      if (search.value.includes(q)) {
-        const res = await r.json()
-        const resultats = res.results.bindings.map((x) => ({
-          nom: x.NomParti.value,
-          id: x.parti.value.match(/\/entity\/(.+)$/)?.[1]
-        }))
-        rechercheAfficherResultatsPartis(resultats)
-      }
-    } else {
-      console.error(await r.text())
-    }
-  })
-}
-
-function makeAnchorListItem(text, href) {
-  const li = document.createElement('li')
-  const a = document.createElement('a')
-  a.innerText = text
-  a.href = href
-  li.appendChild(a)
-  return li
-}
-
-function rechercheAfficherResultatsPersonnalites(resultats) {
-  searchResultsPersonnalites.innerHTML = ''
-  searchResultsContainer.setAttribute('n-personnalites', resultats.length)
-
-  for (const {nom, id} of resultats) {
-    searchResultsPersonnalites.appendChild(makeAnchorListItem(nom, `profil.html#${id}-${nom}`))
-  }
+function afficherResultats(type, resultats) {
+  searchResultsContainer.setAttribute(`n-${type}s`, resultats.length)
 
   if (resultats.length > 0) {
+    Slots.setListOfLinks(`resultats-${type}s`, resultats.map(({ nom, id }) => ({
+      text: nom,
+      href: `${type}.html#${id}-${nom}`,
+    })))
+
     const premier = resultats[0]
     if (search.value.length > 0) {
       searchAutocomplete.innerHTML = search.value + ' — ' + premier.nom
-      meilleurResultat = { ...premier, type: 'profil' }
+      meilleurResultat = { ...premier, type }
     }
   } else {
     searchAutocomplete.innerHTML = ''
-  }
-}
-
-function rechercheAfficherResultatsPartis(resultats) {
-  searchResultsPartis.innerHTML = ''
-  searchResultsContainer.setAttribute('n-partis', resultats.length)
-  for (const {nom, id} of resultats) {
-    searchResultsPartis.appendChild(makeAnchorListItem(nom, `parti.html#${id}-${nom}`))
-  }
-
-  if (resultats.length > 0) {
-    const premier = resultats[0]
-    if (search.value.length > 0) {
-      searchAutocomplete.innerHTML = search.value + ' — ' + premier.nom
-      meilleurResultat = { ...premier, type: 'parti' }
-    }
-  } else {
-    searchAutocomplete.innerHTML = ''
+    Slots.setText(`resultats-${type}s`, '')
+    Slots.hide(`resultats-${type}s`)
   }
 }
 
@@ -103,33 +59,39 @@ function goToFirstResult() {
   }
 }
 
-function update() {
-  // renderRecherche('')
-}
+const chercherProfil = creerFonctionRecherche('profil', requete_recherche_politicien, (x) => ({
+  nom: x.NomPoliticien.value,
+  id: extractIdFromWikidataUrl(x.politician.value)
+}))
+
+const chercherParti = creerFonctionRecherche('parti', requete_recherche_partis, (x) => ({
+  nom: x.NomParti.value,
+  id: extractIdFromWikidataUrl(x.parti.value)
+}))
 
 function init() {
-  update()
-  window.addEventListener('hashchange', () => update())
+  Slots.hide('resultats-profils')
+  Slots.hide('resultats-partis')
 
-  const submit1 = throttle((x) => submitSearchPersonnalites(x, 1), 500, { leading: false, trailing: true })
-  const submit5 = throttle((x) => submitSearchPersonnalites(x, 5), 1500, { leading: false, trailing: true })
+  const submitProfil1 = throttle((x) => chercherProfil(x, 1), 500, { leading: false, trailing: true })
+  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 1500, { leading: false, trailing: true })
+  const submitPartis1 = throttle((x) => chercherParti(x, 1), 500, { leading: false, trailing: true })
+  const submitPartis5 = throttle((x) => chercherParti(x, 5), 1500, { leading: false, trailing: true })
 
-  const submitPartis1 = throttle((x) => submitSearchPartis(x, 1), 500, { leading: false, trailing: true })
-  const submitPartis5 = throttle((x) => submitSearchPartis(x, 5), 1500, { leading: false, trailing: true })
+  searchButton.addEventListener('click', goToFirstResult)
 
-  searchButton.addEventListener('click', () => {
-    goToFirstResult()
-  })
   search.addEventListener('keypress', (e) => {
-    searchAutocomplete.innerHTML = ''
     if (e.key === 'Enter') {
       goToFirstResult()
+    } else {
+      searchAutocomplete.innerHTML = ''
     }
   })
+
   search.addEventListener('input', () => {
     searchAutocomplete.innerHTML = ''
-    submit1(search.value)
-    submit5(search.value)
+    submitProfil1(search.value)
+    submitProfil5(search.value)
     submitPartis1(search.value)
     submitPartis5(search.value)
   })
@@ -172,12 +134,4 @@ function throttle(func, wait, options) {
     }
     return result
   }
-}
-
-function renderRecherche(search) {
-  const entreeRecherche = document.getElementById('search')
-  if (entreeRecherche === null) {
-    throw new Error('Affichage de la page Recherche impossible: éléments #search manquant')
-  }
-  entreeRecherche.value = search
 }
