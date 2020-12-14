@@ -12,14 +12,14 @@
     <link rel="stylesheet" href="styles/utility.css" />
     <link rel="stylesheet" href="styles/main.css" />
     <link rel="stylesheet" href="styles/colonnes.css" />
-    <link rel="stylesheet" href="styles/profil.css" />
-    <link rel="stylesheet" href="styles/recherche.css" />
+    <link rel="stylesheet" href="styles/parti.css" />
+    <link rel="stylesheet" href="styles/loading.css" />
   </head>
 
   <body>
     <header>
       <div class="brand">
-        <h1><a href="index.html">Polit’IF</a></h1>
+        <h1>Polit’IF</h1>
         <p class="h3">Le moteur de recherche de la politique française</p>
       </div>
 
@@ -30,30 +30,26 @@
       </nav>
     </header>
 
-    <main class="recherche">
-      <div id="search-container">
-        <label for="search">Rechercher une personnalité, un parti, une idéologie politique.</label>
-        <div id="search-input-container">
-          <div id="search-autocomplete"></div>
-          <input pattern=".+" id="search" type="text" inputmode="search" placeholder="Valéry Giscard d'Estaing" />
-          <button type="submit" id="searchButton">
-            <div class="sr-only">
-              Accéder au meilleur résultat de recherche
-            </div>
-            <span aria-hidden="true">→</span>
-          </button>
+    <main class="sheet ideologie colonnes" data-key="couleur">
+      <div class="colonne-principale">
+        <h2 class="nom" data-key="nom"></h2>
+
+        <div data-key="description"></div>
+
+        <br />
+        <div data-contains-slot="ideologies-parentes">
+          <h3>Idéologies parentes</h3>
+          <div data-key="ideologies-parentes"></div>
         </div>
 
-        <div id="searchResultsContainer" n-personnalites="0" n-partis="0" n-ideologies="0">
-          <div id="resultats-personnalites">
-            <h3>Personnalités politiques</h3>
-            <ul id="searchResultsPersonnalites"></ul>
-          </div>
-          <div id="resultats-partis">
-            <h3>Partis</h3>
-            <ul id="searchResultsPartis"></ul>
-          </div>
+        <div data-contains-slot="ideologies-derivees">
+          <h3>Idéologies dérivées</h3>
+          <div data-key="ideologies-derivees"></div>
         </div>
+      </div>
+
+      <div class="colonne-secondaire">
+        <img data-key="image-logo" src="" alt="">
       </div>
     </main>
 
@@ -67,7 +63,7 @@
     <script src="scripts/fetchers.js"></script>
     <script src="scripts/render.js"></script>
     <script src="scripts/requetes.js"></script>
-    <script src="scripts/recherche.js"></script>
+    <script src="scripts/ideologie.js"></script>
   </body>
 
 </html>

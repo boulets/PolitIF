@@ -90,3 +90,14 @@
 #searchResultsContainer[n-partis="0"] #resultats-partis {
   display: none;
 }
+
+#search-container label {
+  display: block;
+  margin-bottom: 2em;
+}
+
+@media (max-width: 600px) {
+  #search-container {
+    width: 90%;
+  }
+}

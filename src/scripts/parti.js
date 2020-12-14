@@ -1,7 +1,22 @@
-/* global Slots dateToHtml fetchParti fetchPartiIdeologies */
+/* global Slots dateToHtml fetchParti fetchPartiIdeologies fetchPartiPersonnalites */
 
-const membresList = document.getElementById('membresList')
-const ideologiesList = document.getElementById('ideologiesList')
+function escapeHtml(text) {
+  const div = document.createElement('div')
+  div.innerText = text
+  return div.innerHTML
+}
+
+function adresseToText({ numero, rue, ville, codePostal }) {
+  if (numero && rue && ville && codePostal) {
+    return `${numero} ${rue}, ${ville} ${codePostal}`
+  } else if (numero && rue && ville) {
+    return `${numero} ${rue}, ${ville}`
+  } else if (rue && ville) {
+    return `${rue}, ${ville}`
+  } else if (ville) {
+    return ville
+  }
+}
 
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
@@ -17,7 +32,14 @@ function update() {
   const slots = ['description', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'site-web', 'siege']
   slots.forEach(key => Slots.markLoading(key))
   Slots.setAttr('image-logo', 'src', '')
-  renderParti({nom: nameWhileLoading})
+
+  if (nameWhileLoading) {
+    document.title = `Polit'IF – ${nameWhileLoading}`
+    Slots.setText('nom', nameWhileLoading)
+  } else {
+    document.title = 'Polit\'IF'
+    Slots.markLoading('nom')
+  }
 
   return Promise.all([
     fetchParti(id).then(renderParti),
@@ -46,11 +68,25 @@ function renderParti(parti) {
   } else {
     Slots.hide('date-dissolution')
   }
-  Slots.setText('description', parti.description)
-  Slots.setText('president', parti.president)
-  Slots.setText('fondateur', parti.fondateur)
-  Slots.setText('positionnement', parti.positionnement)
-  Slots.setText('siege', parti.siege)
+  parti.description ? Slots.setText('description', parti.description) : Slots.hide('description')
+  parti.president ? Slots.setText('president', parti.president) : Slots.hide('president')
+  parti.fondateur ? Slots.setText('fondateur', parti.fondateur) : Slots.hide('fondateur')
+  parti.positionnement ? Slots.setText('positionnement', parti.positionnement) : Slots.hide('positionnement')
+  if (parti.siege) {
+    const adr = adresseToText(parti.siege)
+    const href = 'https://www.openstreetmap.org/search?query=' + encodeURIComponent(adr).replace(/%20/g, '+')
+    if (adr) {
+      const html = parti.siege.date
+        ? `${escapeHtml(adr)} (depuis le ${dateToHtml(parti.siege.date)})`
+        : `${escapeHtml(adr)}`
+      Slots.setHtml('siege', `<a target="_blank" rel="noreferrer noopener" title="Ouvrir dans OpenStreetMap" href="${href}">${html}</a>`)
+    } else {
+      Slots.hide('siege')
+    }
+  } else {
+    Slots.hide('siege')
+  }
+
 
   const nombreAdherentsStr = nombreAdherentsToHtml(parti.nombreAdherents)
   if (nombreAdherentsStr) {
@@ -100,27 +136,17 @@ function ucfirst([first, ...rest]) {
 }
 
 function renderPartiIdeologies(ideologies) {
-  //slotSetListOrMissing('ideologies', ideologies.map(ucfirst))
-  //slotSetLoaded('ideologies')
-  ideologiesList.innerHTML = ''
-  ideologies.forEach(ideologie => {
-    const {id, nom} = ideologie
-    const lien = 'ideologie.html#' + id + '-' + ucfirst(nom)
-    const li = document.createElement('li')
-    li.innerHTML = `<a href="${lien}">${ucfirst(nom)}</a>`
-    ideologiesList.appendChild(li)
-  })
+  const liens = ideologies.map(({ id, nom }) => ({
+    href: `ideologie.html#${id}-${ucfirst(nom)}`,
+    text: ucfirst(nom),
+  }))
+  Slots.setListOfLinks('ideologies', liens)
 }
 
 function renderPartiPersonnalites(personnalites) {
-  //slotSetListOrMissing('membres-importants', personnalites.map(ucfirst))
-  //slotSetLoaded('membres-importants')
-  membresList.innerHTML = ''
-  personnalites.forEach(personnalite => {
-    const {id, nom} = personnalite
-    const lien = 'profil.html#' + id + '-' + ucfirst(nom)
-    const li = document.createElement('li')
-    li.innerHTML = `<a href="${lien}">${ucfirst(nom)}</a>`
-    membresList.appendChild(li)
-  })
+  const liens = personnalites.map(({ id, nom }) => ({
+    href: `profil.html#${id}-${ucfirst(nom)}`,
+    text: ucfirst(nom),
+  }))
+  Slots.setListOfLinks('membres-importants', liens)
 }

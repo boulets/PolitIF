@@ -26,6 +26,11 @@ main img[loading]::after {
   content: "";
 }
 
+main h2[loading] {
+  width: 70%;
+  height: 1.2em;
+}
+
 main img {
   transition: opacity 400ms ease 500ms;
 }
@@ -39,6 +44,7 @@ main [data-key="description"][loading] {
   height: 1em;
   position: relative;
   margin-top: 2.5em;
+  margin-bottom: 2.5em;
 }
 main [data-key="description"][loading]::before,
 main [data-key="description"][loading]::after {
