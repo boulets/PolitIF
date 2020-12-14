@@ -97,12 +97,12 @@ async function fetchProfil(id) {
   return res
 }
 
-async function fetchDescription(nomPoliticien) {
-  const cacheKey = `profil/${nomPoliticien}/description`
+async function fetchDescription(idPoliticien) {
+  const cacheKey = `profil/${idPoliticien}/description`
   const inCache = cached(cacheKey)
   if (inCache) { return inCache }
   try {
-    const req = requete_profil_description(nomPoliticien)
+    const req = requete_profil_description(idPoliticien)
     const url = DBPEDIA_URL + '?format=json&query=' + encodeURIComponent(req)
     const reponse = await fetch(url).then(res => res.json())
     const donnees = reponse.results.bindings[0]
