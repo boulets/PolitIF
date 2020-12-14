@@ -51,11 +51,6 @@ function renderIdeologieDescription(ideologie) {
   ideologie.description ? Slots.setText('description', ideologie.description) : Slots.hide('description')
 }
 
-// Mettre la première lettre en majuscule, tout en faisant attention aux caractères accentués
-function ucfirst([first, ...rest]) {
-  return first.toLocaleUpperCase() + rest.join('')
-}
-
 function listeIdeologiesRenderer(slotKey) {
   return (ideologies) => {
     if (Array.isArray(ideologies) && ideologies.length > 0){

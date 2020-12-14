@@ -119,11 +119,6 @@ function nombreAdherentsToHtml(nombreAdherents) {
   }
 }
 
-// Mettre la première lettre en majuscule, tout en faisant attention aux caractères accentués
-function ucfirst([first, ...rest]) {
-  return first.toLocaleUpperCase() + rest.join('')
-}
-
 function renderPartiIdeologies(ideologies) {
   const liens = ideologies.map(({ id, nom }) => ({
     href: `ideologie.html#${id}-${ucfirst(nom)}`,
