@@ -1,5 +1,23 @@
 /* global Slots dateToHtml fetchParti fetchPartiIdeologies fetchPartiPersonnalites */
 
+function escapeHtml(text) {
+  const div = document.createElement('div')
+  div.innerText = text
+  return div.innerHTML
+}
+
+function adresseToText({ numero, rue, ville, codePostal }) {
+  if (numero && rue && ville && codePostal) {
+    return `${numero} ${rue}, ${ville} ${codePostal}`
+  } else if (numero && rue && ville) {
+    return `${numero} ${rue}, ${ville}`
+  } else if (rue && ville) {
+    return `${rue}, ${ville}`
+  } if (ville) {
+    return ville
+  }
+}
+
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
   return [first, rest.length > 0 ? rest.join(on) : null]
@@ -54,7 +72,21 @@ function renderParti(parti) {
   parti.president ? Slots.setText('president', parti.president) : Slots.hide('president')
   parti.fondateur ? Slots.setText('fondateur', parti.fondateur) : Slots.hide('fondateur')
   parti.positionnement ? Slots.setText('positionnement', parti.positionnement) : Slots.hide('positionnement')
-  parti.siege ? Slots.setText('siege', parti.siege) : Slots.hide('siege')
+  if (parti.siege) {
+    const adr = adresseToText(parti.siege)
+    const href = 'https://www.openstreetmap.org/search?query=' + encodeURIComponent(adr).replace(/%20/g, '+')
+    if (adr) {
+      const html = parti.siege.date
+        ? `${escapeHtml(adr)} (depuis le ${dateToHtml(parti.siege.date)})`
+        : `${escapeHtml(adr)}`
+      Slots.setHtml('siege', `<a target="_blank" rel="noreferrer noopener" title="Ouvrir dans OpenStreetMap" href="${href}">${html}</a>`)
+    } else {
+      Slots.hide('siege')
+    }
+  } else {
+    Slots.hide('siege')
+  }
+
 
   const nombreAdherentsStr = nombreAdherentsToHtml(parti.nombreAdherents)
   if (nombreAdherentsStr) {
