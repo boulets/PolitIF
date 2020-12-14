@@ -291,7 +291,7 @@ function requete_profil_enfants(idProfil) {
   }`
 }
 
-function requete_ideologie_images(idIdeologie) {
+function requete_ideologie(idIdeologie) {
   return `SELECT ?Nom ?image ?flagimage WHERE {
     BIND(wd:${idIdeologie} AS ?ideology).
 
@@ -306,7 +306,6 @@ function requete_ideologie_images(idIdeologie) {
     OPTIONAL {
       ?ideology wdt:P41 ?flagimage.
     }
-
   }`
 }
 

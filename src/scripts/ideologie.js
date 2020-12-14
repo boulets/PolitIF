@@ -1,4 +1,4 @@
-/* global Slots dateToHtml fetchParti fetchPartiIdeologies fetchPartiPersonnalites */
+/* global Slots fetchIdeologie fetchIdeologieDescription */
 
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)

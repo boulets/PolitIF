@@ -1,26 +1,26 @@
 /* eslint-disable no-unused-vars */
-/* global requete_profil_biographie, requete_profil_mandats, requete_profil_description, requete_parti_description, requete_parti_general, requete_parti_ideologies, requete_parti_personnalites, requete_profil_partiPolitique, requete_profil_enfants, requete_profil_fratrie */
+/* global requete_profil_biographie, requete_profil_mandats, requete_profil_description, requete_parti_description, requete_parti_general, requete_parti_ideologies, requete_parti_personnalites, requete_profil_partiPolitique, requete_profil_enfants, requete_profil_fratrie, requete_ideologie, requete_ideologie_description */
 
 //import {API_URL} from '../constants'
 const DBPEDIA_URL = 'https://dbpedia.org/sparql'
 const WIKIDATA_API = 'https://query.wikidata.org/sparql'
 
 /** Durée de vie en cache (en secondes) */
-let CACHE_TTL = 0 //5 * 60
+let CACHE_TTL = 0 // 5 * 60
 
-const checkDevToolsOpen = document.createElement('ignorez_ça')
-let ignoreCheck = false
-Object.defineProperty(checkDevToolsOpen, 'id', {
-  get: function () {
-    if (!ignoreCheck) {
-      CACHE_TTL = 0
-      console.log('%c%s', 'background-color: #313; color: white; padding: 3px 6px; border-radius: 3px', 'La console est ouverte donc le cache a été désactivé')
-    }
-    throw new Error('')
-  }
-})
-console.log(checkDevToolsOpen)
-ignoreCheck = true
+// const checkDevToolsOpen = document.createElement('ignorez_ça')
+// let ignoreCheck = false
+// Object.defineProperty(checkDevToolsOpen, 'id', {
+//   get: function() {
+//     if (!ignoreCheck) {
+//       CACHE_TTL = 0
+//       console.log('%c%s', 'background-color: #313; color: white; padding: 3px 6px; border-radius: 3px', 'La console est ouverte donc le cache a été désactivé')
+//     }
+//     throw new Error('')
+//   }
+// })
+// console.log(checkDevToolsOpen)
+// ignoreCheck = true
 
 if (CACHE_TTL > 0) {
   console.log('%c%s', 'background-color: #511; color: white; padding: 3px 6px; border-radius: 3px', `Attention: Le cache est activé (ttl=${CACHE_TTL}s)`)
@@ -44,7 +44,7 @@ function cached(id, fixer) {
   const item = localStorage.getItem('politif_cache__' + id)
   if (item !== undefined) {
     try {
-      const {timestamp, value} = JSON.parse(item)
+      const { timestamp, value } = JSON.parse(item)
       if (timestamp + CACHE_TTL * 1000 > now) {
         // console.log(`Fetching ${id} -> returning cached response`)
         fixer?.(value)
@@ -65,7 +65,7 @@ function cached(id, fixer) {
  */
 function storeInCache(id, value) {
   const now = Date.now()
-  localStorage.setItem('politif_cache__' + id, JSON.stringify({timestamp: now, value}))
+  localStorage.setItem('politif_cache__' + id, JSON.stringify({ timestamp: now, value }))
 }
 
 async function fetchProfil(id) {
@@ -74,9 +74,7 @@ async function fetchProfil(id) {
     value.dateNaissance = nullableDate(value.dateNaissance)
     value.dateDeces = nullableDate(value.dateDeces)
   })
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
 
   const url = wikidataUrl(requete_profil_biographie(id))
   const reponse = await fetch(url).then(res => res.json())
@@ -102,9 +100,7 @@ async function fetchProfil(id) {
 async function fetchDescription(nomPoliticien) {
   const cacheKey = `profil/${nomPoliticien}/description`
   const inCache = cached(cacheKey)
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
   try {
     const req = requete_profil_description(nomPoliticien)
     const url = DBPEDIA_URL + '?format=json&query=' + encodeURIComponent(req)
@@ -126,9 +122,7 @@ async function fetchPositions(id) {
       x.fin = nullableDate(x.fin)
     })
   })
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
 
   const url = wikidataUrl(requete_profil_mandats(id))
   const reponse = await fetch(url).then(res => res.json())
@@ -149,9 +143,7 @@ async function fetchParti(id) {
     x.nombreAdherents.date = nullableDate(x.nombreAdherents.date)
     x.siege.date = nullableDate(x.siege.date)
   })
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
 
   const url = wikidataUrl(requete_parti_general(id))
   const reponse = await fetch(url).then(res => res.json())
@@ -190,9 +182,7 @@ async function fetchParti(id) {
 async function fetchDescriptionParti(idParti) {
   const cacheKey = `parti/${idParti}/description`
   const inCache = cached(cacheKey)
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
   try {
     const req = requete_parti_description(idParti)
     const url = DBPEDIA_URL + '?format=json&query=' + encodeURIComponent(req)
@@ -209,9 +199,7 @@ async function fetchDescriptionParti(idParti) {
 async function fetchPartiIdeologies(id) {
   const cacheKey = `parti/${id}/ideologies`
   const inCache = cached(cacheKey)
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
 
   const url = wikidataUrl(requete_parti_ideologies(id))
   const reponse = await fetch(url).then(res => res.json())
@@ -228,9 +216,7 @@ async function fetchPartiIdeologies(id) {
 async function fetchPartiPersonnalites(id) {
   const cacheKey = `parti/${id}/personnalites`
   const inCache = cached(cacheKey)
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
 
   const url = wikidataUrl(requete_parti_personnalites(id))
   const reponse = await fetch(url).then(res => res.json())
@@ -247,9 +233,7 @@ async function fetchPartiPersonnalites(id) {
 async function fetchPartisOfProfil(id) {
   const cacheKey = `profil/${id}/partis`
   const inCache = cached(cacheKey)
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
 
   const url = wikidataUrl(requete_profil_partiPolitique(id))
   const reponse = await fetch(url).then(res => res.json())
@@ -264,9 +248,7 @@ async function fetchPartisOfProfil(id) {
 async function fetchEnfantsOfProfil(id) {
   const cacheKey = `profil/${id}/enfants`
   const inCache = cached(cacheKey)
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
 
   const url = wikidataUrl(requete_profil_enfants(id))
   const reponse = await fetch(url).then(res => res.json())
@@ -276,11 +258,9 @@ async function fetchEnfantsOfProfil(id) {
 }
 
 async function fetchFratrieOfProfil(id) {
-  const cacheKey = `profil/${id}/enfants`
+  const cacheKey = `profil/${id}/fratrie`
   const inCache = cached(cacheKey)
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
 
   const url = wikidataUrl(requete_profil_fratrie(id))
   const reponse = await fetch(url).then(res => res.json())
@@ -296,11 +276,9 @@ function extractIdFromWikidataUrl(url) {
 async function fetchIdeologie(id) {
   const cacheKey = `ideologie/${id}`
   const inCache = cached(cacheKey)
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
 
-  const url = wikidataUrl(requete_ideologie_images(id))
+  const url = wikidataUrl(requete_ideologie)
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
 
@@ -315,11 +293,9 @@ async function fetchIdeologie(id) {
 }
 
 async function fetchIdeologieDescription(id) {
-  const cacheKey = `ideologie-description/${id}`
+  const cacheKey = `ideologie/${id}/description`
   const inCache = cached(cacheKey)
-  if (inCache) {
-    return inCache
-  }
+  if (inCache) { return inCache }
 
   const req = requete_ideologie_description(id)
   const url = DBPEDIA_URL + '?format=json&query=' + encodeURIComponent(req)
