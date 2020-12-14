@@ -33,6 +33,9 @@ function submitSearch(q, n, type, fonctionRequete, mapper) {
 }
 
 function afficherResultats(type, resultats) {
+  const shouldRestoreFocus = searchResultsContainer.matches(':focus-within')
+  const shouldRestoreFocusToHref = document.activeElement.href
+
   searchResultsContainer.setAttribute(`n-${type}s`, resultats.length)
 
   if (resultats.length > 0) {
@@ -50,6 +53,17 @@ function afficherResultats(type, resultats) {
     searchAutocomplete.innerHTML = ''
     Slots.setText(`resultats-${type}s`, '')
     Slots.hide(`resultats-${type}s`)
+  }
+
+  if (shouldRestoreFocus) {
+    console.log(shouldRestoreFocusToHref)
+    const links = [...searchResultsContainer.querySelectorAll('[href]')]
+    const el = links.find(x => x.href === shouldRestoreFocusToHref)
+    if (el) {
+      el.focus()
+    } else {
+      search.focus()
+    }
   }
 }
 
@@ -88,12 +102,50 @@ function init() {
     }
   })
 
+  search.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      e.stopPropagation()
+      searchResultsContainer.querySelector('a')?.focus()
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      e.stopPropagation()
+      searchResultsContainer.querySelector('.recherche-categorie:last-child ul:last-child li:last-child a')?.focus()
+    }
+  })
+
   search.addEventListener('input', () => {
     searchAutocomplete.innerHTML = ''
     submitProfil1(search.value)
     submitProfil5(search.value)
     submitPartis1(search.value)
     submitPartis5(search.value)
+  })
+
+  searchResultsContainer.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      e.stopPropagation()
+
+      const direction = (e.key === 'ArrowDown') ? +1 : -1
+      const liens = [...searchResultsContainer.querySelectorAll('a')]
+      if (liens && liens.length > 0) {
+        const index = liens.indexOf(document.activeElement)
+        if (index == -1) {
+        // le focus n'est pas sur une ancre
+          liens[0].focus()
+        } else {
+          const nextIndex = index + direction
+          if (nextIndex < 0) {
+            search.focus() // on focus l'entrée
+          } else if (nextIndex >= liens.length) {
+            search.focus() // on boucle
+          } else {
+            liens[nextIndex].focus()
+          }
+        }
+      }
+    }
   })
 }
 init()
