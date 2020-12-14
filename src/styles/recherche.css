@@ -86,15 +86,9 @@
   padding: 0px;
 }
 
-#searchResultsContainer[n-personnalites="0"][n-partis="0"] {
+#searchResultsContainer[n-profils="0"][n-partis="0"][n-ideologies="0"] {
   display: none;
 }
-
-#searchResultsContainer[n-personnalites="0"] #resultats-personnalites,
-#searchResultsContainer[n-partis="0"] #resultats-partis {
-  display: none;
-}
-
 
 #search-container label {
   display: block;

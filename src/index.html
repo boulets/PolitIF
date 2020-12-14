@@ -44,14 +44,15 @@
           </button>
         </div>
 
-        <div id="searchResultsContainer" n-personnalites="0" n-partis="0" n-ideologies="0">
-          <div id="resultats-personnalites">
+        <div id="searchResultsContainer" n-profils="0" n-partis="0" n-ideologies="0">
+          <div data-contains-slot="resultats-profils">
             <h3>Personnalités politiques</h3>
-            <ul id="searchResultsPersonnalites"></ul>
+            <div data-key="resultats-profils"></div>
           </div>
-          <div id="resultats-partis">
+
+          <div data-contains-slot="resultats-partis">
             <h3>Partis</h3>
-            <ul id="searchResultsPartis"></ul>
+            <div data-key="resultats-partis"></div>
           </div>
         </div>
       </div>
