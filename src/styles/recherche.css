@@ -95,6 +95,18 @@
   display: none;
 }
 
+
+#search-container label {
+  display: block;
+  margin-bottom: 2em;
+}
+
+@media (max-width: 600px) {
+  #search-container {
+    width: 90%;
+  }
+}
+
 .home-cards {
   display: grid;
   width: 70%;

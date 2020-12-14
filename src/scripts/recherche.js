@@ -1,4 +1,4 @@
-/* global requete_recherche_partis, requete_recherche_politicien, wikidataUrl */
+/* global requete_recherche_partis requete_recherche_politicien wikidataUrl */
 
 let meilleurResultat = null
 
@@ -172,4 +172,12 @@ function throttle(func, wait, options) {
     }
     return result
   }
+}
+
+function renderRecherche(search) {
+  const entreeRecherche = document.getElementById('search')
+  if (entreeRecherche === null) {
+    throw new Error('Affichage de la page Recherche impossible: éléments #search manquant')
+  }
+  entreeRecherche.value = search
 }

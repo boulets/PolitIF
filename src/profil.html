@@ -33,15 +33,14 @@
     <main class="sheet profil colonnes">
       <div class="colonne-principale">
         <h2 class="nom" data-key="nom"></h2>
+
         <div data-key="description"></div>
-        <div>
-          <br>
+
+        <div data-contains-slot="positions-list">
+          <br />
           <h3>Mandats politiques</h3>
-          <ul id="positionsList">
-
-          </ul>
+          <div data-key="positions-list"></div>
         </div>
-
       </div>
 
       <div class="colonne-secondaire">
@@ -109,8 +108,7 @@
     </footer>
 
     <script src="scripts/Slots.js"></script>
-    <script src="scripts/fetchers.js"></script>
-    <script src="scripts/render.js"></script>
+    <script src="scripts/utils.js"></script>
     <script src="scripts/requetes.js"></script>
     <script src="scripts/profil.js"></script>
   </body>

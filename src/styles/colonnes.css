@@ -7,15 +7,13 @@
   word-break: break-word;
 }
 
-.colonne-secondaire {
-  order: 1;
-}
-
 .colonne-principale {
   order: 2;
+  flex: 1 1;
 }
 
 .colonne-secondaire {
+  order: 1;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -24,6 +22,12 @@
 
 .colonne-secondaire img {
   border-radius: 2px;
-  min-height: 300px;
+  min-height: 200px;
   object-fit: contain;
+}
+
+@media (max-width: 600px) {
+  .colonnes {
+    display: block;
+  }
 }

@@ -129,11 +129,14 @@ function requete_profil_mandats(idProfil) {
   `
 }
 
-function requete_profil_description(nomPoliticien) {
+function requete_profil_description(idPoliticien) {
   return `SELECT ?Description WHERE {
-    ?uri rdfs:label '${nomPoliticien.replace(/'/g, '\\\'')}'@fr .
+    ?politicien rdf:type dbo:Person.
+    ?politicien dbo:party ?parti.
+    ?politicien owl:sameAs ?wikidata.
+    FILTER(str(?wikidata)='http://www.wikidata.org/entity/${idPoliticien}').
     OPTIONAL {
-      ?uri dbo:abstract ?Description .
+      ?politicien dbo:abstract ?Description .
       FILTER(LANG(?Description)='fr') .
     }
   } LIMIT 1`
@@ -187,30 +190,30 @@ function requete_parti_general(idParti) {
     }
 
     # Siège
+    OPTIONAL { ?parti p:P159 ?SiegeStatement. }
     OPTIONAL {
-      ?parti p:P159 ?SiegeStatement.
-      # ?SiegeStatement pq:P669/rdfs:label ?SiegeRue.
-      # ?SiegeStatement pq:P670 ?SiegeNumero.
-      # ?SiegeStatement pq:P281 ?SiegeCodePostal.
-      # ?SiegeStatement pq:P580 ?SiegeStartTime.
+      ?SiegeStatement pq:P669/rdfs:label ?SiegeRue.
+      FILTER(LANG(?SiegeRue)='fr').
+    }
+    OPTIONAL { ?SiegeStatement pq:P670 ?SiegeNumero. }
+    OPTIONAL { ?SiegeStatement pq:P281 ?SiegeCodePostal. }
+    OPTIONAL { ?SiegeStatement pq:P580 ?SiegeStartTime. }
+    OPTIONAL {
       ?SiegeStatement ps:P159/rdfs:label ?SiegeVille.
       FILTER(LANG(?SiegeVille)='fr').
-      # FILTER(LANG(?SiegeRue)='fr').
     }
 
     # Logo
-    OPTIONAL {
-      ?parti p:P154 ?LogoStatement.
-      ?LogoStatement ps:P154 ?ImageLogo.
-      ?LogoStatement pq:P580 ?LogoStartTime.
-    }
+    OPTIONAL { ?parti p:P154 [ ps:P154 ?ImageLogo; pq:P580 ?LogoStartTime ]. }
+    OPTIONAL { ?parti p:P154 [ ps:P154 ?ImageLogo ]. }
+    OPTIONAL { ?parti p:P18 [ ps:P18 ?ImageLogo ]. }
 
     # Site Web
     OPTIONAL { ?parti wdt:P856 ?SiteWeb. }
 
     FILTER(LANG(?NomParti)='fr').
   }
-  ORDER BY DESC (?PresidentStartTime) DESC(?DateNombreAdherents) DESC(?SiegeStartTime) DESC(?LogoStartTime)
+  ORDER BY DESC(?PresidentStartTime) DESC(?DateNombreAdherents) DESC(?SiegeStartTime) DESC(?LogoStartTime) (!bound(?LogoStartTime))
   LIMIT 1
   `
 }
@@ -245,7 +248,8 @@ function requete_parti_personnalites(idPArti) {
         BIND(wd:${idPArti} as ?parti).
         ?politicien wdt:P102 ?parti.
         ?politicien wdt:P1559 ?NomPoliticien.
-        OPTIONAL{?politicien wdt:P39 ?mandat.}
+        FILTER(LANG(?NomPoliticien) = 'fr').
+        OPTIONAL { ?politicien wdt:P39 ?mandat. }
       }
       GROUP BY ?politicien ?NomPoliticien
       ORDER BY DESC(?nombreMandats)
@@ -255,7 +259,8 @@ function requete_parti_personnalites(idPArti) {
         BIND(wd:${idPArti} as ?parti).
         ?politicien wdt:P102 ?parti.
         ?politicien wdt:P1559 ?NomPoliticien.
-        OPTIONAL{?politicien wdt:P3602 ?candidature.}
+        FILTER(LANG(?NomPoliticien) = 'fr').
+        OPTIONAL { ?politicien wdt:P3602 ?candidature. }
       }
       GROUP BY ?politicien ?NomPoliticien
       ORDER BY DESC(?nombreCandidatures)
@@ -289,9 +294,12 @@ function requete_profil_enfants(idProfil) {
   }`
 }
 
-function requete_ideology(idIdeology) {
-  return `SELECT ?ideology ?ideologyDescription ?ideologyLabel ?image ?flagimage WHERE {
-    BIND(wd:${idIdeology} AS ?ideology).
+function requete_ideologie(idIdeologie) {
+  return `SELECT ?Nom ?image ?flagimage WHERE {
+    BIND(wd:${idIdeologie} AS ?ideology).
+
+    ?ideology rdfs:label ?Nom
+    FILTER(LANG(?Nom)='fr').
 
     # Opt : image
     OPTIONAL {
@@ -301,23 +309,45 @@ function requete_ideology(idIdeology) {
     OPTIONAL {
       ?ideology wdt:P41 ?flagimage.
     }
-
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
   }`
 }
 
-function requete_superclass(idIdeology) {
-  return `SELECT ?ideology ?subclass ?subclassLabel ?subclassDescription WHERE {
-    BIND(wd:${idIdeology} AS ?ideology).
+function requete_ideologie_description(idIdeologie) {
+  return `SELECT ?Description WHERE {
+    ?movement rdf:type dbo:Organisation.
+    ?movement dbo:ideology ?ideology.
+    ?ideology owl:sameAs ?wikidata.
+    FILTER(str(?wikidata)='http://www.wikidata.org/entity/${idIdeologie}').
+    OPTIONAL {
+      ?ideology dbo:abstract ?Description .
+      FILTER(LANG(?Description)='fr') .
+    }
+  }
+  LIMIT 1`
+}
 
-    ?ideology wdt:P279 ?subclass.
+function requete_ideologies_parentes(idIdeologie) {
+  return `SELECT ?superClass ?superClassLabel WHERE {
+    BIND(wd:${idIdeologie} AS ?ideology).
 
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
+    ?ideology wdt:P279 ?superClass.
+    ?superClass rdfs:label ?superClassLabel.
+    FILTER(LANG(?superClassLabel)='fr').
+  }`
+}
+
+function requete_ideologies_derivees(idIdeologie) {
+  return `SELECT ?subClass ?subClassLabel WHERE {
+    BIND(wd:${idIdeologie} AS ?ideology).
+
+    ?subClass wdt:P279 ?ideology.
+    ?subClass rdfs:label ?subClassLabel.
+    FILTER(LANG(?subClassLabel)='fr').
   }`
 }
 
 function requete_profil_partiPolitique(idProfil) {
-  return `SELECT ?politician ?NomPoliticien ?NomParti WHERE {
+  return `SELECT ?politician ?NomPoliticien ?Parti ?NomParti WHERE {
     BIND(wd:${idProfil} AS ?politician).
     # Nom prénom
     ?politician rdfs:label ?NomPoliticien.
