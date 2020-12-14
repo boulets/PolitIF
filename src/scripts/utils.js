@@ -110,6 +110,11 @@ function dateToString(date) {
   return formatHumain
 }
 
+// Mettre la première lettre en majuscule, tout en faisant attention aux caractères accentués
+function ucfirst([first, ...rest]) {
+  return first.toLocaleUpperCase() + rest.join('')
+}
+
 function createElementFromHtml(template) {
   const div = document.createElement('div')
   div.innerHTML = template
