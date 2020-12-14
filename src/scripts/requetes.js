@@ -331,10 +331,13 @@ function requete_ideologie_description(idIdeologie) {
 }
 
 function requete_ideologies_parentes(idIdeologie) {
-  return `SELECT ?superClass ?superClassLabel WHERE {
+  return `SELECT DISTINCT ?superClass ?superClassLabel WHERE {
     BIND(wd:${idIdeologie} AS ?ideology).
 
     ?ideology wdt:P279 ?superClass.
+    { ?superClass wdt:P31 wd:Q12909644. }
+    UNION
+    { ?superClass wdt:P31 wd:Q179805. }
     ?superClass rdfs:label ?superClassLabel.
     FILTER(LANG(?superClassLabel)='fr').
   }`
