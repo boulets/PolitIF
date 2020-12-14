@@ -87,7 +87,7 @@ function Slots_setListOfLinks(key, values, type = 'ul') {
     for (const { href, text } of values) {
       const li = document.createElement('li')
       const a = document.createElement('a')
-      a.href = href
+      a.href = href.replace(" ", "_")
       a.innerText = text
       li.appendChild(a)
       listEl.appendChild(li)
