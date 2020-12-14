@@ -53,8 +53,8 @@ function storeInCache(id, value) {
 async function fetchProfil(id) {
   const cacheKey = `profil/${id}`
   const inCache = cached(cacheKey, (value) => {
-    value.dateNaissance = new Date(value.dateNaissance)
-    value.dateDeces = new Date(value.dateDeces)
+    value.dateNaissance = nullableDate(value.dateNaissance)
+    value.dateDeces = nullableDate(value.dateDeces)
   })
   if (inCache) { return inCache }
 
