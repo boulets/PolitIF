@@ -13,7 +13,7 @@ function adresseToText({ numero, rue, ville, codePostal }) {
     return `${numero} ${rue}, ${ville}`
   } else if (rue && ville) {
     return `${rue}, ${ville}`
-  } if (ville) {
+  } else if (ville) {
     return ville
   }
 }
