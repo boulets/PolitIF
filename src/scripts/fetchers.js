@@ -82,15 +82,15 @@ async function fetchProfil(id) {
 
   const res = {
     nom: donnees?.NomPoliticien?.value,
-    dateNaissance : nullableDate(donnees?.DateDeNaissance?.value),
+    dateNaissance: nullableDate(donnees?.DateDeNaissance?.value),
     lieuNaissance: donnees?.NomLieuDeNaissance?.value,
     dateDeces: nullableDate(donnees?.DateDeDeces?.value),
     lieuDeces: donnees?.NomLieuDeDeces?.value,
     image: donnees?.Image?.value,
     pere: donnees?.NomPere?.value,
     mere: donnees?.NomMere?.value,
-    conjoint : donnees?.NomConjoint?.value,
-    signature : donnees?.Signature?.value
+    conjoint: donnees?.NomConjoint?.value,
+    signature: donnees?.Signature?.value
   }
 
   storeInCache(cacheKey, res)
@@ -156,7 +156,7 @@ async function fetchParti(id) {
     logo: donnees?.ImageLogo?.value,
     president: donnees?.NomPresident?.value,
     fondateur: donnees?.NomFondateur?.value,
-    dateCreation : nullableDate(donnees?.DateCreation?.value),
+    dateCreation: nullableDate(donnees?.DateCreation?.value),
     dateDissolution: nullableDate(donnees?.DateDissolution?.value),
     nombreAdherents: {
       compte: donnees?.NombreAdherents?.value,
@@ -287,7 +287,6 @@ async function fetchIdeologie(id) {
     image: donnees?.image?.value,
     flag: donnees?.flagimage?.value,
   }
-  console.log(res)
 
   storeInCache(cacheKey, res)
   return res
@@ -306,6 +305,51 @@ async function fetchIdeologieDescription(id) {
   const res = {
     description: donnees?.Description?.value ?? 'Pas de description',
   }
+
+  storeInCache(cacheKey, res)
+  return res
+}
+
+async function fetchIdeologiesParentes(id) {
+  const cacheKey = `ideologie-parentes/${id}`
+  const inCache = cached(cacheKey)
+  if (inCache) {
+    return inCache
+  }
+
+  const url = wikidataUrl(requete_ideologies_parentes(id))
+  const reponse = await fetch(url).then(res => res.json())
+
+  const res = reponse.results.bindings
+    .map(ideologie => ({
+      id: extractIdFromWikidataUrl(ideologie?.superClass.value),
+      nom: ideologie.superClassLabel.value,
+    }))
+    .filter(nom => nom) // filtrer null, undefined, vide
+
+  storeInCache(cacheKey, res)
+  return res
+}
+
+async function fetchIdeologiesDerivees(id) {
+  const cacheKey = `ideologie-derivees/${id}`
+  const inCache = cached(cacheKey)
+  if (inCache) {
+    return inCache
+  }
+
+  const url = wikidataUrl(requete_ideologies_derivees(id))
+  const reponse = await fetch(url).then(res => res.json())
+
+  console.log(reponse)
+
+  const res = reponse.results.bindings
+    .map(ideologie => ({
+      id: extractIdFromWikidataUrl(ideologie.subClass.value),
+      nom: ideologie.subClassLabel.value,
+    }))
+    .filter(nom => nom) // filtrer null, undefined, vide
+
 
   storeInCache(cacheKey, res)
   return res
