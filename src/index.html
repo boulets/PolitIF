@@ -56,25 +56,70 @@
         </div>
       </div>
 
-      <aside class="home-cards">
-        <article class="home-card">
-          <img src="favicon.ico" alt="" class="home-card__icon" />
-          <a href="" class="home-card__title">Emmanuel Macron</a>
-          <a href="" class="home-card__subtitle">La République en Marche</a>
-        </article>
+      <aside class="home-cards"></aside>
 
-        <article class="home-card">
-          <img src="favicon.ico" alt="" class="home-card__icon" />
-          <a href="" class="home-card__title">Jean-Luc Mélenchon</a>
-          <a href="" class="home-card__subtitle">La France Insoumise</a>
-        </article>
-
-        <article class="home-card">
-          <img src="favicon.ico" alt="" class="home-card__icon" />
-          <a href="" class="home-card__title">Marine Le Pen</a>
-          <a href="" class="home-card__subtitle">Le Rassemblement National</a>
-        </article>
-      </aside>
+      <script>
+        function createElementFromHtml(template) {
+          const div = document.createElement('div')
+          div.innerHTML = template
+          return div.children[0]
+        }
+        function homecard({ title = '', subtitle = '', titleHref = '', subtitleHref = '', icon = '' }) {
+          const card = createElementFromHtml(`<article class="home-card">
+                  <img src="" alt="" class="home-card__icon" />
+                  <a href="" class="home-card__title"></a>
+                  <a href="" class="home-card__subtitle"></a>
+                </article>`)
+          card.querySelector('.home-card__title').innerText = title
+          card.querySelector('.home-card__subtitle').innerText = subtitle
+          card.querySelector('a.home-card__title').href = titleHref
+          card.querySelector('a.home-card__subtitle').href = subtitleHref
+          card.querySelector('img.home-card__icon').src = icon
+          return card
+        }
+        function homecards(cardsData) {
+          const el = document.querySelector('.home-cards')
+          el.innerHTML = ''
+          el.append(...cardsData.map(homecard))
+        }
+        homecards([
+          {
+            title: 'Emmanuel Macron',
+            titleHref: 'profil.html#Q3052772-Emmanuel%20Macron',
+            subtitle: 'La République en marche',
+            subtitleHref: 'parti.html#Q23731823-La%20République%20en%20marche',
+            icon: 'http://commons.wikimedia.org/wiki/Special:FilePath/Emmanuel%20Macron%20%2837374335081%29%20%28cropped%29.jpg?width=200px',
+          },
+          {
+            title: 'La République en marche',
+            titleHref: 'parti.html#Q23731823-La%20République%20en%20marche',
+            subtitle: 'Libéralisme',
+            subtitleHref: '',
+            icon: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Logo_En_Marche_%21.svg',
+          },
+          {
+            title: 'Jean-Luc Mélenchon',
+            titleHref: 'profil.html#Q5829-Jean-Luc%20Mélenchon',
+            subtitle: 'La France insoumise',
+            subtitleHref: 'parti.html#Q27978402-La%20France%20insoumise',
+            icon: 'http://commons.wikimedia.org/wiki/Special:FilePath/Jean%20Luc%20MELENCHON%20in%20the%20European%20Parliament%20in%20Strasbourg%2C%202016%20%28cropped%29.jpg?width=200px',
+          },
+          {
+            title: 'La France insoumise',
+            titleHref: 'parti.html#Q27978402-La%20France%20insoumise',
+            subtitle: 'Anticapitalisme',
+            subtitleHref: '',
+            icon: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Logo_France_Insoumise.svg',
+          },
+          {
+            title: 'François Hollande',
+            titleHref: 'profil.html#Q157-François%20Hollande',
+            subtitle: 'Parti socialiste',
+            subtitleHref: 'parti.html#Q170972-Parti%20socialiste',
+            icon: 'http://commons.wikimedia.org/wiki/Special:FilePath/Francois%20Hollande%202015.jpeg?width=200px',
+          },
+        ])
+      </script>
     </main>
 
     <footer>
