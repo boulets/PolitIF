@@ -108,7 +108,7 @@ function renderPositions(positions) {
   positionsList.appendChild(ul)
 
   positions.forEach(mandat => {
-    const { debut, fin, nom } = mandat
+    const { debut, fin, nom, of } = mandat
     if (!nom) { return } // skip
 
     const li = document.createElement('li')
@@ -123,7 +123,7 @@ function renderPositions(positions) {
       li.innerHTML = '<b></b>'
     }
 
-    li.querySelector('b').innerText = nom
+    li.querySelector('b').innerText = ucfirst(nom) + (of ? ` de ${of}` : "")
     ul.appendChild(li)
   })
 }
@@ -202,6 +202,7 @@ async function fetchMandatsProfil(id) {
     nom: element.Position?.value,
     debut: nullableDate(element.DateEntreePosition?.value),
     fin: nullableDate(element.DateSortiePosition?.value),
+    of: element?.of?.value,
   }))
   PolitifCache.set(cacheKey, mandats)
   return mandats

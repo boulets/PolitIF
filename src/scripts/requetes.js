@@ -109,7 +109,7 @@ function requete_profil_biographie(idProfil) {
 }
 
 function requete_profil_mandats(idProfil) {
-  return `SELECT ?politician ?Position ?DateEntreePosition ?DateSortiePosition WHERE {
+  return `SELECT ?politician ?Position ?DateEntreePosition ?DateSortiePosition ?of WHERE {
     BIND(wd:${idProfil} AS ?politician).
 
     # Les positions qu'ils ont occuppé
@@ -121,6 +121,10 @@ function requete_profil_mandats(idProfil) {
     }
     OPTIONAL {
       ?posStat pq:P582 ?DateSortiePosition.
+    }
+    OPTIONAL {
+      ?posStat pq:P642/rdfs:label ?of. # President OF Communauté de communes de XXX
+      FILTER(LANG(?of)='fr').
     }
 
     FILTER(LANG(?Position)='fr').
