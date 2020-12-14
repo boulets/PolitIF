@@ -1,4 +1,4 @@
-/* global Slots fetchIdeologie fetchIdeologieDescription */
+/* global Slots fetchIdeologie fetchIdeologieDescription fetchIdeologiesDerivees fetchIdeologiesParentes */
 
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
@@ -15,7 +15,7 @@ function update() {
   slots.forEach(key => Slots.markLoading(key))
   Slots.setAttr('image-logo', 'src', '')
 
-  if (nameWhileLoading) {
+  if  (nameWhileLoading) {
     document.title = `Polit'IF – ${nameWhileLoading}`
     Slots.setText('nom', nameWhileLoading)
   } else {
@@ -26,8 +26,8 @@ function update() {
   return Promise.all([
     fetchIdeologie(id).then(renderIdeologie),
     fetchIdeologieDescription(id).then(renderIdeologieDescription),
-    fetchIdeologiesDerivees(id).then(renderIdeologiesDerivees),
-    fetchIdeologiesParentes(id).then(renderIdeologiesParentes),
+    fetchIdeologiesDerivees(id).then(listeIdeologiesRenderer('ideologies-derivees')),
+    fetchIdeologiesParentes(id).then(listeIdeologiesRenderer('ideologies-parentes')),
   ])
 }
 
@@ -42,9 +42,9 @@ function renderIdeologie(ideologie) {
   document.title = `Polit'IF – ${ucfirst(ideologie.nom)}`
   Slots.setText('nom', ucfirst(ideologie.nom))
 
-  if (ideologie.image) {
+  if  (ideologie.image) {
     Slots.setAttr('image-logo', 'src', ideologie.image)
-  } else if(ideologie.flag) {
+  } else if (ideologie.flag) {
     Slots.setAttr('image-logo', 'src', ideologie.flag)
   } else {
     Slots.setAttr('image-logo', 'src', '')
@@ -56,35 +56,21 @@ function renderIdeologieDescription(ideologie) {
   ideologie.description ? Slots.setText('description', ideologie.description) : Slots.hide('description')
 }
 
-function formatNumber(x) {
-  return new Intl.NumberFormat().format(x)
-}
-
 // Mettre la première lettre en majuscule, tout en faisant attention aux caractères accentués
 function ucfirst([first, ...rest]) {
   return first.toLocaleUpperCase() + rest.join('')
 }
 
-function renderIdeologiesDerivees(ideologies) {
-  if(!ideologies || ideologies.length === 0){
-    Slots.hide('ideologies-derivees')
-  } else {
-    const liens = ideologies.map(({id, nom}) => ({
-      href: `ideologie.html#${id}-${ucfirst(nom)}`,
-      text: ucfirst(nom),
-    }))
-    Slots.setListOfLinks('ideologies-derivees', liens)
-  }
-}
-
-function renderIdeologiesParentes(ideologies) {
-  if(!ideologies || ideologies.length === 0){
-    Slots.hide('ideologies-parentes')
-  } else {
-    const liens = ideologies.map(({id, nom}) => ({
-      href: `ideologie.html#${id}-${ucfirst(nom)}`,
-      text: ucfirst(nom),
-    }))
-    Slots.setListOfLinks('ideologies-parentes', liens)
+function listeIdeologiesRenderer(slotKey) {
+  return (ideologies) => {
+    if (Array.isArray(ideologies) && ideologies.length === 0){
+      const liens = ideologies.map(({id, nom}) => ({
+        href: `ideologie.html#${id}-${ucfirst(nom)}`,
+        text: ucfirst(nom),
+      }))
+      Slots.setListOfLinks(slotKey, liens)
+    } else {
+      Slots.hide(slotKey)
+    }
   }
 }
