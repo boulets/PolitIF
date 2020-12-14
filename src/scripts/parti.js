@@ -14,8 +14,14 @@ function update() {
   const slots = ['description', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'site-web', 'siege']
   slots.forEach(key => Slots.markLoading(key))
   Slots.setAttr('image-logo', 'src', '')
-  document.title = `Polit'IF – ${nameWhileLoading}`
-  Slots.setText('nom', nameWhileLoading)
+
+  if (nameWhileLoading) {
+    document.title = `Polit'IF – ${nameWhileLoading}`
+    Slots.setText('nom', nameWhileLoading)
+  } else {
+    document.title = 'Polit\'IF'
+    Slots.markLoading('nom')
+  }
 
   return Promise.all([
     fetchParti(id).then(renderParti),
@@ -44,11 +50,11 @@ function renderParti(parti) {
   } else {
     Slots.hide('date-dissolution')
   }
-  Slots.setText('description', parti.description)
-  Slots.setText('president', parti.president)
+  parti.description ? Slots.setText('description', parti.description) : Slots.hide('description')
+  parti.president ? Slots.setText('president', parti.president) : Slots.hide('president')
   parti.fondateur ? Slots.setText('fondateur', parti.fondateur) : Slots.hide('fondateur')
-  Slots.setText('positionnement', parti.positionnement)
-  Slots.setText('siege', parti.siege)
+  parti.positionnement ? Slots.setText('positionnement', parti.positionnement) : Slots.hide('positionnement')
+  parti.siege ? Slots.setText('siege', parti.siege) : Slots.hide('siege')
 
   const nombreAdherentsStr = nombreAdherentsToHtml(parti.nombreAdherents)
   if (nombreAdherentsStr) {

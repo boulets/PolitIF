@@ -11,9 +11,14 @@ function update() {
   const id = p.length > 0 ? p[0] : ''
   const nameWhileLoading = p.length > 1 ? p[1] : ''
 
-  renderProfilPartial(null)
+  renderLoadingProfil() // set loading
+
   if (nameWhileLoading) {
-    renderProfilPartial({ nom: nameWhileLoading })
+    document.title = `Polit'IF – ${nameWhileLoading}`
+    Slots.setText('nom', nameWhileLoading)
+  } else {
+    document.title = 'Polit\'IF'
+    Slots.markLoading('nom')
   }
 
   let profilComplet = {}
@@ -98,27 +103,6 @@ function renderProfilOrHide(profil) {
   profil.signature
     ? Slots.setAttr('signature-personne', 'src', profil.signature)
     : Slots.hide('signature-personne')
-}
-
-function renderProfilPartial(profil) {
-  if (profil === null) {
-    renderLoadingProfil()
-  } else {
-    if (profil.nom) {
-      document.title = `Polit'IF – ${profil.nom}`
-      Slots.setText('nom', profil.nom)
-    }
-    profil.dateNaissance && Slots.setHtml('date-naissance', dateToHtml(profil.dateNaissance))
-    profil.dateDeces && Slots.setHtml('date-deces', dateToHtml(profil.dateDeces))
-    profil.lieuNaissance && Slots.setText('lieu-naissance', profil.lieuNaissance)
-    profil.lieuDeces && Slots.setText('lieu-deces', profil.lieuDeces)
-    profil.pere && Slots.setText('pere', profil.pere)
-    profil.mere && Slots.setText('mere', profil.mere)
-    profil.fratrie && profil.fratrie.length && Slots.setText('fratrie', profil.fratrie.join(', '))
-    profil.conjoint && Slots.setText('conjoint', profil.conjoint)
-    profil.enfants && profil.enfants.length && Slots.setText('enfants', profil.enfants.join(', '))
-    profil.description && Slots.setHtml('description', profil.description)
-  }
 }
 
 function renderPositions(positions) {
