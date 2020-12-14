@@ -109,3 +109,9 @@ function dateToString(date) {
   })
   return formatHumain
 }
+
+function createElementFromHtml(template) {
+  const div = document.createElement('div')
+  div.innerHTML = template
+  return div.children[0]
+}
