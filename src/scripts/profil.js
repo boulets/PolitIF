@@ -28,7 +28,7 @@ function update() {
         profilComplet = { ...profilComplet, ...profil }
         renderProfilOrHide(profilComplet)
         try {
-          const description = await fetchDescription(profil.nom)
+          const description = await fetchDescription(id)
           profilComplet = { ...profilComplet, description }
           description ? Slots.setText('description', description) : Slots.hide('description')
         } catch (error) {

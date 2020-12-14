@@ -129,11 +129,14 @@ function requete_profil_mandats(idProfil) {
   `
 }
 
-function requete_profil_description(nomPoliticien) {
+function requete_profil_description(idPoliticien) {
   return `SELECT ?Description WHERE {
-    ?uri rdfs:label '${nomPoliticien.replace(/'/g, '\\\'')}'@fr .
+    ?politicien rdf:type dbo:Person.
+    ?politicien dbo:party ?parti.
+    ?politicien owl:sameAs ?wikidata.
+    FILTER(str(?wikidata)='http://www.wikidata.org/entity/${idPoliticien}').
     OPTIONAL {
-      ?uri dbo:abstract ?Description .
+      ?politicien dbo:abstract ?Description .
       FILTER(LANG(?Description)='fr') .
     }
   } LIMIT 1`
