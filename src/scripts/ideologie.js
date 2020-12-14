@@ -26,8 +26,8 @@ function update() {
   return Promise.all([
     fetchIdeologie(id).then(renderIdeologie),
     fetchIdeologieDescription(id).then(renderIdeologieDescription),
-    // fetchPartiIdeologies(id).then(renderPartiIdeologies),
-    // fetchPartiPersonnalites(id).then(renderPartiPersonnalites),
+    fetchIdeologiesDerivees(id).then(renderIdeologiesDerivees),
+    fetchIdeologiesParentes(id).then(renderIdeologiesParentes),
   ])
 }
 
@@ -53,7 +53,6 @@ function renderIdeologie(ideologie) {
 }
 
 function renderIdeologieDescription(ideologie) {
-  console.log(ideologie.description)
   ideologie.description ? Slots.setText('description', ideologie.description) : Slots.hide('description')
 }
 
@@ -66,10 +65,26 @@ function ucfirst([first, ...rest]) {
   return first.toLocaleUpperCase() + rest.join('')
 }
 
-function renderPartiPersonnalites(personnalites) {
-  const liens = personnalites.map(({ id, nom }) => ({
-    href: `profil.html#${id}-${ucfirst(nom)}`,
-    text: ucfirst(nom),
-  }))
-  Slots.setListOfLinks('membres-importants', liens)
+function renderIdeologiesDerivees(ideologies) {
+  if(!ideologies || ideologies.length === 0){
+    Slots.hide('ideologies-derivees')
+  } else {
+    const liens = ideologies.map(({id, nom}) => ({
+      href: `ideologie.html#${id}-${ucfirst(nom)}`,
+      text: ucfirst(nom),
+    }))
+    Slots.setListOfLinks('ideologies-derivees', liens)
+  }
+}
+
+function renderIdeologiesParentes(ideologies) {
+  if(!ideologies || ideologies.length === 0){
+    Slots.hide('ideologies-parentes')
+  } else {
+    const liens = ideologies.map(({id, nom}) => ({
+      href: `ideologie.html#${id}-${ucfirst(nom)}`,
+      text: ucfirst(nom),
+    }))
+    Slots.setListOfLinks('ideologies-parentes', liens)
+  }
 }
