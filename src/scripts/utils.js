@@ -114,3 +114,9 @@ function dateToString(date) {
 function ucfirst([first, ...rest]) {
   return first.toLocaleUpperCase() + rest.join('')
 }
+
+function createElementFromHtml(template) {
+  const div = document.createElement('div')
+  div.innerHTML = template
+  return div.children[0]
+}
