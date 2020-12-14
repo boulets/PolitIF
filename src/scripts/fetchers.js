@@ -141,6 +141,7 @@ async function fetchParti(id) {
     x.dateCreation = nullableDate(x.dateCreation)
     x.dateDissolution = nullableDate(x.dateDissolution)
     x.nombreAdherents.date = nullableDate(x.nombreAdherents.date)
+    x.siege.date = nullableDate(x.siege.date)
   })
   if (inCache) { return inCache }
 
@@ -161,7 +162,13 @@ async function fetchParti(id) {
       compte: donnees?.NombreAdherents?.value,
       date: nullableDate(donnees?.DateNombreAdherents?.value),
     },
-    siege: donnees?.SiegeVille?.value,
+    siege: {
+      numero: donnees?.SiegeNumero?.value,
+      rue: donnees?.SiegeRue?.value,
+      codePostal: donnees?.SiegeCodePostal?.value,
+      ville: donnees?.SiegeVille?.value,
+      date: nullableDate(donnees?.SiegeStartTime?.value),
+    },
     couleur: donnees?.Couleur?.value,
     siteWeb: donnees?.SiteWeb?.value,
     positionnement: donnees?.Positionnement?.value,

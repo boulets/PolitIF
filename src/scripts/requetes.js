@@ -187,15 +187,17 @@ function requete_parti_general(idParti) {
     }
 
     # Siège
+    OPTIONAL { ?parti p:P159 ?SiegeStatement. }
     OPTIONAL {
-      ?parti p:P159 ?SiegeStatement.
-      # ?SiegeStatement pq:P669/rdfs:label ?SiegeRue.
-      # ?SiegeStatement pq:P670 ?SiegeNumero.
-      # ?SiegeStatement pq:P281 ?SiegeCodePostal.
-      # ?SiegeStatement pq:P580 ?SiegeStartTime.
+      ?SiegeStatement pq:P669/rdfs:label ?SiegeRue.
+      FILTER(LANG(?SiegeRue)='fr').
+    }
+    OPTIONAL { ?SiegeStatement pq:P670 ?SiegeNumero. }
+    OPTIONAL { ?SiegeStatement pq:P281 ?SiegeCodePostal. }
+    OPTIONAL { ?SiegeStatement pq:P580 ?SiegeStartTime. }
+    OPTIONAL {
       ?SiegeStatement ps:P159/rdfs:label ?SiegeVille.
       FILTER(LANG(?SiegeVille)='fr').
-      # FILTER(LANG(?SiegeRue)='fr').
     }
 
     # Logo
@@ -242,9 +244,9 @@ function requete_parti_personnalites(idPArti) {
       SELECT ?politicien ?NomPoliticien (COUNT(?mandat) AS ?nombreMandats) WHERE {
         BIND(wd:${idPArti} as ?parti).
         ?politicien wdt:P102 ?parti.
-        ?politicien rdfs:label ?NomPoliticien.
+        ?politicien wdt:P1559 ?NomPoliticien.
         FILTER(LANG(?NomPoliticien) = 'fr').
-        OPTIONAL{?politicien wdt:P39 ?mandat.}
+        OPTIONAL { ?politicien wdt:P39 ?mandat. }
       }
       GROUP BY ?politicien ?NomPoliticien
       ORDER BY DESC(?nombreMandats)
@@ -253,9 +255,9 @@ function requete_parti_personnalites(idPArti) {
       SELECT ?politicien ?NomPoliticien (COUNT(?candidature) AS ?nombreCandidatures) WHERE {
         BIND(wd:${idPArti} as ?parti).
         ?politicien wdt:P102 ?parti.
-        ?politicien rdfs:label ?NomPoliticien.
+        ?politicien wdt:P1559 ?NomPoliticien.
         FILTER(LANG(?NomPoliticien) = 'fr').
-        OPTIONAL{?politicien wdt:P3602 ?candidature.}
+        OPTIONAL { ?politicien wdt:P3602 ?candidature. }
       }
       GROUP BY ?politicien ?NomPoliticien
       ORDER BY DESC(?nombreCandidatures)
