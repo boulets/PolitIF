@@ -1,10 +1,4 @@
-/* global Slots dateToHtml fetchParti fetchPartiIdeologies fetchPartiPersonnalites */
-
-function escapeHtml(text) {
-  const div = document.createElement('div')
-  div.innerText = text
-  return div.innerHTML
-}
+/* global Slots PolitifCache escapeHtml splitOnce wikidataUrl dbpediaUrl dateToHtml */
 
 function adresseToText({ numero, rue, ville, codePostal }) {
   if (numero && rue && ville && codePostal) {
@@ -16,11 +10,6 @@ function adresseToText({ numero, rue, ville, codePostal }) {
   } else if (ville) {
     return ville
   }
-}
-
-function splitOnce(s, on) {
-  const [first, ...rest] = s.split(on)
-  return [first, rest.length > 0 ? rest.join(on) : null]
 }
 
 function update() {
@@ -149,4 +138,99 @@ function renderPartiPersonnalites(personnalites) {
     text: ucfirst(nom),
   }))
   Slots.setListOfLinks('membres-importants', liens)
+}
+
+async function fetchParti(id) {
+  const cacheKey = `parti/${id}`
+  const inCache = PolitifCache.get(cacheKey, (x) => {
+    x.dateCreation = nullableDate(x.dateCreation)
+    x.dateDissolution = nullableDate(x.dateDissolution)
+    x.nombreAdherents.date = nullableDate(x.nombreAdherents.date)
+    x.siege.date = nullableDate(x.siege.date)
+  })
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_parti_general(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
+
+  const description = await fetchDescriptionParti(id)
+
+  const res = {
+    nom: donnees?.NomParti?.value,
+    logo: donnees?.ImageLogo?.value,
+    president: donnees?.NomPresident?.value,
+    fondateur: donnees?.NomFondateur?.value,
+    dateCreation: nullableDate(donnees?.DateCreation?.value),
+    dateDissolution: nullableDate(donnees?.DateDissolution?.value),
+    nombreAdherents: {
+      compte: donnees?.NombreAdherents?.value,
+      date: nullableDate(donnees?.DateNombreAdherents?.value),
+    },
+    siege: {
+      numero: donnees?.SiegeNumero?.value,
+      rue: donnees?.SiegeRue?.value,
+      codePostal: donnees?.SiegeCodePostal?.value,
+      ville: donnees?.SiegeVille?.value,
+      date: nullableDate(donnees?.SiegeStartTime?.value),
+    },
+    couleur: donnees?.Couleur?.value,
+    siteWeb: donnees?.SiteWeb?.value,
+    positionnement: donnees?.Positionnement?.value,
+    description: description ?? 'Pas de description',
+  }
+
+  PolitifCache.set(cacheKey, res)
+  return res
+}
+
+async function fetchDescriptionParti(idParti) {
+  const cacheKey = `parti/${idParti}/description`
+  const inCache = PolitifCache.get(cacheKey)
+  if (inCache) { return inCache }
+  try {
+    const req = requete_parti_description(idParti)
+    const url = dbpediaUrl(req)
+    const reponse = await fetch(url).then(res => res.json())
+    const donnees = reponse.results.bindings[0]
+    const v = donnees?.Description?.value
+    PolitifCache.set(cacheKey, v)
+    return v
+  } catch (error) {
+    return ''
+  }
+}
+
+async function fetchPartiIdeologies(id) {
+  const cacheKey = `parti/${id}/ideologies`
+  const inCache = PolitifCache.get(cacheKey)
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_parti_ideologies(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const ideologies = reponse.results.bindings
+    .map(ideologie => ({
+      id: extractIdFromWikidataUrl(ideologie.Ideologie?.value),
+      nom: ideologie.NomIdeologie?.value,
+    }))
+    .filter(nom => nom) // filtrer null, undefined, vide
+  PolitifCache.set(cacheKey, ideologies)
+  return ideologies
+}
+
+async function fetchPartiPersonnalites(id) {
+  const cacheKey = `parti/${id}/personnalites`
+  const inCache = PolitifCache.get(cacheKey)
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_parti_personnalites(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const personnalites = reponse.results.bindings
+    .map(personnalite => ({
+      id: extractIdFromWikidataUrl(personnalite.politicien?.value),
+      nom: personnalite.NomPoliticien?.value,
+    }))
+    .filter(nom => nom) // filtrer null, undefined, vide
+  PolitifCache.set(cacheKey, personnalites)
+  return personnalites
 }

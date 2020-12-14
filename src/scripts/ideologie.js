@@ -1,9 +1,4 @@
-/* global Slots fetchIdeologie fetchIdeologieDescription fetchIdeologiesDerivees fetchIdeologiesParentes */
-
-function splitOnce(s, on) {
-  const [first, ...rest] = s.split(on)
-  return [first, rest.length > 0 ? rest.join(on) : null]
-}
+/* global Slots PolitifCache splitOnce requete_ideologie requete_ideologie_description requete_ideologies_parentes requete_ideologies_derivees wikidataUrl dbpediaUrl */
 
 function update() {
   const hash = document.location.hash.slice(1)
@@ -73,4 +68,86 @@ function listeIdeologiesRenderer(slotKey) {
       Slots.hide(slotKey)
     }
   }
+}
+
+async function fetchIdeologie(id) {
+  const cacheKey = `ideologie/${id}`
+  const inCache = PolitifCache.get(cacheKey)
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_ideologie)
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
+
+  const res = {
+    nom: donnees?.Nom?.value,
+    image: donnees?.image?.value,
+    flag: donnees?.flagimage?.value,
+  }
+
+  PolitifCache.set(cacheKey, res)
+  return res
+}
+
+async function fetchIdeologieDescription(id) {
+  const cacheKey = `ideologie/${id}/description`
+  const inCache = PolitifCache.get(cacheKey)
+  if (inCache) { return inCache }
+
+  const req = requete_ideologie_description(id)
+  const url = dbpediaUrl(req)
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
+
+  const res = {
+    description: donnees?.Description?.value ?? 'Pas de description',
+  }
+
+  PolitifCache.set(cacheKey, res)
+  return res
+}
+
+async function fetchIdeologiesParentes(id) {
+  const cacheKey = `ideologie-parentes/${id}`
+  const inCache = PolitifCache.get(cacheKey)
+  if (inCache) {
+    return inCache
+  }
+
+  const url = wikidataUrl(requete_ideologies_parentes(id))
+  const reponse = await fetch(url).then(res => res.json())
+
+  const res = reponse.results.bindings
+    .map(ideologie => ({
+      id: extractIdFromWikidataUrl(ideologie?.superClass.value),
+      nom: ideologie.superClassLabel.value,
+    }))
+    .filter(nom => nom) // filtrer null, undefined, vide
+
+  PolitifCache.set(cacheKey, res)
+  return res
+}
+
+async function fetchIdeologiesDerivees(id) {
+  const cacheKey = `ideologie-derivees/${id}`
+  const inCache = PolitifCache.get(cacheKey)
+  if (inCache) {
+    return inCache
+  }
+
+  const url = wikidataUrl(requete_ideologies_derivees(id))
+  const reponse = await fetch(url).then(res => res.json())
+
+  console.log(reponse)
+
+  const res = reponse.results.bindings
+    .map(ideologie => ({
+      id: extractIdFromWikidataUrl(ideologie.subClass.value),
+      nom: ideologie.subClassLabel.value,
+    }))
+    .filter(nom => nom) // filtrer null, undefined, vide
+
+
+  PolitifCache.set(cacheKey, res)
+  return res
 }

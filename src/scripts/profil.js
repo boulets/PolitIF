@@ -1,9 +1,4 @@
-/* global Slots, fetchProfil, fetchPositions, fetchDescription, fetchEnfantsOfProfil, fetchFratrieOfProfil, fetchPartisOfProfil, dateToHtml */
-
-function splitOnce(s, on) {
-  const [first, ...rest] = s.split(on)
-  return [first, rest.length > 0 ? rest.join(on) : null]
-}
+/* global Slots PolitifCache wikidataUrl dbpediaUrl dateToHtml */
 
 function update() {
   const hash = document.location.hash.slice(1)
@@ -51,7 +46,7 @@ function update() {
         Slots.hide('fratrie')
       }
     }),
-    fetchPositions(id).then(renderPositions),
+    fetchMandatsProfil(id).then(renderPositions),
     fetchPartisOfProfil(id).then(renderPartis)
   ]).then(() => {
     console.log(profilComplet)
@@ -143,4 +138,110 @@ function renderPartis(partis) {
   } else {
     Slots.hide('profil-liste-partis')
   }
+}
+
+async function fetchProfil(id) {
+  const cacheKey = `profil/${id}`
+  const inCache = PolitifCache.get(cacheKey, (value) => {
+    value.dateNaissance = nullableDate(value.dateNaissance)
+    value.dateDeces = nullableDate(value.dateDeces)
+  })
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_profil_biographie(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings[0]
+
+  const res = {
+    nom: donnees?.NomPoliticien?.value,
+    dateNaissance: nullableDate(donnees?.DateDeNaissance?.value),
+    lieuNaissance: donnees?.NomLieuDeNaissance?.value,
+    dateDeces: nullableDate(donnees?.DateDeDeces?.value),
+    lieuDeces: donnees?.NomLieuDeDeces?.value,
+    image: donnees?.Image?.value,
+    pere: donnees?.NomPere?.value,
+    mere: donnees?.NomMere?.value,
+    conjoint: donnees?.NomConjoint?.value,
+    signature: donnees?.Signature?.value
+  }
+
+  PolitifCache.set(cacheKey, res)
+  return res
+}
+
+async function fetchDescription(idPoliticien) {
+  const cacheKey = `profil/${idPoliticien}/description`
+  const inCache = PolitifCache.get(cacheKey)
+  if (inCache) { return inCache }
+  try {
+    const req = requete_profil_description(idPoliticien)
+    const url = dbpediaUrl(req)
+    const reponse = await fetch(url).then(res => res.json())
+    const donnees = reponse.results.bindings[0]
+    const v = donnees?.Description?.value
+    PolitifCache.set(cacheKey, v)
+    return v
+  } catch (error) {
+    return ''
+  }
+}
+
+async function fetchMandatsProfil(id) {
+  const cacheKey = `profil/${id}/positions`
+  const inCache = PolitifCache.get(cacheKey, (a) => {
+    a.forEach(x => {
+      x.debut = nullableDate(x.debut)
+      x.fin = nullableDate(x.fin)
+    })
+  })
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_profil_mandats(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const mandats = reponse.results.bindings.map(element => ({
+    nom: element.Position?.value,
+    debut: nullableDate(element.DateEntreePosition?.value),
+    fin: nullableDate(element.DateSortiePosition?.value),
+  }))
+  PolitifCache.set(cacheKey, mandats)
+  return mandats
+}
+
+async function fetchPartisOfProfil(id) {
+  const cacheKey = `profil/${id}/partis`
+  const inCache = PolitifCache.get(cacheKey)
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_profil_partiPolitique(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const partis = reponse.results.bindings.map(parti => ({
+    id: extractIdFromWikidataUrl(parti.Parti?.value),
+    nom: parti.NomParti?.value,
+  }))
+  PolitifCache.set(cacheKey, partis)
+  return partis
+}
+
+async function fetchEnfantsOfProfil(id) {
+  const cacheKey = `profil/${id}/enfants`
+  const inCache = PolitifCache.get(cacheKey)
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_profil_enfants(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const v = reponse.results.bindings.map(x => x.nomEnfants?.value).filter(x => x)
+  PolitifCache.set(cacheKey, v)
+  return v
+}
+
+async function fetchFratrieOfProfil(id) {
+  const cacheKey = `profil/${id}/fratrie`
+  const inCache = PolitifCache.get(cacheKey)
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_profil_fratrie(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const v = reponse.results.bindings.map(x => x.nomFratrie?.value).filter(x => x)
+  PolitifCache.set(cacheKey, v)
+  return v
 }
