@@ -58,7 +58,7 @@ function ucfirst([first, ...rest]) {
 
 function listeIdeologiesRenderer(slotKey) {
   return (ideologies) => {
-    if (Array.isArray(ideologies) && ideologies.length === 0){
+    if (Array.isArray(ideologies) && ideologies.length > 0){
       const liens = ideologies.map(({id, nom}) => ({
         href: `ideologie.html#${id}-${ucfirst(nom)}`,
         text: ucfirst(nom),
