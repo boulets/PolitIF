@@ -6,7 +6,25 @@ const DBPEDIA_URL = 'https://dbpedia.org/sparql'
 const WIKIDATA_API = 'https://query.wikidata.org/sparql'
 
 /** Durée de vie en cache (en secondes) */
-const CACHE_TTL = 5 * 60
+let CACHE_TTL = 5 * 60
+
+const checkDevToolsOpen = document.createElement('ignorez_ça')
+let ignoreCheck = false
+Object.defineProperty(checkDevToolsOpen, 'id', {
+  get: function() {
+    if (!ignoreCheck) {
+      CACHE_TTL = 0
+      console.log('%c%s', 'background-color: #313; color: white; padding: 3px 6px; border-radius: 3px', 'La console est ouverte donc le cache a été désactivé')
+    }
+    throw new Error('')
+  }
+})
+console.log(checkDevToolsOpen)
+ignoreCheck = true
+
+if (CACHE_TTL > 0) {
+  console.log('%c%s', 'background-color: #511; color: white; padding: 3px 6px; border-radius: 3px', `Attention: Le cache est activé (ttl=${CACHE_TTL}s)`)
+}
 
 function nullableDate(string) {
   return string === null || string === undefined ? null : new Date(string)
