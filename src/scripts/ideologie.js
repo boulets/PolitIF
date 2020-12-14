@@ -76,7 +76,7 @@ async function fetchIdeologie(id) {
   if (inCache) { return inCache }
 
   const req = requete_ideologie(id)
-  const url = wikidataUrl()
+  const url = wikidataUrl(req)
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
 
