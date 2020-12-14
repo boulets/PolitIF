@@ -1,4 +1,4 @@
-/* global Slots dateToHtml fetchParti fetchPartiIdeologies fetchPartiPersonnalites */
+/* global Slots fetchIdeologie fetchIdeologieDescription */
 
 function splitOnce(s, on) {
   const [first, ...rest] = s.split(on)
@@ -26,8 +26,6 @@ function update() {
   return Promise.all([
     fetchIdeologie(id).then(renderIdeologie),
     fetchIdeologieDescription(id).then(renderIdeologieDescription),
-    // fetchPartiIdeologies(id).then(renderPartiIdeologies),
-    // fetchPartiPersonnalites(id).then(renderPartiPersonnalites),
   ])
 }
 

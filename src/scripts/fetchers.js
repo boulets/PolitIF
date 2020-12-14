@@ -1,26 +1,26 @@
 /* eslint-disable no-unused-vars */
-/* global requete_profil_biographie, requete_profil_mandats, requete_profil_description, requete_parti_description, requete_parti_general, requete_parti_ideologies, requete_parti_personnalites, requete_profil_partiPolitique, requete_profil_enfants, requete_profil_fratrie */
+/* global requete_profil_biographie, requete_profil_mandats, requete_profil_description, requete_parti_description, requete_parti_general, requete_parti_ideologies, requete_parti_personnalites, requete_profil_partiPolitique, requete_profil_enfants, requete_profil_fratrie, requete_ideologie, requete_ideologie_description */
 
 //import {API_URL} from '../constants'
 const DBPEDIA_URL = 'https://dbpedia.org/sparql'
 const WIKIDATA_API = 'https://query.wikidata.org/sparql'
 
 /** Durée de vie en cache (en secondes) */
-let CACHE_TTL = 0 //5 * 60
+let CACHE_TTL = 0 // 5 * 60
 
-const checkDevToolsOpen = document.createElement('ignorez_ça')
-let ignoreCheck = false
-Object.defineProperty(checkDevToolsOpen, 'id', {
-  get: function() {
-    if (!ignoreCheck) {
-      CACHE_TTL = 0
-      console.log('%c%s', 'background-color: #313; color: white; padding: 3px 6px; border-radius: 3px', 'La console est ouverte donc le cache a été désactivé')
-    }
-    throw new Error('')
-  }
-})
-console.log(checkDevToolsOpen)
-ignoreCheck = true
+// const checkDevToolsOpen = document.createElement('ignorez_ça')
+// let ignoreCheck = false
+// Object.defineProperty(checkDevToolsOpen, 'id', {
+//   get: function() {
+//     if (!ignoreCheck) {
+//       CACHE_TTL = 0
+//       console.log('%c%s', 'background-color: #313; color: white; padding: 3px 6px; border-radius: 3px', 'La console est ouverte donc le cache a été désactivé')
+//     }
+//     throw new Error('')
+//   }
+// })
+// console.log(checkDevToolsOpen)
+// ignoreCheck = true
 
 if (CACHE_TTL > 0) {
   console.log('%c%s', 'background-color: #511; color: white; padding: 3px 6px; border-radius: 3px', `Attention: Le cache est activé (ttl=${CACHE_TTL}s)`)
@@ -258,7 +258,7 @@ async function fetchEnfantsOfProfil(id) {
 }
 
 async function fetchFratrieOfProfil(id) {
-  const cacheKey = `profil/${id}/enfants`
+  const cacheKey = `profil/${id}/fratrie`
   const inCache = cached(cacheKey)
   if (inCache) { return inCache }
 
@@ -278,7 +278,7 @@ async function fetchIdeologie(id) {
   const inCache = cached(cacheKey)
   if (inCache) { return inCache }
 
-  const url = wikidataUrl(requete_ideologie_images(id))
+  const url = wikidataUrl(requete_ideologie)
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
 
@@ -294,7 +294,7 @@ async function fetchIdeologie(id) {
 }
 
 async function fetchIdeologieDescription(id) {
-  const cacheKey = `ideologie-description/${id}`
+  const cacheKey = `ideologie/${id}/description`
   const inCache = cached(cacheKey)
   if (inCache) { return inCache }
 
