@@ -134,8 +134,6 @@ async function fetchIdeologiesDerivees(id) {
   const url = wikidataUrl(requete_ideologies_derivees(id))
   const reponse = await fetch(url).then(res => res.json())
 
-  console.log(reponse)
-
   const res = reponse.results.bindings
     .map(ideologie => ({
       id: extractIdFromWikidataUrl(ideologie.subClass.value),
