@@ -1,6 +1,8 @@
-/* global Slots requete_recherche_partis requete_recherche_politicien wikidataUrl extractIdFromWikidataUrl */
+/* global Slots PolitifCache requete_recherche_partis requete_recherche_politicien wikidataUrl extractIdFromWikidataUrl */
 
 const tousLesResultats = {}
+
+const pendingPromises = {}
 
 let meilleurResultat = null
 
@@ -18,18 +20,34 @@ function submitSearch(q, n, type, fonctionRequete, mapper) {
   if (q === '') {
     return afficherResultats(type, [])
   }
+
   const url = wikidataUrl(fonctionRequete(q, n))
-  fetch(url).then(async r => {
+  const k = `${q}:${n}:${type}`
+  const inCache = PolitifCache.get(k)
+  if (inCache) {
+    tousLesResultats[type] = inCache
+    afficherResultats(type, inCache)
+    return
+  }
+
+  if (pendingPromises[k]) {
+    console.error('already searching')
+    return // already fetching results for this query params
+  }
+  pendingPromises[k] = fetch(url).then(async r => {
     if (r.ok) {
-      if (search.value.includes(q)) {
-        const res = await r.json()
-        const resultats = res.results.bindings.map(mapper)
-        tousLesResultats[type] = resultats
-        afficherResultats(type, resultats)
-      }
+      const res = await r.json()
+      delete pendingPromises[k]
+      const resultats = res.results.bindings.map(mapper)
+      PolitifCache.set(resultats)
+      tousLesResultats[type] = resultats
+      afficherResultats(type, resultats)
     } else {
-      console.error(await r.text())
+      throw new Error(await r.text())
     }
+  }).catch((err) => {
+    console.error(err)
+    delete pendingPromises[k]
   })
 }
 
@@ -72,6 +90,12 @@ function definirMeilleurResultat() {
   } else {
     searchAutocomplete.innerHTML = ''
     meilleurResultat = null
+
+    const isLastQuery = Object.values(pendingPromises).length === 0
+    const noResults = Object.values(tousLesResultats).findIndex(x => x.length > 0) === -1
+    if (isLastQuery && noResults) {
+      searchAutocomplete.innerHTML = search.value + ' — ' + 'Aucun résultat'
+    }
   }
 }
 
@@ -96,17 +120,15 @@ function init() {
   Slots.hide('resultats-partis')
 
   const submitProfil1 = throttle((x) => chercherProfil(x, 1), 500, { leading: false, trailing: true })
-  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 1500, { leading: false, trailing: true })
+  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 500, { leading: false, trailing: true })
   const submitPartis1 = throttle((x) => chercherParti(x, 1), 500, { leading: false, trailing: true })
-  const submitPartis5 = throttle((x) => chercherParti(x, 5), 1500, { leading: false, trailing: true })
+  const submitPartis5 = throttle((x) => chercherParti(x, 5), 500, { leading: false, trailing: true })
 
   searchButton.addEventListener('click', goToFirstResult)
 
   search.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       goToFirstResult()
-    } else {
-      searchAutocomplete.innerHTML = ''
     }
   })
 
@@ -123,11 +145,17 @@ function init() {
   })
 
   search.addEventListener('input', () => {
-    searchAutocomplete.innerHTML = ''
-    submitProfil1(search.value)
-    submitProfil5(search.value)
-    submitPartis1(search.value)
-    submitPartis5(search.value)
+    Object.keys(tousLesResultats).forEach(k => delete tousLesResultats[k])
+    const q = search.value
+    if (q.length > 0) {
+      searchAutocomplete.innerHTML = q + ' — ' + 'Recherche…'
+      submitProfil1(q)
+      submitProfil5(q)
+      submitPartis1(q)
+      submitPartis5(q)
+    } else {
+      searchAutocomplete.innerHTML = ''
+    }
   })
 
   searchResultsContainer.addEventListener('keydown', (e) => {
