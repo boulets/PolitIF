@@ -24,6 +24,21 @@ header .brand {
   gap: 30px;
 }
 
+header .logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+header .logo img {
+  height: 5em;
+  width: auto;
+}
+header a {
+  color: inherit !important;
+  text-decoration: none;
+}
+
 header nav {
   display: flex;
   flex-direction: row;
