@@ -45,18 +45,22 @@
 
 #searchButton {
   display: grid;
+  place-items: center;
   position: absolute;
   width: 52px;
   height: 52px;
   top: 0;
   right: 0;
   z-index: 10;
-  background: none;
+  background: white;
   border: none;
   border-radius: 99px;
   color: #0055a4;
   font-size: 30px;
-  place-items: center;
+}
+#searchButton svg {
+  width: 36px;
+  height: 36px;
 }
 #search:invalid + #searchButton,
 #search:placeholder-shown + #searchButton {

@@ -32,12 +32,15 @@
         <label for="search">Rechercher une personnalité, un parti, une idéologie politique.</label>
         <div id="search-input-container">
           <div id="search-autocomplete"></div>
-          <input pattern=".+" id="search" type="text" inputmode="search" placeholder="Valéry Giscard d'Estaing" />
+          <input pattern=".+" id="search" type="search" inputmode="search" placeholder="Valéry Giscard d'Estaing" />
           <button type="submit" id="searchButton">
             <div class="sr-only">
               Accéder au meilleur résultat de recherche
             </div>
-            <span aria-hidden="true">→</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="48px" height="48px">
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+            </svg>
           </button>
         </div>
 
