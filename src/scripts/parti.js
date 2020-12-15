@@ -32,6 +32,9 @@ function update() {
 
   return Promise.all([
     fetchParti(id).then(renderParti),
+    fetchDescriptionParti(id).then(description => {
+      description ? Slots.setText('description', description) : Slots.hide('description')
+    }),
     fetchPartiIdeologies(id).then(renderPartiIdeologies),
     fetchPartiPersonnalites(id).then(renderPartiPersonnalites),
   ])
@@ -57,7 +60,6 @@ function renderParti(parti) {
   } else {
     Slots.hide('date-dissolution')
   }
-  parti.description ? Slots.setText('description', parti.description) : Slots.hide('description')
   parti.president ? Slots.setText('president', parti.president) : Slots.hide('president')
   parti.fondateur ? Slots.setText('fondateur', parti.fondateur) : Slots.hide('fondateur')
   parti.positionnement ? Slots.setText('positionnement', ucfirst(parti.positionnement)) : Slots.hide('positionnement')
@@ -75,7 +77,6 @@ function renderParti(parti) {
   } else {
     Slots.hide('siege')
   }
-
 
   const nombreAdherentsStr = nombreAdherentsToHtml(parti.nombreAdherents)
   if (nombreAdherentsStr) {
@@ -148,8 +149,6 @@ async function fetchParti(id) {
   const url = wikidataUrl(requete_parti_general(id))
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings[0]
-
-  const description = await fetchDescriptionParti(id)
 
   const res = {
     nom: donnees?.NomParti?.value,

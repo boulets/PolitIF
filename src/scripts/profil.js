@@ -18,18 +18,14 @@ function update() {
 
   let profilComplet = {}
   Promise.all([
-    fetchProfil(id)
-      .then(async profil => {
-        profilComplet = { ...profilComplet, ...profil }
-        renderProfilOrHide(profilComplet)
-        try {
-          const description = await fetchDescription(id)
-          profilComplet = { ...profilComplet, description }
-          description ? Slots.setText('description', description) : Slots.hide('description')
-        } catch (error) {
-          Slots.hide('description')
-        }
-      }),
+    fetchProfil(id).then(profil => {
+      profilComplet = { ...profilComplet, ...profil }
+      renderProfilOrHide(profilComplet)
+    }),
+    fetchDescription(id).then(description => {
+      profilComplet = { ...profilComplet, description }
+      description ? Slots.setText('description', description) : Slots.hide('description')
+    }),
     fetchEnfantsOfProfil(id).then(enfants => {
       profilComplet = { ...profilComplet, enfants }
       if (enfants && enfants.length > 0) {
@@ -123,7 +119,7 @@ function renderPositions(positions) {
       li.innerHTML = '<b></b>'
     }
 
-    li.querySelector('b').innerText = ucfirst(nom) + (of ? ` de ${of}` : "")
+    li.querySelector('b').innerText = ucfirst(nom) + (of ? ` de ${of}` : '')
     ul.appendChild(li)
   })
 }
