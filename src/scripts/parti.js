@@ -18,7 +18,7 @@ function update() {
   const id = p.length > 0 ? p[0] : ''
   const nameWhileLoading = p.length > 1 ? p[1] : ''
 
-  Slots.setAttr('image-logo', 'src', '')
+  Slots.setImage('image-logo', '')
   const slots = ['description', 'image-logo', 'president', 'fondateur', 'date-creation', 'date-dissolution', 'nombre-adherents', 'positionnement', 'site-web', 'siege']
   slots.forEach(key => Slots.markLoading(key))
 
@@ -86,8 +86,7 @@ function renderParti(parti) {
   }
 
   if (parti.logo) {
-    Slots.setAttr('image-logo', 'src', parti.logo)
-    Slots.setAttr('image-logo', 'alt', 'Logo de ' + parti.nom)
+    Slots.setImage('image-logo', parti.logo, `Logo de ${parti.nom}`)
   } else {
     Slots.hide('image-logo')
   }

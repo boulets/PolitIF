@@ -17,26 +17,23 @@ main [loading] {
 main img[loading] {
   display: block;
   width: 100%;
-  height: 40%;
+  height: 200px;
 }
 main img[loading]::after {
   display: block;
   background: inherit;
   animation: inherit;
   content: "";
+  height: 100%;
+}
+
+main img {
+  transition: opacity 400ms ease;
 }
 
 main h2[loading] {
   width: 70%;
   height: 1.2em;
-}
-
-main img {
-  transition: opacity 400ms ease 500ms;
-}
-main img[loading],
-main img[src=""] {
-  opacity: 0;
 }
 
 main [data-key="description"][loading] {

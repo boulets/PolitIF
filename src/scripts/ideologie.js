@@ -6,7 +6,7 @@ function update() {
   const id = p.length > 0 ? p[0] : ''
   const nameWhileLoading = p.length > 1 ? p[1] : ''
 
-  Slots.setAttr('image-logo', 'src', '')
+  Slots.setImage('image-logo', '')
   const slots = ['description', 'image-logo', 'ideologies-derivees', 'ideologies-parentes']
   slots.forEach(key => Slots.markLoading(key))
 
@@ -38,11 +38,9 @@ function renderIdeologie(ideologie) {
   Slots.setText('nom', ucfirst(ideologie.nom))
 
   if (ideologie.image) {
-    Slots.setAttr('image-logo', 'src', ideologie.image)
-    Slots.setAttr('image-logo', 'src', `Image représentant l'idéologie ${ideologie.nom}`)
+    Slots.setImage('image-logo', ideologie.image, `Image représentant l'idéologie ${ideologie.nom}`))
   } else if (ideologie.flag) {
-    Slots.setAttr('image-logo', 'src', ideologie.flag)
-    Slots.setAttr('image-logo', 'src', `Drapeau de l'idéologie ${ideologie.nom}`)
+    Slots.setImage('image-logo', ideologie.flag, `Drapeau de l'idéologie ${ideologie.nom}`)
   } else {
     Slots.hide('image-logo')
   }
