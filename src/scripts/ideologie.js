@@ -6,9 +6,9 @@ function update() {
   const id = p.length > 0 ? p[0] : ''
   const nameWhileLoading = p.length > 1 ? p[1] : ''
 
+  Slots.setAttr('image-logo', 'src', '')
   const slots = ['description', 'image-logo', 'ideologies-derivees', 'ideologies-parentes']
   slots.forEach(key => Slots.markLoading(key))
-  Slots.setAttr('image-logo', 'src', '')
 
   if  (nameWhileLoading) {
     document.title = `Polit'IF – ${nameWhileLoading}`
@@ -37,14 +37,15 @@ function renderIdeologie(ideologie) {
   document.title = `Polit'IF – ${ucfirst(ideologie.nom)}`
   Slots.setText('nom', ucfirst(ideologie.nom))
 
-  if  (ideologie.image) {
+  if (ideologie.image) {
     Slots.setAttr('image-logo', 'src', ideologie.image)
+    Slots.setAttr('image-logo', 'src', `Image représentant l'idéologie ${ideologie.nom}`)
   } else if (ideologie.flag) {
     Slots.setAttr('image-logo', 'src', ideologie.flag)
+    Slots.setAttr('image-logo', 'src', `Drapeau de l'idéologie ${ideologie.nom}`)
   } else {
-    Slots.setAttr('image-logo', 'src', '')
+    Slots.hide('image-logo')
   }
-
 }
 
 function renderIdeologieDescription(ideologie) {
@@ -104,7 +105,7 @@ async function fetchIdeologieDescription(id) {
 }
 
 async function fetchIdeologiesParentes(id) {
-  const cacheKey = `ideologie-parentes/${id}`
+  const cacheKey = `ideologie/${id}/parentes`
   const inCache = PolitifCache.get(cacheKey)
   if (inCache) {
     return inCache
@@ -125,7 +126,7 @@ async function fetchIdeologiesParentes(id) {
 }
 
 async function fetchIdeologiesDerivees(id) {
-  const cacheKey = `ideologie-derivees/${id}`
+  const cacheKey = `ideologie/${id}/derivees`
   const inCache = PolitifCache.get(cacheKey)
   if (inCache) {
     return inCache
@@ -140,7 +141,6 @@ async function fetchIdeologiesDerivees(id) {
       nom: ideologie.subClassLabel.value,
     }))
     .filter(nom => nom) // filtrer null, undefined, vide
-
 
   PolitifCache.set(cacheKey, res)
   return res
