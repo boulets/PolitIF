@@ -32,7 +32,7 @@ main h2[loading] {
 }
 
 main img {
-  transition: opacity 400ms ease 500ms;
+  transition: all 400ms ease;
 }
 main img[loading],
 main img[src=""] {
