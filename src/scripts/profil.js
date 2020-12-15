@@ -60,7 +60,7 @@ function init() {
 init()
 
 function renderLoadingProfil() {
-  Slots.setAttr('image-personne', 'src', '')
+  Slots.setImage('image-personne', '')
   const slots = [
     'nom', 'date-naissance', 'date-deces', 'lieu-naissance', 'lieu-deces',
     'description', 'pere', 'mere', 'fratrie', 'conjoint', 'enfants',
@@ -93,15 +93,13 @@ function renderProfilOrHide(profil) {
   profil.conjoint ? Slots.setText('conjoint', profil.conjoint) : Slots.hide('conjoint')
 
   if (profil.image) {
-    Slots.setAttr('image-personne', 'src', profil.image)
-    Slots.setAttr('image-personne', 'alt', 'Photo de ' + profil.nom)
+    Slots.setImage('image-personne', profil.image, `Photo de ${profil.nom}`)
   } else {
     Slots.hide('image-personne')
   }
 
   if (profil.signature) {
-    Slots.setAttr('signature-personne', 'src', profil.signature)
-    Slots.setAttr('signature-personne', 'alt', 'Signature de ' + profil.nom)
+    Slots.setImage('signature-personne', profil.signature, `Signature de ${profil.nom}`)
   } else {
     Slots.hide('signature-personne')
   }
