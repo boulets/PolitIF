@@ -41,21 +41,21 @@ function requete_recherche_partis(recherche, n = 1) {
 
     OPTIONAL {
       ${filterRechercheParTexte(recherche, '?NomParti')}
-      bind(true as ?matched)
+      BIND(true as ?matched)
     }
 
     OPTIONAL {
       ?parti p:P1813 [ ps:P1813 ?NomCourt ].
       FILTER(lang(?NomCourt) = 'fr')
       ${filterRechercheParTexte(recherche, '?NomCourt')}
-      bind(true as ?matched)
+      BIND(true as ?matched)
     }
 
     OPTIONAL {
       ?parti p:P1448 [ ps:P1448 ?NomOfficiel ].
       FILTER(lang(?NomOfficiel) = 'fr')
       ${filterRechercheParTexte(recherche, '?NomOfficiel')}
-      bind(true as ?matched)
+      BIND(true as ?matched)
     }
 
     FILTER(?matched=true)
