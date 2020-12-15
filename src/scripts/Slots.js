@@ -96,32 +96,35 @@ function Slots_setListOfLinks(key, values, type = 'ul') {
   }
 }
 
-function Slots_setHtml(key, value) {
-  Slots_showSlot(key)
-  if (value === null || value === undefined) {
-    return Slots_markLoading(value)
-  } else {
-    const element = Slots_getSlot(key)
-    element.innerHTML = value
-    element.removeAttribute('loading')
-  }
-}
-
-function Slots_setText(key, value) {
-  Slots_showSlot(key)
-  if (value === null || value === undefined) {
-    return Slots_markLoading(value)
-  } else {
-    const element = Slots_getSlot(key)
-    element.innerText = value
-    element.removeAttribute('loading')
-  }
-}
-
 function Slots_setAttr(key, attribute, value) {
   const element = Slots_getSlot(key)
   element.setAttribute(attribute, value)
   element.removeAttribute('loading')
+}
+
+function Slots_setImage(key, src, alt = '') {
+  const element = Slots_getSlot(key)
+  if (src === '') {
+    // alors on veut plutôt une image vide qu'une icone "image cassée"
+    const EMPTY_GIF_DATA_URL = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+    element.setAttribute('src', EMPTY_GIF_DATA_URL)
+    element.setAttribute('alt', alt)
+    element.setAttribute('loading', 'true')
+  } else {
+    element.setAttribute('src', src)
+    element.setAttribute('alt', alt)
+    element.addEventListener('load', () => {
+      const t = getComputedStyle(element).transitionDuration
+      element.style.transition = 'none'
+      element.style.opacity = '0'
+      element.removeAttribute('loading')
+
+      setTimeout(() => {
+        element.style.transition = t
+        element.style.opacity = '1'
+      }, 100)
+    })
+  }
 }
 
 function Slots_markLoading(key) {
@@ -143,6 +146,7 @@ const Slots = {
   setList: (key, list) => Slots_setListOrMissing(key, list),
   setListOfLinks: Slots_setListOfLinks,
   setAttr: (key, attr, value) => Slots_setAttr(key, attr, value),
+  setImage: (key, src, alt = '') => Slots_setImage(key, src, alt),
 
   markLoading: (key) => Slots_markLoading(key),
   markLoaded: (key) => Slots_markLoaded(key),
