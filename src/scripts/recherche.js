@@ -14,6 +14,7 @@ function creerFonctionRecherche(type, fonctionRequete, mapper) {
 }
 
 function submitSearch(q, n, type, fonctionRequete, mapper) {
+  tousLesResultats[type] = []
   if (q === '') {
     return afficherResultats(type, [])
   }
@@ -43,20 +44,14 @@ function afficherResultats(type, resultats) {
       text: nom,
       href: `${type}.html#${id}-${nom}`,
     })))
-
-    const premier = resultats[0]
-    if (search.value.length > 0) {
-      searchAutocomplete.innerHTML = search.value + ' — ' + premier.nom
-      meilleurResultat = { ...premier, type }
-    }
   } else {
-    searchAutocomplete.innerHTML = ''
     Slots.setText(`resultats-${type}s`, '')
     Slots.hide(`resultats-${type}s`)
   }
 
+  definirMeilleurResultat()
+
   if (shouldRestoreFocus) {
-    console.log(shouldRestoreFocusToHref)
     const links = [...searchResultsContainer.querySelectorAll('[href]')]
     const el = links.find(x => x.href === shouldRestoreFocusToHref)
     if (el) {
@@ -64,6 +59,19 @@ function afficherResultats(type, resultats) {
     } else {
       search.focus()
     }
+  }
+}
+
+function definirMeilleurResultat() {
+  const type = ['profil', 'parti', 'ideologie'].filter(t => tousLesResultats[t]?.length > 0)[0]
+  const premier = tousLesResultats[type]?.[0]
+
+  if (premier && search.value.length > 0) {
+    searchAutocomplete.innerHTML = search.value + ' — ' + premier.nom
+    meilleurResultat = { ...premier, type }
+  } else {
+    searchAutocomplete.innerHTML = ''
+    meilleurResultat = null
   }
 }
 
