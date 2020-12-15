@@ -159,3 +159,8 @@ dd ul {
   padding-left: 0px;
   margin: 0px;
 }
+
+a:hover {
+  color: black;
+  text-decoration: underline solid black 2px;
+}
