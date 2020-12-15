@@ -38,7 +38,7 @@ function renderIdeologie(ideologie) {
   Slots.setText('nom', ucfirst(ideologie.nom))
 
   if (ideologie.image) {
-    Slots.setImage('image-logo', ideologie.image, `Image représentant l'idéologie ${ideologie.nom}`))
+    Slots.setImage('image-logo', ideologie.image, `Image représentant l'idéologie ${ideologie.nom}`)
   } else if (ideologie.flag) {
     Slots.setImage('image-logo', ideologie.flag, `Drapeau de l'idéologie ${ideologie.nom}`)
   } else {
