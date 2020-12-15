@@ -1,4 +1,4 @@
-/* global Slots PolitifCache escapeHtml splitOnce wikidataUrl dbpediaUrl dateToHtml */
+/* global Slots PolitifCache escapeHtml splitOnce wikidataUrl dbpediaUrl dateToHtml nullableDate ucfirst requete_parti_general description requete_parti_description requete_parti_ideologies extractIdFromWikidataUrl requete_parti_personnalites */
 
 function adresseToText({ numero, rue, ville, codePostal }) {
   if (numero && rue && ville && codePostal) {

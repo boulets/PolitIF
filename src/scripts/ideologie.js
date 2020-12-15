@@ -1,4 +1,4 @@
-/* global Slots PolitifCache splitOnce requete_ideologie requete_ideologie_description requete_ideologies_parentes requete_ideologies_derivees wikidataUrl dbpediaUrl */
+/* global Slots PolitifCache splitOnce requete_ideologie requete_ideologie_description requete_ideologies_parentes requete_ideologies_derivees wikidataUrl dbpediaUrl extractIdFromWikidataUrl ucfirst */
 
 function update() {
   const hash = document.location.hash.slice(1)
