@@ -26,6 +26,10 @@
   object-fit: contain;
 }
 
+.colonne-secondaire img[hidden] + dl {
+  margin-top: 3rem;
+}
+
 @media (max-width: 600px) {
   .colonnes {
     display: block;
