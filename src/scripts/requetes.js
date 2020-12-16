@@ -5,8 +5,16 @@ const classesIdeologies = ['wd:Q12909644', 'wd:Q179805'].join(' ')
 function filterRechercheParTexte(recherche, prop) {
   const rech = recherche.toLocaleLowerCase().replace(/"/g, ' ')
   return `FILTER(contains(lcase(${prop}), "${rech}")).`
-  // const segments = rech.split(/\s+/g)
-  // return segments.map(s => `FILTER(contains(lcase(${prop}), "${s}")).`).join('\n')
+}
+function serviceEntitySearch(recherche, prop) {
+  const rech = recherche.replace(/"/g, ' ')
+  return `SERVICE wikibase:mwapi {
+      bd:serviceParam wikibase:endpoint "www.wikidata.org";
+                      wikibase:api "EntitySearch";
+                      mwapi:search "${rech}";
+                      mwapi:language "fr".
+      ${prop} wikibase:apiOutputItem mwapi:item.
+    }`
 }
 
 function requete_recherche_politicien(recherche, n = 1) {
@@ -14,17 +22,9 @@ function requete_recherche_politicien(recherche, n = 1) {
     # Tous les politiciens de nationalités françaises
     ?politician wdt:P106/wdt:P279? wd:Q82955.
     ?politician wdt:P27 wd:Q142.
-    SERVICE wikibase:mwapi
-    {
-      bd:serviceParam wikibase:endpoint "www.wikidata.org";
-                      wikibase:api "Generator";
-                      mwapi:generator "search";
-                      mwapi:gsrsearch "inlabel:${recherche.toLocaleLowerCase().replace(/"/g, ' ')}";
-                      mwapi:gsrlimit "max".
-      ?politician wikibase:apiOutputItem mwapi:title.
-    }
+
+    ${serviceEntitySearch(recherche, '?politician')}
     ?politician rdfs:label ?NomPoliticien.
-    ${filterRechercheParTexte(recherche, '?NomPoliticien')}
     FILTER(LANG(?NomPoliticien) = 'fr')
 
     # Filtres
@@ -34,43 +34,26 @@ function requete_recherche_politicien(recherche, n = 1) {
 }
 
 function requete_recherche_partis(recherche, n = 1) {
-  return `SELECT ?parti ?NomParti WHERE {
-    # Tous les partis
-    ?parti wdt:P31 wd:Q7278; wdt:P17 wd:Q142.
-
-    ?parti wdt:P571 ?DateInception.
-    FILTER(year(?DateInception) > 1789)
-
-    SERVICE wikibase:mwapi
+  return `SELECT DISTINCT ?parti ?NomParti WHERE {
     {
-      bd:serviceParam wikibase:endpoint "www.wikidata.org";
-                      wikibase:api "Generator";
-                      mwapi:generator "search";
-                      mwapi:gsrsearch "inlabel:${recherche.toLocaleLowerCase().replace(/"/g, ' ')}";
-                      mwapi:gsrlimit "max".
-      ?parti wikibase:apiOutputItem mwapi:title.
-    }
-
+    # Tous les partis
+      ?parti wdt:P31 wd:Q7278; wdt:P17 wd:Q142; wdt:P571 ?DateInception.
+    FILTER(year(?DateInception) > 1789)
+      ${serviceEntitySearch(recherche, '?parti')}
     ?parti rdfs:label ?NomParti.
     FILTER(lang(?NomParti) = 'fr')
-
-    OPTIONAL {
-      ${filterRechercheParTexte(recherche, '?NomParti')}
-      BIND(true as ?matched)
-    }
-
-    OPTIONAL {
+    } UNION {
+      # Tous les partis
+      ?parti wdt:P31 wd:Q7278; wdt:P17 wd:Q142; wdt:P571 ?DateInception.
+      FILTER(year(?DateInception) > 1900)
+      ?parti rdfs:label ?NomParti.
+      FILTER(lang(?NomParti) = 'fr')
       ?parti p:P1813 [ ps:P1813 ?NomCourt ].
       FILTER(lang(?NomCourt) = 'fr')
       ${filterRechercheParTexte(recherche, '?NomCourt')}
-      BIND(true as ?matched)
     }
-
-    OPTIONAL {
-      ?parti p:P1448 [ ps:P1448 ?NomOfficiel ].
-      FILTER(lang(?NomOfficiel) = 'fr')
-      ${filterRechercheParTexte(recherche, '?NomOfficiel')}
-      BIND(true as ?matched)
+  }
+  LIMIT ${n}`
     }
 
     FILTER(?matched=true)
