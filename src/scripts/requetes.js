@@ -67,7 +67,11 @@ function requete_recherche_partis(recherche, n = 1) {
 
 
 function requete_profil_biographie(idProfil) {
-  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomLieuDeNaissance ?NomLieuDeDeces ?NomPere ?Pere ?NomMere ?Mere ?NomConjoint ?Conjoint ?Image ?Signature ?Genre WHERE {
+  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomLieuDeNaissance ?NomLieuDeDeces
+    ?NomPere ?Pere ?IsPerePolitician
+    ?NomMere ?Mere ?IsMerePolitician
+    ?NomConjoint ?Conjoint ?IsConjointPolitician
+    ?Image ?Signature ?Genre WHERE {
     BIND(wd:${idProfil} AS ?politician)
 
     # Nom prénom
@@ -92,16 +96,28 @@ function requete_profil_biographie(idProfil) {
       ?politician wdt:P22 ?Pere.
       ?Pere rdfs:label ?NomPere.
       FILTER(lang(?NomPere) = 'fr')
+      OPTIONAL {
+        ?Pere wdt:P106/wdt:P279? wd:Q82955.
+        BIND(true as ?IsPerePolitician).
+      }
     }
     OPTIONAL {
       ?politician wdt:P25 ?Mere.
       ?Mere rdfs:label ?NomMere.
       FILTER(lang(?NomMere) = 'fr')
+      OPTIONAL {
+        ?Mere wdt:P106/wdt:P279? wd:Q82955.
+        BIND(true as ?IsMerePolitician).
+      }
     }
     OPTIONAL {
       ?politician wdt:P26 ?Conjoint.
       ?Conjoint rdfs:label ?NomConjoint.
       FILTER(lang(?NomConjoint) = 'fr')
+      OPTIONAL {
+        ?Conjoint wdt:P106/wdt:P279? wd:Q82955.
+        BIND(true as ?IsConjointPolitician).
+      }
     }
 
     OPTIONAL { ?politician wdt:P18 ?Image. }
@@ -256,18 +272,26 @@ function requete_parti_personnalites(idPArti) {
 }
 
 function requete_profil_fratrie(idProfil) {
-  return  `SELECT ?id ?nom WHERE {
+  return  `SELECT ?id ?nom ?isPolitician WHERE {
     BIND(wd:${idProfil} AS ?politician)
     ?politician wdt:P3373 ?id.
+    OPTIONAL {
+      ?id wdt:P106/wdt:P279? wd:Q82955.
+      BIND(true as ?isPolitician).
+    }
     ?id rdfs:label ?nom.
     FILTER(lang(?nom) = 'fr')
   }`
 }
 
 function requete_profil_enfants(idProfil) {
-  return  `SELECT ?id ?nom WHERE {
+  return  `SELECT ?id ?nom ?isPolitician WHERE {
     BIND(wd:${idProfil} AS ?politician)
     ?politician wdt:P40 ?id.
+    OPTIONAL {
+      ?id wdt:P106/wdt:P279? wd:Q82955.
+      BIND(true as ?isPolitician).
+    }
     ?id rdfs:label ?nom.
     FILTER(lang(?nom) = 'fr')
   }`

@@ -1,5 +1,17 @@
 /* global Slots PolitifCache wikidataUrl dbpediaUrl dateToHtml splitOnce ucfirst nullableDate requete_profil_biographie requete_profil_description requete_profil_mandats requete_profil_partiPolitique extractIdFromWikidataUrl requete_profil_enfants requete_profil_fratrie genrerFonction extractGenderFromWikidataUrl */
 
+function setLinkPoliticianOrHide(key, { id, nom, isPolitician = false }) {
+  if (nom) {
+    if (isPolitician) {
+      return Slots.setLink(key, `profil.html#${id}-${nom}`, nom)
+    } else {
+      return Slots.setText(key, nom)
+    }
+  } else {
+    return Slots.hide(key)
+  }
+}
+
 function update() {
   const hash = document.location.hash.slice(1)
   const p = splitOnce(decodeURIComponent(hash), '-')
@@ -33,8 +45,8 @@ function update() {
     fetchEnfantsOfProfil(id).then(enfants => {
       profilComplet = { ...profilComplet, enfants }
       if (enfants && enfants.length > 0) {
-        Slots.setListOfLinks('enfants', enfants.map(({ id, nom }) => ({
-          href: `profil.html#${id}-${nom}`,
+        Slots.setListOfLinks('enfants', enfants.map(({ id, nom, isPolitician = false }) => ({
+          href: isPolitician ? `profil.html#${id}-${nom}` : null,
           text: nom,
         })))
       } else {
@@ -44,8 +56,8 @@ function update() {
     fetchFratrieOfProfil(id).then(fratrie => {
       profilComplet = { ...profilComplet, fratrie }
       if (fratrie && fratrie.length > 0) {
-        Slots.setListOfLinks('fratrie', fratrie.map(({ id, nom }) => ({
-          href: `profil.html#${id}-${nom}`,
+        Slots.setListOfLinks('fratrie', fratrie.map(({ id, nom, isPolitician = false }) => ({
+          href: isPolitician ? `profil.html#${id}-${nom}` : null,
           text: nom,
         })))
       } else {
@@ -93,9 +105,9 @@ function renderProfilOrHide(profil) {
 
   profil.lieuDeces ? Slots.setText('lieu-deces', profil.lieuDeces) : Slots.hide('lieu-deces')
 
-  profil.pere.nom ? Slots.setLink('pere', `profil.html#${profil.pere.id}-${profil.pere.nom}`, profil.pere.nom) : Slots.hide('pere')
-  profil.mere.nom ? Slots.setLink('mere', `profil.html#${profil.mere.id}-${profil.mere.nom}`, profil.mere.nom) : Slots.hide('mere')
-  profil.conjoint.nom ? Slots.setLink('conjoint', `profil.html#${profil.conjoint.id}-${profil.conjoint.nom}`, profil.conjoint.nom) : Slots.hide('conjoint')
+  setLinkPoliticianOrHide('pere', profil.pere)
+  setLinkPoliticianOrHide('mere', profil.mere)
+  setLinkPoliticianOrHide('conjoint', profil.conjoint)
 
   if (profil.image) {
     Slots.setImage('image-personne', profil.image, `Photo de ${profil.nom}`)
@@ -172,14 +184,17 @@ async function fetchProfil(id) {
     pere: {
       id: extractIdFromWikidataUrl(donnees?.Pere?.value),
       nom: donnees?.NomPere?.value,
+      isPolitician: !!donnees?.IsPerePolitician?.value,
     },
     mere: {
       id: extractIdFromWikidataUrl(donnees?.Mere?.value),
       nom: donnees?.NomMere?.value,
+      isPolitician: !!donnees?.IsMerePolitician?.value,
     },
     conjoint: {
       id: extractIdFromWikidataUrl(donnees?.Conjoint?.value),
       nom: donnees?.NomConjoint?.value,
+      isPolitician: !!donnees?.IsConjointPolitician?.value,
     },
     signature: donnees?.Signature?.value,
     genre: extractGenderFromWikidataUrl(donnees?.Genre?.value) ?? 'M',
@@ -253,6 +268,7 @@ async function fetchEnfantsOfProfil(id) {
   const v = reponse.results.bindings.map(x => ({
     id: extractIdFromWikidataUrl(x.id.value),
     nom: x.nom.value,
+    isPolitician: !!x.isPolitician?.value,
   }))
   PolitifCache.set(cacheKey, v)
   return v
@@ -268,6 +284,7 @@ async function fetchFratrieOfProfil(id) {
   const v = reponse.results.bindings.map(x => ({
     id: extractIdFromWikidataUrl(x.id.value),
     nom: x.nom.value,
+    isPolitician: !!x.isPolitician?.value,
   }))
   PolitifCache.set(cacheKey, v)
   return v
