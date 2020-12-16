@@ -6,9 +6,15 @@ const pendingPromises = {}
 
 const abortControllers = {}
 
+/**
+ * Active l'annulation des requêtes, permet d'économiser
+ * de la bande passante mais le cache se remplira moins vite
+ */
+const enableAborts = true
+
 const SEARCH_TYPES = ['profil', 'parti']
 
-const logr = (...x) => console.log('recherche.js   ', ...x)
+// const logr = (...x) => console.log('recherche.js   ', ...x)
 
 let meilleurResultat = null
 
@@ -22,16 +28,19 @@ function creerFonctionRecherche(type, fonctionRequete, mapper) {
 }
 
 function submitSearch(q, n, type, fonctionRequete, mapper) {
-  const toAbort = Object.keys(pendingPromises).filter((k) => k.split(':', 3)[2] !== q)
-  toAbort.forEach(k => {
-    if (abortControllers[k]) {
-      logr(`abort-other ${k}`)
-      abortControllers[k].abort()
-      delete abortControllers[k]
-    }
-  })
+  if (enableAborts) {
+    const toAbort = Object.keys(pendingPromises).filter((k) => k.split(':', 3)[2] !== q)
+    toAbort.forEach(k => {
+      if (abortControllers[k]) {
+        // logr(`abort-other ${k}`)
+        abortControllers[k].abort()
+        delete abortControllers[k]
+      }
+    })
+  }
 
   tousLesResultats[type] = []
+
   if (q === '') {
     return afficherResultats(type, [])
   }
@@ -39,22 +48,21 @@ function submitSearch(q, n, type, fonctionRequete, mapper) {
   const url = wikidataUrl(fonctionRequete(q, n))
   const k = `${n}:${type}:${q.toLocaleLowerCase()}`
 
-  if (abortControllers[k]) {
-    logr(`abort ${k}`)
+  if (enableAborts && abortControllers[k]) {
+    // logr(`abort ${k}`)
     abortControllers[k].abort()
     delete abortControllers[k]
   }
 
-  logr(`-> ${k}`)
-  const inCache = PolitifCache.get(k)
+  const inCache = PolitifCache.get(`recherche/${k}`)
   if (inCache) {
     afficherResultats(type, inCache)
-    logr(`in cache ${k}`)
+    // logr(`in cache ${k}`)
     return
   }
 
   if (pendingPromises[k]) {
-    logr(`already ${k}`)
+    // logr(`already ${k}`)
     return // already fetching results for this query params
   }
 
@@ -63,33 +71,39 @@ function submitSearch(q, n, type, fonctionRequete, mapper) {
   pendingPromises[k] = fetch(url, { signal }).then(async r => {
     if (r.ok) {
       const res = await r.json()
+      const resultats = res.results.bindings.map(mapper)
+      PolitifCache.set(`recherche/${k}`, resultats)
+
       if (search.value === q) {
-        console.log(abortControllers[k])
-        console.log(res)
-        logr(`<- ${k}`)
         delete abortControllers[k]
         delete pendingPromises[k]
-        const resultats = res.results.bindings.map(mapper)
-        PolitifCache.set(resultats)
         afficherResultats(type, resultats)
       } else {
-        throw new Error('failed to cancel')
+        if (enableAborts) {
+          throw new Error('failed to cancel')
+        } else {
+          // logr(`ignored ${k}`)
+          delete pendingPromises[k]
+        }
       }
     } else {
       throw new Error(await r.text())
     }
   }).catch((err) => {
-    console.error(err)
-    delete abortControllers[k]
-    delete pendingPromises[k]
+    // on ignore les `DOMException: The user aborted a request.`
+    if (!(err instanceof DOMException)) {
+      console.error(err)
+      delete abortControllers[k]
+      delete pendingPromises[k]
+    }
   })
 }
 
-function afficherResultats(type, resultats) {
+function afficherResultats(type, resultats, forceSetResults = false) {
   const prevLength = tousLesResultats[type]?.length || 0
   const nextLength = resultats.length
-  if (nextLength < prevLength) {
-    logr(`skip ${type} ${resultats.length}`)
+  if (nextLength < prevLength && !forceSetResults) {
+    // logr(`skip ${type} ${resultats.length}`)
     return
   }
   tousLesResultats[type] = resultats
@@ -123,7 +137,6 @@ function afficherResultats(type, resultats) {
 }
 
 function definirMeilleurResultat() {
-  console.log('definirMeilleurResultat # ' + search.value)
   const type = SEARCH_TYPES.filter(t => tousLesResultats[t]?.length > 0)[0]
   const premier = tousLesResultats[type]?.[0]
 
@@ -134,10 +147,16 @@ function definirMeilleurResultat() {
     searchAutocomplete.innerHTML = ''
     meilleurResultat = null
 
-    const isLastQuery = Object.values(pendingPromises).length === 0
-    const noResults = Object.values(tousLesResultats).findIndex(x => x.length > 0) === -1
-    if (isLastQuery && noResults) {
-      searchAutocomplete.innerHTML = `${search.value} — Aucun résultat`
+    if (search.value.length > 0) {
+      const noResults = Object.values(tousLesResultats).findIndex(x => x.length > 0) === -1
+      if (noResults) {
+        const isLastQuery = Object.values(pendingPromises).length === 0
+        if (isLastQuery) {
+          searchAutocomplete.innerHTML = `${search.value} — Aucun résultat`
+        } else {
+          searchAutocomplete.innerHTML = `${search.value} — Recherche…`
+        }
+      }
     }
   }
 }
@@ -187,19 +206,24 @@ function init() {
   })
 
   search.addEventListener('input', () => {
-    const q = search.value
+    const q = search.value.toLocaleLowerCase()
     if (q.length > 0) {
-      searchAutocomplete.innerHTML = `${q} — Recherche…`
+      searchAutocomplete.innerHTML = `${search.value} — Recherche…`
       submitProfil1(q)
       submitProfil5(q)
       submitPartis1(q)
       submitPartis5(q)
     } else {
       searchAutocomplete.innerHTML = ''
-      Object.keys(tousLesResultats).forEach(k => delete tousLesResultats[k])
-      Object.entries(abortControllers).forEach(([k, ac]) => {
-        ac.abort()
-        delete abortControllers[k]
+      if (enableAborts) {
+        Object.entries(abortControllers).forEach(([k, ac]) => {
+          ac.abort()
+          delete abortControllers[k]
+        })
+      }
+      Object.keys(tousLesResultats).forEach(type => {
+        delete tousLesResultats[type]
+        afficherResultats(type, [], { forceSetResults: true })
       })
     }
   })
