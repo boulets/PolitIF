@@ -4,8 +4,10 @@
 const DBPEDIA_API = 'https://dbpedia.org/sparql'
 const WIKIDATA_API = 'https://query.wikidata.org/sparql'
 
+
 /** Durée de vie en cache (en secondes) */
 let CACHE_TTL = 0 // 5 * 60
+const CACHE_PREFIX = 'politif_cache__'
 
 // const checkDevToolsOpen = document.createElement('ignorez_ça')
 // let ignoreCheck = false
@@ -23,12 +25,25 @@ let CACHE_TTL = 0 // 5 * 60
 
 if (CACHE_TTL > 0) {
   console.log('%c%s', 'background-color: #511; color: white; padding: 3px 6px; border-radius: 3px', `Attention: Le cache est activé (ttl=${CACHE_TTL}s)`)
+} else {
+  console.log('%c%s', 'background-color: #313; color: white; padding: 3px 6px; border-radius: 3px', 'Le cache est désactivé')
 }
 
 const PolitifCache = {
   get: Cache_get,
   set: Cache_set,
 }
+
+Object.keys(localStorage)
+  .filter(k => k.startsWith(CACHE_PREFIX))
+  .forEach(k => {
+    const now = Date.now()
+    const timestamp = localStorage[k]?.timestamp
+    if (!timestamp || (timestamp + CACHE_TTL * 1000 > now)) {
+      console.log('removed stale cache entry ' + k)
+      delete localStorage[k]
+    }
+  })
 
 /**
  * @return {object | undefined}
@@ -37,7 +52,7 @@ const PolitifCache = {
  */
 function Cache_get(id, fixer) {
   const now = Date.now()
-  const item = localStorage.getItem('politif_cache__' + id)
+  const item = localStorage.getItem(CACHE_PREFIX + id)
   if (item !== undefined) {
     try {
       const { timestamp, value } = JSON.parse(item)
@@ -61,7 +76,7 @@ function Cache_get(id, fixer) {
  */
 function Cache_set(id, value) {
   const now = Date.now()
-  localStorage.setItem('politif_cache__' + id, JSON.stringify({ timestamp: now, value }))
+  localStorage.setItem(CACHE_PREFIX + id, JSON.stringify({ timestamp: now, value }))
 }
 
 function nullableDate(string) {
