@@ -156,7 +156,6 @@ const fonctionsGenrees = {
  * @returns {string}
  */
 function genrerFonction(genre, fonction) {
-  console.log(`genrerFonction(${genre}, ${fonction})`)
   if (genre === 'M') {
     return fonction
   } else {
