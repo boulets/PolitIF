@@ -10,31 +10,46 @@ function filterRechercheParTexte(recherche, prop) {
 }
 
 function requete_recherche_politicien(recherche, n = 1) {
-  return `SELECT DISTINCT ?politician ?NomPoliticien {
+  return `SELECT ?politician ?NomPoliticien WHERE {
     # Tous les politiciens de nationalités françaises
-    # ?politician wdt:P106 wd:Q82955.
+    ?politician wdt:P106/wdt:P279? wd:Q82955.
     ?politician wdt:P27 wd:Q142.
-
+    SERVICE wikibase:mwapi
+    {
+      bd:serviceParam wikibase:endpoint "www.wikidata.org";
+                      wikibase:api "Generator";
+                      mwapi:generator "search";
+                      mwapi:gsrsearch "inlabel:${recherche.toLocaleLowerCase().replace(/"/g, ' ')}";
+                      mwapi:gsrlimit "max".
+      ?politician wikibase:apiOutputItem mwapi:title.
+    }
     ?politician rdfs:label ?NomPoliticien.
-    FILTER(lang(?NomPoliticien) = 'fr')
     ${filterRechercheParTexte(recherche, '?NomPoliticien')}
-
-    # Les positions qu'ils ont occuppé
-    ?politician p:P39 ?posStat.
-    ?posStat pq:P580 ?DateEntreePosition.
+    FILTER(LANG(?NomPoliticien) = 'fr')
 
     # Filtres
-    FILTER(year(?DateEntreePosition) > 1789)
+    ?politician wdt:P569 ?DateNaissance.
+    FILTER(year(?DateNaissance) > 1789)
   } LIMIT ${n}`
 }
 
 function requete_recherche_partis(recherche, n = 1) {
-  return `SELECT DISTINCT ?parti ?NomParti WHERE {
+  return `SELECT ?parti ?NomParti WHERE {
     # Tous les partis
     ?parti wdt:P31 wd:Q7278; wdt:P17 wd:Q142.
 
     ?parti wdt:P571 ?DateInception.
     FILTER(year(?DateInception) > 1789)
+
+    SERVICE wikibase:mwapi
+    {
+      bd:serviceParam wikibase:endpoint "www.wikidata.org";
+                      wikibase:api "Generator";
+                      mwapi:generator "search";
+                      mwapi:gsrsearch "inlabel:${recherche.toLocaleLowerCase().replace(/"/g, ' ')}";
+                      mwapi:gsrlimit "max".
+      ?parti wikibase:apiOutputItem mwapi:title.
+    }
 
     ?parti rdfs:label ?NomParti.
     FILTER(lang(?NomParti) = 'fr')
@@ -272,7 +287,7 @@ function requete_parti_personnalites(idPArti) {
 }
 
 function requete_profil_fratrie(idProfil) {
-  return  `SELECT ?id ?nom ?isPolitician WHERE {
+  return `SELECT ?id ?nom ?isPolitician WHERE {
     BIND(wd:${idProfil} AS ?politician)
     ?politician wdt:P3373 ?id.
     OPTIONAL {
@@ -285,7 +300,7 @@ function requete_profil_fratrie(idProfil) {
 }
 
 function requete_profil_enfants(idProfil) {
-  return  `SELECT ?id ?nom ?isPolitician WHERE {
+  return `SELECT ?id ?nom ?isPolitician WHERE {
     BIND(wd:${idProfil} AS ?politician)
     ?politician wdt:P40 ?id.
     OPTIONAL {
