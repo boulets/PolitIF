@@ -81,7 +81,18 @@ function dbpediaUrl(req) {
 }
 
 function extractIdFromWikidataUrl(url) {
-  return url.match(/entity\/(Q\d+)$/)?.[1]
+  return url?.match(/entity\/(Q\d+)$/)?.[1]
+}
+
+function extractGenderFromWikidataUrl(url) {
+  const genders = {
+    Q6581097: 'M',
+    Q6581072: 'F',
+  }
+  const id = extractIdFromWikidataUrl(url)
+  if (id) {
+    return genders[id]
+  }
 }
 
 function splitOnce(s, on) {
@@ -123,4 +134,44 @@ function createElementFromHtml(template) {
   const div = document.createElement('div')
   div.innerHTML = template
   return div.children[0]
+}
+
+const fonctionsGenrees = {
+  'conseiller régional': ['conseillère régionale'],
+  'conseiller général': ['conseillère générale'],
+  'conseiller': ['conseillère'],
+  'député européen': ['députée européenne'],
+  'député': ['députée'],
+  'sénateur': ['sénatrice'],
+  'vice-président': ['vice-présidente'],
+  'président': ['présidente'],
+  'ambassadeur français': ['ambassadrice française'],
+  // 'maire': ['mairesse'],
+}
+
+/**
+ * Retourne le nom de la fonction accordé avec le genre donné en paramètre
+ * @param {'M' | 'F' | 'X'} genre
+ * @param {string} fonction
+ * @returns {string}
+ */
+function genrerFonction(genre, fonction) {
+  console.log(`genrerFonction(${genre}, ${fonction})`)
+  if (genre === 'M') {
+    return fonction
+  } else {
+    for (const [key, choix] of Object.entries(fonctionsGenrees)) {
+      const re = new RegExp('^' + key, 'u')
+      if (fonction.match(re)) {
+        const i = (genre === 'F') ? 0 : 1
+        const remplacement = choix?.[i]
+        if (remplacement) {
+          return fonction.replace(re, remplacement)
+        } else {
+          break
+        }
+      }
+    }
+    return fonction
+  }
 }

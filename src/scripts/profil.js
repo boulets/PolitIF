@@ -1,4 +1,4 @@
-/* global Slots PolitifCache wikidataUrl dbpediaUrl dateToHtml splitOnce ucfirst nullableDate requete_profil_biographie requete_profil_description requete_profil_mandats requete_profil_partiPolitique extractIdFromWikidataUrl requete_profil_enfants requete_profil_fratrie */
+/* global Slots PolitifCache wikidataUrl dbpediaUrl dateToHtml splitOnce ucfirst nullableDate requete_profil_biographie requete_profil_description requete_profil_mandats requete_profil_partiPolitique extractIdFromWikidataUrl requete_profil_enfants requete_profil_fratrie genrerFonction extractGenderFromWikidataUrl */
 
 function update() {
   const hash = document.location.hash.slice(1)
@@ -18,10 +18,14 @@ function update() {
 
   let profilComplet = {}
   Promise.all([
-    fetchProfil(id).then(profil => {
-      profilComplet = { ...profilComplet, ...profil }
-      renderProfilOrHide(profilComplet)
-    }),
+    Promise.all([
+      fetchProfil(id).then(profil => {
+        profilComplet = { ...profilComplet, ...profil }
+        renderProfilOrHide(profilComplet)
+        return profilComplet
+      }),
+      fetchMandatsProfil(id),
+    ]).then(([profil, mandats]) => renderPositions(mandats, profil.genre)),
     fetchDescription(id).then(description => {
       profilComplet = { ...profilComplet, description }
       description ? Slots.setText('description', description) : Slots.hide('description')
@@ -42,7 +46,6 @@ function update() {
         Slots.hide('fratrie')
       }
     }),
-    fetchMandatsProfil(id).then(renderPositions),
     fetchPartisOfProfil(id).then(renderPartis)
   ]).then(() => {
     console.log(profilComplet)
@@ -101,7 +104,7 @@ function renderProfilOrHide(profil) {
   }
 }
 
-function renderPositions(positions) {
+function renderPositions(positions, genre = 'M') {
   const positionsList = Slots.get('positions-list')
   positionsList.innerHTML = ''
 
@@ -124,7 +127,7 @@ function renderPositions(positions) {
       li.innerHTML = '<b></b>'
     }
 
-    li.querySelector('b').innerText = ucfirst(nom) + (of ? ` de ${of}` : '')
+    li.querySelector('b').innerText = ucfirst(genrerFonction(genre, nom)) + (of ? ` de ${of}` : '')
     ul.appendChild(li)
   })
 }
@@ -163,7 +166,8 @@ async function fetchProfil(id) {
     pere: donnees?.NomPere?.value,
     mere: donnees?.NomMere?.value,
     conjoint: donnees?.NomConjoint?.value,
-    signature: donnees?.Signature?.value
+    signature: donnees?.Signature?.value,
+    genre: extractGenderFromWikidataUrl(donnees?.Genre?.value) ?? 'M',
   }
 
   PolitifCache.set(cacheKey, res)
