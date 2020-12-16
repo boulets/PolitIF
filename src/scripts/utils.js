@@ -4,24 +4,9 @@
 const DBPEDIA_API = 'https://dbpedia.org/sparql'
 const WIKIDATA_API = 'https://query.wikidata.org/sparql'
 
-
 /** Durée de vie en cache (en secondes) */
 let CACHE_TTL = 0 // 5 * 60
 const CACHE_PREFIX = 'politif_cache__'
-
-// const checkDevToolsOpen = document.createElement('ignorez_ça')
-// let ignoreCheck = false
-// Object.defineProperty(checkDevToolsOpen, 'id', {
-//   get: function() {
-//     if (!ignoreCheck) {
-//       CACHE_TTL = 0
-//       console.log('%c%s', 'background-color: #313; color: white; padding: 3px 6px; border-radius: 3px', 'La console est ouverte donc le cache a été désactivé')
-//     }
-//     throw new Error('')
-//   }
-// })
-// console.log(checkDevToolsOpen)
-// ignoreCheck = true
 
 if (CACHE_TTL > 0) {
   console.log('%c%s', 'background-color: #511; color: white; padding: 3px 6px; border-radius: 3px', `Attention: Le cache est activé (ttl=${CACHE_TTL}s)`)
@@ -34,14 +19,15 @@ const PolitifCache = {
   set: Cache_set,
 }
 
+// Initial clean-up
 Object.keys(localStorage)
-  .filter(k => k.startsWith(CACHE_PREFIX))
-  .forEach(k => {
+  .filter(id => id.startsWith(CACHE_PREFIX))
+  .forEach(id => {
     const now = Date.now()
-    const timestamp = localStorage[k]?.timestamp
-    if (!timestamp || (timestamp + CACHE_TTL * 1000 > now)) {
-      console.log('removed stale cache entry ' + k)
-      delete localStorage[k]
+    const timestamp = localStorage[id]?.timestamp
+    if (!timestamp || (timestamp > now)) {
+      // Stale cache
+      delete localStorage[id]
     }
   })
 
@@ -53,19 +39,22 @@ Object.keys(localStorage)
 function Cache_get(id, fixer) {
   const now = Date.now()
   const item = localStorage.getItem(CACHE_PREFIX + id)
-  if (item !== undefined) {
+  if (item !== undefined && item !== null) {
     try {
       const { timestamp, value } = JSON.parse(item)
-      if (timestamp + CACHE_TTL * 1000 > now) {
-        // console.log(`Fetching ${id} -> returning cached response`)
-        fixer?.(value)
+      if (timestamp > now) {
+        // Valid cache
+        fixer?.(value) // custom deserialize function (e.g. for Dates)
         return value
       } else {
-        // console.log(`Staled cache for ${id}`)
+        // Stale cache
+        delete localStorage[id]
       }
     } catch (error) {
-      // console.log(`Invalid cache for ${id}`)
-      // console.error(error)
+      console.error(`Invalid cache for ${id}:`)
+      console.dir(localStorage[id])
+      console.error(error)
+      delete localStorage[id]
     }
   }
 }
@@ -76,7 +65,7 @@ function Cache_get(id, fixer) {
  */
 function Cache_set(id, value) {
   const now = Date.now()
-  localStorage.setItem(CACHE_PREFIX + id, JSON.stringify({ timestamp: now, value }))
+  localStorage.setItem(CACHE_PREFIX + id, JSON.stringify({ timestamp: now + CACHE_TTL * 1000, value }))
 }
 
 function nullableDate(string) {
