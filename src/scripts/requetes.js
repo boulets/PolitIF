@@ -10,21 +10,18 @@ function filterRechercheParTexte(recherche, prop) {
 }
 
 function requete_recherche_politicien(recherche, n = 1) {
-  return `SELECT DISTINCT ?politician ?NomPoliticien {
+  return `SELECT ?politician ?NomPoliticien {
     # Tous les politiciens de nationalités françaises
-    # ?politician wdt:P106 wd:Q82955.
+    ?politician wdt:P106/wdt:P279? wd:Q82955.
     ?politician wdt:P27 wd:Q142.
 
     ?politician rdfs:label ?NomPoliticien.
     FILTER(lang(?NomPoliticien) = 'fr')
     ${filterRechercheParTexte(recherche, '?NomPoliticien')}
 
-    # Les positions qu'ils ont occuppé
-    ?politician p:P39 ?posStat.
-    ?posStat pq:P580 ?DateEntreePosition.
-
     # Filtres
-    FILTER(year(?DateEntreePosition) > 1789)
+    ?politician wdt:P569 ?DateNaissance.
+    FILTER(year(?DateNaissance) > 1789)
   } LIMIT ${n}`
 }
 
@@ -120,6 +117,7 @@ function requete_profil_mandats(idProfil) {
     # Les positions qu'ils ont occuppé
     ?politician p:P39 ?posStat.
     ?posStat ps:P39 ?pos.
+    {?pos wdt:P279+ wd:Q82955. } UNION {?pos wdt:P31+ wd:Q303618}.
     ?pos rdfs:label ?Position.
     OPTIONAL { ?posStat pq:P580 ?DateEntreePosition. }
     OPTIONAL { ?posStat pq:P582 ?DateSortiePosition. }
