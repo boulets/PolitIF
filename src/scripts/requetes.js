@@ -66,11 +66,13 @@ function requete_recherche_partis(recherche, n = 1) {
 
 
 function requete_profil_biographie(idProfil) {
-  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomLieuDeNaissance ?NomLieuDeDeces ?NomPere ?NomMere ?NomConjoint ?Image ?Signature WHERE {
+  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomLieuDeNaissance ?NomLieuDeDeces ?NomPere ?NomMere ?NomConjoint ?Image ?Signature ?Genre WHERE {
     BIND(wd:${idProfil} AS ?politician).
 
     # Nom prénom
     ?politician rdfs:label ?NomPoliticien.
+
+    ?politician wdt:P21 ?Genre.
 
     # Dates
     ?politician wdt:P569 ?DateDeNaissance.
@@ -111,7 +113,7 @@ function requete_profil_biographie(idProfil) {
 }
 
 function requete_profil_mandats(idProfil) {
-  return `SELECT ?politician ?Position ?DateEntreePosition ?DateSortiePosition ?of WHERE {
+  return `SELECT ?Position ?DateEntreePosition ?DateSortiePosition ?of WHERE {
     BIND(wd:${idProfil} AS ?politician).
 
     # Les positions qu'ils ont occuppé
