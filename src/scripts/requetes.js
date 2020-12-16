@@ -249,7 +249,7 @@ function requete_parti_personnalites(idPArti) {
     ?parti ^wdt:P102 ?politicien.
     ?politicien rdfs:label ?NomPoliticien.
     FILTER(lang(?NomPoliticien) = 'fr')
-    { ?politicien p:P3602 []. } #UNION { ?politicien p:P39 []. }
+    { ?politicien p:P3602 []. } UNION { ?politicien p:P39 []. }
   }
   GROUP BY ?politicien ?NomPoliticien
   ORDER BY DESC(?importance)
