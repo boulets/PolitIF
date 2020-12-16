@@ -67,6 +67,18 @@
   display: none;
 }
 
+#searchButton:hover svg {
+  animation: anim-translation-horiz 400ms ease;
+}
+@keyframes anim-translation-horiz {
+  20% {
+    transform: translateX(4px);
+  }
+  70% {
+    transform: translateX(-4px);
+  }
+}
+
 #searchResultsContainer {
   z-index: 1;
   position: relative;

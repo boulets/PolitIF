@@ -28,7 +28,7 @@ main img[loading]::after {
 }
 
 main img {
-  transition: opacity 400ms ease;
+  transition: all 400ms ease;
 }
 
 main h2[loading] {
