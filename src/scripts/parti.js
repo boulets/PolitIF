@@ -60,8 +60,18 @@ function renderParti(parti) {
   } else {
     Slots.hide('date-dissolution')
   }
-  parti.president ? Slots.setText('president', parti.president) : Slots.hide('president')
-  parti.fondateur ? Slots.setText('fondateur', parti.fondateur) : Slots.hide('fondateur')
+
+  if (parti.president.id) {
+    Slots.setLink('president', `profil.html#${parti.president.id}-${encodeURIComponent(parti.president.nom)}`, parti.president.nom)
+  } else {
+    Slots.hide('president')
+  }
+  if (parti.fondateur.id) {
+    Slots.setLink('fondateur', `profil.html#${parti.fondateur.id}-${encodeURIComponent(parti.fondateur.nom)}`, parti.fondateur.nom)
+  } else {
+    Slots.hide('fondateur')
+  }
+
   parti.positionnement ? Slots.setText('positionnement', ucfirst(parti.positionnement)) : Slots.hide('positionnement')
   if (parti.siege) {
     const adr = adresseToText(parti.siege)
@@ -153,8 +163,14 @@ async function fetchParti(id) {
   const res = {
     nom: donnees?.NomParti?.value,
     logo: donnees?.ImageLogo?.value,
-    president: donnees?.NomPresident?.value,
-    fondateur: donnees?.NomFondateur?.value,
+    president: {
+      id: extractIdFromWikidataUrl(donnees?.President?.value),
+      nom: donnees?.NomPresident?.value,
+    },
+    fondateur: {
+      id: extractIdFromWikidataUrl(donnees?.Fondateur?.value),
+      nom: donnees?.NomFondateur?.value,
+    },
     dateCreation: nullableDate(donnees?.DateCreation?.value),
     dateDissolution: nullableDate(donnees?.DateDissolution?.value),
     nombreAdherents: {
