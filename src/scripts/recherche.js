@@ -4,6 +4,12 @@ const tousLesResultats = {}
 
 const pendingPromises = {}
 
+const abortControllers = {}
+
+const SEARCH_TYPES = ['profil', 'parti']
+
+const logr = (...x) => console.log('recherche.js   ', ...x)
+
 let meilleurResultat = null
 
 const searchAutocomplete = document.getElementById('search-autocomplete')
@@ -16,42 +22,78 @@ function creerFonctionRecherche(type, fonctionRequete, mapper) {
 }
 
 function submitSearch(q, n, type, fonctionRequete, mapper) {
+  const toAbort = Object.keys(pendingPromises).filter((k) => k.split(':', 3)[2] !== q)
+  toAbort.forEach(k => {
+    if (abortControllers[k]) {
+      logr(`abort-other ${k}`)
+      abortControllers[k].abort()
+      delete abortControllers[k]
+    }
+  })
+
   tousLesResultats[type] = []
   if (q === '') {
     return afficherResultats(type, [])
   }
 
   const url = wikidataUrl(fonctionRequete(q, n))
-  const k = `${q}:${n}:${type}`
+  const k = `${n}:${type}:${q.toLocaleLowerCase()}`
+
+  if (abortControllers[k]) {
+    logr(`abort ${k}`)
+    abortControllers[k].abort()
+    delete abortControllers[k]
+  }
+
+  logr(`-> ${k}`)
   const inCache = PolitifCache.get(k)
   if (inCache) {
-    tousLesResultats[type] = inCache
     afficherResultats(type, inCache)
+    logr(`in cache ${k}`)
     return
   }
 
   if (pendingPromises[k]) {
-    console.error('already searching')
+    logr(`already ${k}`)
     return // already fetching results for this query params
   }
-  pendingPromises[k] = fetch(url).then(async r => {
+
+  abortControllers[k] = new AbortController()
+  const { signal } = abortControllers[k]
+  pendingPromises[k] = fetch(url, { signal }).then(async r => {
     if (r.ok) {
       const res = await r.json()
-      delete pendingPromises[k]
-      const resultats = res.results.bindings.map(mapper)
-      PolitifCache.set(resultats)
-      tousLesResultats[type] = resultats
-      afficherResultats(type, resultats)
+      if (search.value === q) {
+        console.log(abortControllers[k])
+        console.log(res)
+        logr(`<- ${k}`)
+        delete abortControllers[k]
+        delete pendingPromises[k]
+        const resultats = res.results.bindings.map(mapper)
+        PolitifCache.set(resultats)
+        afficherResultats(type, resultats)
+      } else {
+        throw new Error('failed to cancel')
+      }
     } else {
       throw new Error(await r.text())
     }
   }).catch((err) => {
     console.error(err)
+    delete abortControllers[k]
     delete pendingPromises[k]
   })
 }
 
 function afficherResultats(type, resultats) {
+  const prevLength = tousLesResultats[type]?.length || 0
+  const nextLength = resultats.length
+  if (nextLength < prevLength) {
+    logr(`skip ${type} ${resultats.length}`)
+    return
+  }
+  tousLesResultats[type] = resultats
+
   const shouldRestoreFocus = searchResultsContainer.matches(':focus-within')
   const shouldRestoreFocusToHref = document.activeElement.href
 
@@ -81,11 +123,12 @@ function afficherResultats(type, resultats) {
 }
 
 function definirMeilleurResultat() {
-  const type = ['profil', 'parti', 'ideologie'].filter(t => tousLesResultats[t]?.length > 0)[0]
+  console.log('definirMeilleurResultat # ' + search.value)
+  const type = SEARCH_TYPES.filter(t => tousLesResultats[t]?.length > 0)[0]
   const premier = tousLesResultats[type]?.[0]
 
   if (premier && search.value.length > 0) {
-    searchAutocomplete.innerHTML = search.value + ' — ' + premier.nom
+    searchAutocomplete.innerHTML = `${search.value} — ${premier.nom}`
     meilleurResultat = { ...premier, type }
   } else {
     searchAutocomplete.innerHTML = ''
@@ -94,7 +137,7 @@ function definirMeilleurResultat() {
     const isLastQuery = Object.values(pendingPromises).length === 0
     const noResults = Object.values(tousLesResultats).findIndex(x => x.length > 0) === -1
     if (isLastQuery && noResults) {
-      searchAutocomplete.innerHTML = search.value + ' — ' + 'Aucun résultat'
+      searchAutocomplete.innerHTML = `${search.value} — Aucun résultat`
     }
   }
 }
@@ -116,13 +159,12 @@ const chercherParti = creerFonctionRecherche('parti', requete_recherche_partis, 
 }))
 
 function init() {
-  Slots.hide('resultats-profils')
-  Slots.hide('resultats-partis')
+  SEARCH_TYPES.forEach(type => Slots.hide(`resultats-${type}`))
 
-  const submitProfil1 = throttle((x) => chercherProfil(x, 1), 500, { leading: false, trailing: true })
-  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 500, { leading: false, trailing: true })
-  const submitPartis1 = throttle((x) => chercherParti(x, 1), 500, { leading: false, trailing: true })
-  const submitPartis5 = throttle((x) => chercherParti(x, 5), 500, { leading: false, trailing: true })
+  const submitProfil1 = throttle((x) => chercherProfil(x, 1), 50, { leading: false, trailing: true })
+  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 50, { leading: false, trailing: true })
+  const submitPartis1 = throttle((x) => chercherParti(x, 1), 50, { leading: false, trailing: true })
+  const submitPartis5 = throttle((x) => chercherParti(x, 5), 50, { leading: false, trailing: true })
 
   searchButton.addEventListener('click', goToFirstResult)
 
@@ -145,16 +187,20 @@ function init() {
   })
 
   search.addEventListener('input', () => {
-    Object.keys(tousLesResultats).forEach(k => delete tousLesResultats[k])
     const q = search.value
     if (q.length > 0) {
-      searchAutocomplete.innerHTML = q + ' — ' + 'Recherche…'
+      searchAutocomplete.innerHTML = `${q} — Recherche…`
       submitProfil1(q)
       submitProfil5(q)
       submitPartis1(q)
       submitPartis5(q)
     } else {
       searchAutocomplete.innerHTML = ''
+      Object.keys(tousLesResultats).forEach(k => delete tousLesResultats[k])
+      Object.entries(abortControllers).forEach(([k, ac]) => {
+        ac.abort()
+        delete abortControllers[k]
+      })
     }
   })
 
