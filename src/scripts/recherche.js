@@ -115,7 +115,7 @@ function afficherResultats(type, resultats, forceSetResults = false) {
 
   if (resultats.length > 0) {
     Slots.setListOfLinks(`resultats-${type}s`, resultats.map(({ nom, id }) => ({
-      text: nom,
+      text: ucfirst(nom),
       href: `${type}.html#${id}-${nom}`,
     })))
   } else {
