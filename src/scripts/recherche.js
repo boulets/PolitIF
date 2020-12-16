@@ -1,4 +1,4 @@
-/* global Slots PolitifCache requete_recherche_partis requete_recherche_politicien wikidataUrl extractIdFromWikidataUrl */
+/* global Slots PolitifCache requete_recherche_partis requete_recherche_politicien requete_recherche_ideologies wikidataUrl extractIdFromWikidataUrl ucfirst */
 
 const tousLesResultats = {}
 
@@ -12,7 +12,7 @@ const abortControllers = {}
  */
 const enableAborts = false
 
-const SEARCH_TYPES = ['profil', 'parti']
+const SEARCH_TYPES = ['profil', 'parti', 'ideologie']
 
 // const logr = (...x) => console.log('recherche.js   ', ...x)
 
@@ -178,13 +178,20 @@ const chercherParti = creerFonctionRecherche('parti', requete_recherche_partis, 
   id: extractIdFromWikidataUrl(x.parti.value)
 }))
 
-function init() {
-  SEARCH_TYPES.forEach(type => Slots.hide(`resultats-${type}`))
+const chercherIdeologie = creerFonctionRecherche('ideologie', requete_recherche_ideologies, (x) => ({
+  nom: x.NomIdeologie.value,
+  id: extractIdFromWikidataUrl(x.ideologie.value)
+}))
 
-  const submitProfil1 = throttle((x) => chercherProfil(x, 1), 400, { leading: false, trailing: true })
-  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 400, { leading: false, trailing: true })
-  const submitPartis1 = throttle((x) => chercherParti(x, 1), 400, { leading: false, trailing: true })
-  const submitPartis5 = throttle((x) => chercherParti(x, 5), 400, { leading: false, trailing: true })
+function init() {
+  SEARCH_TYPES.forEach(type => Slots.hide(`resultats-${type}s`))
+
+  const submitProfil1 = throttle((x) => chercherProfil(x, 1), 500, { leading: false, trailing: true })
+  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 900, { leading: false, trailing: true })
+  const submitPartis1 = throttle((x) => chercherParti(x, 1), 500, { leading: false, trailing: true })
+  const submitPartis5 = throttle((x) => chercherParti(x, 5), 900, { leading: false, trailing: true })
+  const submitIdeologies1 = throttle((x) => chercherIdeologie(x, 1), 500, { leading: false, trailing: true })
+  const submitIdeologies5 = throttle((x) => chercherIdeologie(x, 5), 900, { leading: false, trailing: true })
 
   searchButton.addEventListener('click', goToFirstResult)
 
@@ -214,6 +221,8 @@ function init() {
       submitProfil5(q)
       submitPartis1(q)
       submitPartis5(q)
+      submitIdeologies1(q)
+      submitIdeologies5(q)
     } else {
       searchAutocomplete.innerHTML = ''
       if (enableAborts) {
