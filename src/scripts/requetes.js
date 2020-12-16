@@ -246,7 +246,7 @@ function requete_parti_ideologies(idParti) {
 function requete_parti_personnalites(idPArti) {
   return `SELECT ?politicien ?NomPoliticien (COUNT(*) as ?importance) WHERE {
     BIND(wd:${idPArti} AS ?parti)
-    ?parti ^wdt:P102 ?politicien.
+    ?politicien wdt:P102 ?parti.
     ?politicien rdfs:label ?NomPoliticien.
     FILTER(lang(?NomPoliticien) = 'fr')
     { ?politicien p:P3602 []. } UNION { ?politicien p:P39 []. }
