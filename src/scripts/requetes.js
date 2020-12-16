@@ -56,11 +56,13 @@ function requete_recherche_partis(recherche, n = 1) {
   LIMIT ${n}`
     }
 
-    FILTER(?matched=true)
-  } ORDER BY
-    (!bound(?NomCourt)) asc(?NomCourt)
-    (!bound(?NomOfficiel)) asc(?NomOfficiel)
-  LIMIT ${n}`
+function requete_recherche_ideologies(recherche, n = 1) {
+  return `SELECT ?ideologie ?NomIdeologie WHERE {
+    ?ideologie wdt:P31 ?c. VALUES ?c { ${classesIdeologies} }
+    ${serviceEntitySearch(recherche, '?ideologie')}
+    ?ideologie rdfs:label ?NomIdeologie.
+    FILTER(LANG(?NomIdeologie) = 'fr')
+  } LIMIT ${n}`
 }
 
 
