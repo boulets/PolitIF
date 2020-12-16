@@ -28,6 +28,7 @@ function creerFonctionRecherche(type, fonctionRequete, mapper) {
 }
 
 function submitSearch(q, n, type, fonctionRequete, mapper) {
+  // logr(`${q} ${n} ${type}`)
   if (enableAborts) {
     const toAbort = Object.keys(pendingPromises).filter((k) => k.split(':', 3)[2] !== q)
     toAbort.forEach(k => {
@@ -82,7 +83,7 @@ function submitSearch(q, n, type, fonctionRequete, mapper) {
         if (enableAborts) {
           throw new Error('failed to cancel')
         } else {
-          // logr(`ignored ${k}`)
+          // logr(`ignored ${k} (resCount=${resultats.length}, currCount=${tousLesResultats[type]?.length})`)
           delete pendingPromises[k]
         }
       }
