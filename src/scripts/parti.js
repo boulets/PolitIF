@@ -106,8 +106,7 @@ function renderParti(parti) {
   }
 
   if (parti.siteWeb) {
-    Slots.setText('site-web', parti.siteWeb.replace(/^https?:\/\/([^/]+).*$/, '$1'))
-    Slots.setAttr('site-web', 'href', parti.siteWeb)
+    Slots.setLink('site-web', parti.siteWeb, parti.siteWeb.replace(/^(https?:\/\/)?(www\.)?([^/]+).*$/, '$3'))
   } else {
     Slots.hide('site-web')
   }
