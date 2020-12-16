@@ -25,12 +25,12 @@ function requete_recherche_politicien(recherche, n = 1) {
     }
     ?politician rdfs:label ?NomPoliticien.
     ${filterRechercheParTexte(recherche, '?NomPoliticien')}
-    FILTER(LANG(?NomPoliticien)='fr')
+    FILTER(LANG(?NomPoliticien) = 'fr')
 
     # Filtres
     ?politician wdt:P569 ?DateNaissance.
     FILTER(year(?DateNaissance) > 1789)
-  }  LIMIT ${n}`
+  } LIMIT ${n}`
 }
 
 function requete_recherche_partis(recherche, n = 1) {
