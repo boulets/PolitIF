@@ -82,22 +82,25 @@ function requete_recherche_partis(recherche, n = 1) {
 
 
 function requete_profil_biographie(idProfil) {
-  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomLieuDeNaissance ?NomLieuDeDeces ?NomPere ?NomMere ?NomConjoint ?Image ?Signature ?Genre WHERE {
+  return `SELECT ?politician ?NomPoliticien ?DateDeNaissance ?DateDeDeces ?NomLieuDeNaissance ?NomLieuDeDeces
+    ?NomPere ?Pere ?IsPerePolitician
+    ?NomMere ?Mere ?IsMerePolitician
+    ?NomConjoint ?Conjoint ?IsConjointPolitician
+    ?Image ?Signature ?Genre WHERE {
     BIND(wd:${idProfil} AS ?politician)
 
     # Nom prénom
     ?politician rdfs:label ?NomPoliticien.
+    FILTER(lang(?NomPoliticien) = 'fr')
 
     ?politician wdt:P21 ?Genre.
 
-    # Dates
-    ?politician wdt:P569 ?DateDeNaissance.
-    ?politician wdt:P19 ?LieuDeNaissance.
-    ?LieuDeNaissance rdfs:label ?NomLieuDeNaissance.
     OPTIONAL {
-      ?politician wdt:P18 ?Image.
+      ?politician wdt:P569 ?DateDeNaissance.
+      ?politician wdt:P19 ?LieuDeNaissance.
+      ?LieuDeNaissance rdfs:label ?NomLieuDeNaissance.
+      FILTER(lang(?NomLieuDeNaissance) = 'fr')
     }
-
     OPTIONAL {
       ?politician wdt:P570 ?DateDeDeces.
       ?politician wdt:P20 ?LieuDeDeces.
@@ -108,24 +111,34 @@ function requete_profil_biographie(idProfil) {
       ?politician wdt:P22 ?Pere.
       ?Pere rdfs:label ?NomPere.
       FILTER(lang(?NomPere) = 'fr')
+      OPTIONAL {
+        ?Pere wdt:P106/wdt:P279? wd:Q82955.
+        BIND(true as ?IsPerePolitician).
+      }
     }
     OPTIONAL {
       ?politician wdt:P25 ?Mere.
       ?Mere rdfs:label ?NomMere.
       FILTER(lang(?NomMere) = 'fr')
+      OPTIONAL {
+        ?Mere wdt:P106/wdt:P279? wd:Q82955.
+        BIND(true as ?IsMerePolitician).
+      }
     }
     OPTIONAL {
       ?politician wdt:P26 ?Conjoint.
       ?Conjoint rdfs:label ?NomConjoint.
       FILTER(lang(?NomConjoint) = 'fr')
-    }
-    OPTIONAL {
-      ?politician wdt:P109 ?Signature
+      OPTIONAL {
+        ?Conjoint wdt:P106/wdt:P279? wd:Q82955.
+        BIND(true as ?IsConjointPolitician).
+      }
     }
 
-    FILTER(lang(?NomPoliticien) = 'fr')
-    FILTER(lang(?NomLieuDeNaissance) = 'fr')
-  }`
+    OPTIONAL { ?politician wdt:P18 ?Image. }
+
+    OPTIONAL { ?politician wdt:P109 ?Signature }
+  } LIMIT 1`
 }
 
 function requete_profil_mandats(idProfil) {
@@ -162,7 +175,7 @@ function requete_profil_description(idPoliticien) {
 }
 
 function requete_parti_general(idParti) {
-  return `SELECT ?NomParti ?DateCreation ?DateDissolution ?NomPresident ?PresidentStartTime ?NomFondateur ?NombreAdherents ?DateNombreAdherents ?Couleur ?Positionnement ?SiegeNumero ?SiegeRue ?SiegeCodePostal ?SiegeVille ?SiegeStartTime ?ImageLogo ?LogoStartTime ?SiteWeb WHERE {
+  return `SELECT ?NomParti ?DateCreation ?DateDissolution ?President ?NomPresident ?PresidentStartTime ?Fondateur ?NomFondateur ?NombreAdherents ?DateNombreAdherents ?Couleur ?Positionnement ?SiegeNumero ?SiegeRue ?SiegeCodePostal ?SiegeVille ?SiegeStartTime ?ImageLogo ?LogoStartTime ?SiteWeb WHERE {
     BIND(wd:${idParti} AS ?parti)
 
     # Nom
@@ -274,18 +287,28 @@ function requete_parti_personnalites(idPArti) {
 }
 
 function requete_profil_fratrie(idProfil) {
-  return `SELECT ?nomFratrie WHERE {
+  return `SELECT ?id ?nom ?isPolitician WHERE {
     BIND(wd:${idProfil} AS ?politician)
-    ?politician wdt:P3373/rdfs:label ?nomFratrie.
-    FILTER(lang(?nomFratrie) = 'fr')
+    ?politician wdt:P3373 ?id.
+    OPTIONAL {
+      ?id wdt:P106/wdt:P279? wd:Q82955.
+      BIND(true as ?isPolitician).
+    }
+    ?id rdfs:label ?nom.
+    FILTER(lang(?nom) = 'fr')
   }`
 }
 
 function requete_profil_enfants(idProfil) {
-  return `SELECT ?nomEnfants WHERE {
+  return `SELECT ?id ?nom ?isPolitician WHERE {
     BIND(wd:${idProfil} AS ?politician)
-    ?politician wdt:P40/rdfs:label ?nomEnfants.
-    FILTER(lang(?nomEnfants) = 'fr')
+    ?politician wdt:P40 ?id.
+    OPTIONAL {
+      ?id wdt:P106/wdt:P279? wd:Q82955.
+      BIND(true as ?isPolitician).
+    }
+    ?id rdfs:label ?nom.
+    FILTER(lang(?nom) = 'fr')
   }`
 }
 

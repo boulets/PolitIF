@@ -72,6 +72,17 @@ function Slots_setListOrMissing(key, values, type = 'ul') {
   element.removeAttribute('loading')
 }
 
+function Slots_setLink(key, href, text) {
+  Slots_showSlot(key)
+  const element = Slots_getSlot(key)
+  element.innerHTML = ''
+  const a = document.createElement('a')
+  a.href = href
+  a.innerText = text
+  element.appendChild(a)
+  element.removeAttribute('loading')
+}
+
 /**
  * @param {String} key
  * @param {Array<Record<'href' | 'text', string>>} values
@@ -86,10 +97,14 @@ function Slots_setListOfLinks(key, values, type = 'ul') {
     const listEl = document.createElement(type)
     for (const { href, text } of values) {
       const li = document.createElement('li')
-      const a = document.createElement('a')
-      a.href = href
-      a.innerText = text
-      li.appendChild(a)
+      if (href === null || href === undefined) {
+        li.innerText = text
+      } else {
+        const a = document.createElement('a')
+        a.href = href
+        a.innerText = text
+        li.appendChild(a)
+      }
       listEl.appendChild(li)
     }
     element.appendChild(listEl)
@@ -122,20 +137,23 @@ function Slots_setImage(key, src, alt = '') {
       setTimeout(() => {
         element.style.transition = t
         element.style.opacity = '1'
-      }, 100)
+      }, 0)
     })
   }
 }
 
 function Slots_markLoading(key) {
   const element = Slots_getSlot(key)
+  Slots_showSlot(key)
   element.innerHTML = ''
   element.setAttribute('loading', 'true')
   element.style.setProperty('--random', Math.random())
 }
 
 function Slots_markLoaded(key) {
-  Slots_getSlot(key).removeAttribute('loading')
+  const element = Slots_getSlot(key)
+  element.setAttribute('loading', 'true')
+  element.style.removeProperty('--random')
 }
 
 const Slots = {
@@ -147,6 +165,7 @@ const Slots = {
   setListOfLinks: Slots_setListOfLinks,
   setAttr: (key, attr, value) => Slots_setAttr(key, attr, value),
   setImage: (key, src, alt = '') => Slots_setImage(key, src, alt),
+  setLink: (key, href, text) => Slots_setLink(key, href, text),
 
   markLoading: (key) => Slots_markLoading(key),
   markLoaded: (key) => Slots_markLoaded(key),

@@ -1,5 +1,17 @@
 /* global Slots PolitifCache wikidataUrl dbpediaUrl dateToHtml splitOnce ucfirst nullableDate requete_profil_biographie requete_profil_description requete_profil_mandats requete_profil_partiPolitique extractIdFromWikidataUrl requete_profil_enfants requete_profil_fratrie genrerFonction extractGenderFromWikidataUrl */
 
+function setLinkPoliticianOrHide(key, { id, nom, isPolitician = false }) {
+  if (nom) {
+    if (isPolitician) {
+      return Slots.setLink(key, `profil.html#${id}-${nom}`, nom)
+    } else {
+      return Slots.setText(key, nom)
+    }
+  } else {
+    return Slots.hide(key)
+  }
+}
+
 function update() {
   const hash = document.location.hash.slice(1)
   const p = splitOnce(decodeURIComponent(hash), '-')
@@ -33,7 +45,10 @@ function update() {
     fetchEnfantsOfProfil(id).then(enfants => {
       profilComplet = { ...profilComplet, enfants }
       if (enfants && enfants.length > 0) {
-        Slots.setText('enfants', enfants.join(', '))
+        Slots.setListOfLinks('enfants', enfants.map(({ id, nom, isPolitician = false }) => ({
+          href: isPolitician ? `profil.html#${id}-${nom}` : null,
+          text: nom,
+        })))
       } else {
         Slots.hide('enfants')
       }
@@ -41,7 +56,10 @@ function update() {
     fetchFratrieOfProfil(id).then(fratrie => {
       profilComplet = { ...profilComplet, fratrie }
       if (fratrie && fratrie.length > 0) {
-        Slots.setText('fratrie', fratrie.join(', '))
+        Slots.setListOfLinks('fratrie', fratrie.map(({ id, nom, isPolitician = false }) => ({
+          href: isPolitician ? `profil.html#${id}-${nom}` : null,
+          text: nom,
+        })))
       } else {
         Slots.hide('fratrie')
       }
@@ -87,9 +105,9 @@ function renderProfilOrHide(profil) {
 
   profil.lieuDeces ? Slots.setText('lieu-deces', profil.lieuDeces) : Slots.hide('lieu-deces')
 
-  profil.pere ? Slots.setText('pere', profil.pere) : Slots.hide('pere')
-  profil.mere ? Slots.setText('mere', profil.mere) : Slots.hide('mere')
-  profil.conjoint ? Slots.setText('conjoint', profil.conjoint) : Slots.hide('conjoint')
+  setLinkPoliticianOrHide('pere', profil.pere)
+  setLinkPoliticianOrHide('mere', profil.mere)
+  setLinkPoliticianOrHide('conjoint', profil.conjoint)
 
   if (profil.image) {
     Slots.setImage('image-personne', profil.image, `Photo de ${profil.nom}`)
@@ -163,9 +181,21 @@ async function fetchProfil(id) {
     dateDeces: nullableDate(donnees?.DateDeDeces?.value),
     lieuDeces: donnees?.NomLieuDeDeces?.value,
     image: donnees?.Image?.value,
-    pere: donnees?.NomPere?.value,
-    mere: donnees?.NomMere?.value,
-    conjoint: donnees?.NomConjoint?.value,
+    pere: {
+      id: extractIdFromWikidataUrl(donnees?.Pere?.value),
+      nom: donnees?.NomPere?.value,
+      isPolitician: !!donnees?.IsPerePolitician?.value,
+    },
+    mere: {
+      id: extractIdFromWikidataUrl(donnees?.Mere?.value),
+      nom: donnees?.NomMere?.value,
+      isPolitician: !!donnees?.IsMerePolitician?.value,
+    },
+    conjoint: {
+      id: extractIdFromWikidataUrl(donnees?.Conjoint?.value),
+      nom: donnees?.NomConjoint?.value,
+      isPolitician: !!donnees?.IsConjointPolitician?.value,
+    },
     signature: donnees?.Signature?.value,
     genre: extractGenderFromWikidataUrl(donnees?.Genre?.value) ?? 'M',
   }
@@ -235,7 +265,11 @@ async function fetchEnfantsOfProfil(id) {
 
   const url = wikidataUrl(requete_profil_enfants(id))
   const reponse = await fetch(url).then(res => res.json())
-  const v = reponse.results.bindings.map(x => x.nomEnfants?.value).filter(x => x)
+  const v = reponse.results.bindings.map(x => ({
+    id: extractIdFromWikidataUrl(x.id.value),
+    nom: x.nom.value,
+    isPolitician: !!x.isPolitician?.value,
+  }))
   PolitifCache.set(cacheKey, v)
   return v
 }
@@ -247,7 +281,11 @@ async function fetchFratrieOfProfil(id) {
 
   const url = wikidataUrl(requete_profil_fratrie(id))
   const reponse = await fetch(url).then(res => res.json())
-  const v = reponse.results.bindings.map(x => x.nomFratrie?.value).filter(x => x)
+  const v = reponse.results.bindings.map(x => ({
+    id: extractIdFromWikidataUrl(x.id.value),
+    nom: x.nom.value,
+    isPolitician: !!x.isPolitician?.value,
+  }))
   PolitifCache.set(cacheKey, v)
   return v
 }
