@@ -10,7 +10,7 @@ const abortControllers = {}
  * Active l'annulation des requêtes, permet d'économiser
  * de la bande passante mais le cache se remplira moins vite
  */
-const enableAborts = true
+const enableAborts = false
 
 const SEARCH_TYPES = ['profil', 'parti']
 
