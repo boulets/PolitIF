@@ -36,12 +36,12 @@ function requete_recherche_politicien(recherche, n = 1) {
 function requete_recherche_partis(recherche, n = 1) {
   return `SELECT DISTINCT ?parti ?NomParti WHERE {
     {
-    # Tous les partis
+      # Tous les partis
       ?parti wdt:P31 wd:Q7278; wdt:P17 wd:Q142; wdt:P571 ?DateInception.
-    FILTER(year(?DateInception) > 1789)
+      FILTER(year(?DateInception) > 1789)
       ${serviceEntitySearch(recherche, '?parti')}
-    ?parti rdfs:label ?NomParti.
-    FILTER(lang(?NomParti) = 'fr')
+      ?parti rdfs:label ?NomParti.
+      FILTER(lang(?NomParti) = 'fr')
     } UNION {
       # Tous les partis
       ?parti wdt:P31 wd:Q7278; wdt:P17 wd:Q142; wdt:P571 ?DateInception.
@@ -54,7 +54,7 @@ function requete_recherche_partis(recherche, n = 1) {
     }
   }
   LIMIT ${n}`
-    }
+}
 
 function requete_recherche_ideologies(recherche, n = 1) {
   return `SELECT ?ideologie ?NomIdeologie WHERE {
