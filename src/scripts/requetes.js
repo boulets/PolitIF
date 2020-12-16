@@ -117,7 +117,16 @@ function requete_profil_mandats(idProfil) {
     # Les positions qu'ils ont occuppé
     ?politician p:P39 ?posStat.
     ?posStat ps:P39 ?pos.
-    {?pos wdt:P279+ wd:Q82955. } UNION {?pos wdt:P31+ wd:Q303618}.
+
+    {?pos wdt:P279+ wd:Q82955. } # Politicien
+    UNION
+    {?pos wdt:P31+ wd:Q303618} # Diplomate
+    UNION
+    {
+      ?posStat pq:P642 ?parti. # President de parti
+      ?parti wdt:P31 wd:Q7278.
+    }
+
     ?pos rdfs:label ?Position.
     OPTIONAL { ?posStat pq:P580 ?DateEntreePosition. }
     OPTIONAL { ?posStat pq:P582 ?DateSortiePosition. }
