@@ -147,7 +147,7 @@ function requete_profil_description(idPoliticien) {
 }
 
 function requete_parti_general(idParti) {
-  return `SELECT ?NomParti ?DateCreation ?DateDissolution ?NomPresident ?PresidentStartTime ?NomFondateur ?NombreAdherents ?DateNombreAdherents ?Couleur ?Positionnement ?SiegeNumero ?SiegeRue ?SiegeCodePostal ?SiegeVille ?SiegeStartTime ?ImageLogo ?LogoStartTime ?SiteWeb WHERE {
+  return `SELECT ?NomParti ?DateCreation ?DateDissolution ?President ?NomPresident ?PresidentStartTime ?Fondateur ?NomFondateur ?NombreAdherents ?DateNombreAdherents ?Couleur ?Positionnement ?SiegeNumero ?SiegeRue ?SiegeCodePostal ?SiegeVille ?SiegeStartTime ?ImageLogo ?LogoStartTime ?SiteWeb WHERE {
     BIND(wd:${idParti} AS ?parti)
 
     # Nom

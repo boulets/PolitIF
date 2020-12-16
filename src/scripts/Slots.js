@@ -72,6 +72,17 @@ function Slots_setListOrMissing(key, values, type = 'ul') {
   element.removeAttribute('loading')
 }
 
+function Slots_setLink(key, href, text) {
+  Slots_showSlot(key)
+  const element = Slots_getSlot(key)
+  element.innerHTML = ''
+  const a = document.createElement('a')
+  a.href = href
+  a.innerText = text
+  element.appendChild(a)
+  element.removeAttribute('loading')
+}
+
 /**
  * @param {String} key
  * @param {Array<Record<'href' | 'text', string>>} values
@@ -147,6 +158,7 @@ const Slots = {
   setListOfLinks: Slots_setListOfLinks,
   setAttr: (key, attr, value) => Slots_setAttr(key, attr, value),
   setImage: (key, src, alt = '') => Slots_setImage(key, src, alt),
+  setLink: (key, href, text) => Slots_setLink(key, href, text),
 
   markLoading: (key) => Slots_markLoading(key),
   markLoaded: (key) => Slots_markLoaded(key),
