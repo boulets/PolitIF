@@ -180,10 +180,10 @@ const chercherParti = creerFonctionRecherche('parti', requete_recherche_partis, 
 function init() {
   SEARCH_TYPES.forEach(type => Slots.hide(`resultats-${type}`))
 
-  const submitProfil1 = throttle((x) => chercherProfil(x, 1), 50, { leading: false, trailing: true })
-  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 50, { leading: false, trailing: true })
-  const submitPartis1 = throttle((x) => chercherParti(x, 1), 50, { leading: false, trailing: true })
-  const submitPartis5 = throttle((x) => chercherParti(x, 5), 50, { leading: false, trailing: true })
+  const submitProfil1 = throttle((x) => chercherProfil(x, 1), 400, { leading: false, trailing: true })
+  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 400, { leading: false, trailing: true })
+  const submitPartis1 = throttle((x) => chercherParti(x, 1), 400, { leading: false, trailing: true })
+  const submitPartis5 = throttle((x) => chercherParti(x, 5), 400, { leading: false, trailing: true })
 
   searchButton.addEventListener('click', goToFirstResult)
 
