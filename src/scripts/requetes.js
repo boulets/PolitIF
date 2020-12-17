@@ -382,7 +382,7 @@ function requete_parti_alignement(idParti) {
 }
 
 function requete_presidents() {
-  return `SELECT DISTINCT ?PresidentLabel ?DateEntreePosition ?DateSortiePosition WHERE {
+  return `SELECT DISTINCT ?President ?PresidentLabel ?DateEntreePosition ?DateSortiePosition WHERE {
     BIND(wd:Q142 AS ?pays)
     ?pays p:P35 ?chefDetatStat.
     ?chefDetatStat ps:P35 ?President.
