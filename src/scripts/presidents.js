@@ -1,3 +1,5 @@
+/* global wikidataUrl requete_presidents extractIdFromWikidataUrl nullableDate requete_presidents_image createElementFromHtml */
+
 async function fetchPresidents() {
   const url = wikidataUrl(requete_presidents())
   const reponse = await fetch(url).then(res => res.json())
