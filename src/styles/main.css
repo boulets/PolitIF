@@ -169,13 +169,16 @@ a:hover {
 }
 
 a[href^="http://"]::after,
-a[href^="https://"]::after {
-  content: " [↗︎]";
-  text-decoration: none;
-
-  vertical-align: super;
-  font-size: 0.8em;
-  line-height: 1;
+a[href^="https://"]::after
+{
+  display: inline;
+  content: "X";
+  color: transparent;
+  background-position: center center;
+  background-image: url("../img/ext-link.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  /* vertical-align: super; */
 }
 
 .sr-only {
