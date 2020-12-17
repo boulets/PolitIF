@@ -14,7 +14,7 @@ function Slots_hide(key) {
   if (container) {
     container.setAttribute('hidden', 'hidden')
   } else {
-    const slot = document.querySelector(`[data-key=${key}]`)
+    const slot = Slots_getSlot(key)
     slot?.setAttribute('hidden', 'hidden')
   }
 }
@@ -24,7 +24,7 @@ function Slots_showSlot(key) {
   if (container) {
     container.removeAttribute('hidden')
   } else {
-    const slot = document.querySelector(`[data-key=${key}]`)
+    const slot = Slots_getSlot(key)
     slot?.removeAttribute('hidden')
   }
 }
