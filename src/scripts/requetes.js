@@ -3,11 +3,11 @@
 const classesIdeologies = ['wd:Q12909644', 'wd:Q179805'].join(' ')
 
 function filterRechercheParTexte(recherche, prop) {
-  const rech = recherche.toLocaleLowerCase().replace(/"/g, ' ')
+  const rech = recherche.replace(/"/g, ' ').toLocaleLowerCase()
   return `FILTER(contains(lcase(${prop}), "${rech}")).`
 }
 function serviceEntitySearch(recherche, prop) {
-  const rech = recherche.replace(/"/g, ' ')
+  const rech = recherche.replace(/"/g, ' ').toLocaleLowerCase()
   return `SERVICE wikibase:mwapi {
       bd:serviceParam wikibase:endpoint "www.wikidata.org";
                       wikibase:api "EntitySearch";
@@ -20,7 +20,7 @@ function serviceEntitySearch(recherche, prop) {
 function requete_recherche_politicien(recherche, n = 1) {
   return `SELECT ?politician ?NomPoliticien WHERE {
     # Tous les politiciens de nationalités françaises
-    ?politician wdt:P106/wdt:P279? wd:Q82955.
+    ?politician wdt:P106/wdt:P279 wd:Q82955.
     ?politician wdt:P27 wd:Q142.
 
     ${serviceEntitySearch(recherche, '?politician')}
