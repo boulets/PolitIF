@@ -141,7 +141,7 @@ function renderPartiChairpeople(chairpeople) {
     if (!nom) { return } // skip
     const li = document.createElement('li')
     const period = periodToHtml(debut, fin)
-    li.innerHTML = `<a href="profil.html#${id}-${ucfirst(nom)}">${escapeHtml(ucfirst(nom))}</a>${period}`
+    li.innerHTML = `<a href="profil.html#${id}-${encodeURIComponent(ucfirst(nom))}">${escapeHtml(ucfirst(nom))}</a>${period}`
     ul.appendChild(li)
   })
 }
