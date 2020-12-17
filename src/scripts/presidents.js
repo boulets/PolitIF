@@ -3,8 +3,10 @@ async function fetchPresidents() {
   const url = wikidataUrl(requete_presidents())
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings
+  console.log(donnees)
   donnees.forEach((data) => {
     presidents.push({
+      id : data.President.value.substr(data.President.value.lastIndexOf("/")+1),
       title : data.PresidentLabel.value,
       dateEntree: new Date(data.DateEntreePosition.value),
       dateSortie: new Date(data.DateSortiePosition?.value)
@@ -29,7 +31,7 @@ function renderTimeline(presidents) {
     {
       card = createElementFromHtml(`
         <li>
-          <div class="title">${president.title}</div>
+          <div class="title"><a href='profil.html#${president.id}-${president.title}'>${president.title}</a></div>
           <span class="number">
                 <span>${1900 + president.dateEntree?.getYear()}</span>
                 <span>${1900 + president.dateSortie?.getYear()}</span>
@@ -39,7 +41,7 @@ function renderTimeline(presidents) {
     } else {
       card = createElementFromHtml(`
         <li>
-          <div class="title">${president.title}</div>
+          <div class="title"><a href='profil.html#${president.id}-${president.title}'>${president.title}</a></div>
           <span class="number">
                 <span></span>
                 <span>${1900 + president.dateSortie?.getYear()}</span>
