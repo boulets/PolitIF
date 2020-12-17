@@ -3,6 +3,10 @@
   place-items: center;
 }
 
+.timeline-title {
+  padding: 0.5em;
+}
+
 .timeline {
   list-style: none;
   display: flex;
