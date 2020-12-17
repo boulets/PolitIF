@@ -16,7 +16,6 @@ async function fetchPresidents() {
     const image = reponse.results.bindings[0].Image?.value
     x.image = image
   }))
-  console.log(presidents)
   return presidents
 }
 
@@ -26,6 +25,9 @@ async function init() {
 init()
 
 function renderTimeline(presidents) {
+  const timelineSpinnerContainer = document.getElementById('spinner')
+  timelineSpinnerContainer.remove()
+
   const timeline = document.getElementById('timeline')
   timeline.innerHTML = ''
 

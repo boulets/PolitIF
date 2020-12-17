@@ -95,3 +95,56 @@
 .timeline-element .number .date-debut {
   top: 100%;
 }
+
+.timeline-spinner-container {
+  height: 50vmin;
+  width: 50vmin;
+  padding: 20vmin;
+  display: grid;
+  place-items: center;
+  color: black;
+  animation: spinnerColor 2s ease infinite;
+}
+
+.timeline-spinner {
+  animation: spinnerRotate 2s linear infinite;
+}
+
+.timeline-spinner .path {
+  stroke: currentColor;
+  stroke-linecap: round;
+  animation: spinnerDash 1.5s ease-in-out infinite;
+}
+
+@keyframes spinnerColor {
+  0%,
+  40%,
+  100% {
+    color: #000091;
+  }
+  50%,
+  90% {
+    color: #ef4135;
+  }
+}
+
+@keyframes spinnerRotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinnerDash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
