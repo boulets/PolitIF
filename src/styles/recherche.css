@@ -131,7 +131,10 @@
 
 @media (max-width: 600px) {
   #search-container {
-    width: 90%;
+    width: 90% !important;
+  }
+  .home-cards {
+    width: 90% !important;
   }
 }
 
