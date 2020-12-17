@@ -40,7 +40,7 @@ function requete_recherche_politiciens(recherche, n = 1) {
     ?politician wdt:P106/wdt:P279? wd:Q82955.
     ?politician wdt:P27 wd:Q142.
     ?politician wdt:P569 ?DateNaissance.
-    FILTER(year(?DateNaissance) > 1789)
+    FILTER(year(?DateNaissance) > 1700)
     ?politician rdfs:label ?NomPoliticien.
     FILTER(LANG(?NomPoliticien) = 'fr')
     ${filterRechercheParTexte(recherche, '?NomPoliticien')}
@@ -53,7 +53,7 @@ function requete_recherche_politicien_rapide(recherche, n = 1) {
     ?politician wdt:P106/wdt:P279? wd:Q82955.
     ?politician wdt:P27 wd:Q142.
     ?politician wdt:P569 ?DateNaissance.
-    FILTER(year(?DateNaissance) > 1789)
+    FILTER(year(?DateNaissance) > 1700)
     ${serviceEntitySearch2(recherche, '?politician', 1 + (n - 1) * 2)}
     ?politician rdfs:label ?NomPoliticien.
     FILTER(LANG(?NomPoliticien) = 'fr')
