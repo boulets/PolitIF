@@ -285,8 +285,7 @@ function requete_parti_chairpeople(idParti) {
     FILTER(lang(?NomPoliticien) = 'fr')
     OPTIONAL { ?polStat pq:P580 ?DateEntreePosition. }
     OPTIONAL { ?polStat pq:P582 ?DateSortiePosition. }
-    }
-  ORDER BY DESC(?DateEntreePosition)`
+  } ORDER BY DESC(?DateEntreePosition)`
 }
 
 function requete_profil_fratrie(idProfil) {
