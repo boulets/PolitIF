@@ -36,16 +36,20 @@ function requete_recherche_politicien(recherche, n = 1) {
 function requete_recherche_partis(recherche, n = 1) {
   return `SELECT DISTINCT ?parti ?NomParti WHERE {
     {
-      # Tous les partis
       ?parti wdt:P31 wd:Q7278; wdt:P17 wd:Q142; wdt:P571 ?DateInception.
       FILTER(year(?DateInception) > 1789)
       ${serviceEntitySearch(recherche, '?parti')}
       ?parti rdfs:label ?NomParti.
       FILTER(lang(?NomParti) = 'fr')
     } UNION {
-      # Tous les partis
       ?parti wdt:P31 wd:Q7278; wdt:P17 wd:Q142; wdt:P571 ?DateInception.
-      FILTER(year(?DateInception) > 1900)
+      FILTER(year(?DateInception) > 1789)
+      ?parti rdfs:label ?NomParti.
+      FILTER(lang(?NomParti) = 'fr')
+      ${filterRechercheParTexte(recherche, '?NomParti')}
+    } UNION {
+      ?parti wdt:P31 wd:Q7278; wdt:P17 wd:Q142; wdt:P571 ?DateInception.
+      FILTER(year(?DateInception) > 1789)
       ?parti rdfs:label ?NomParti.
       FILTER(lang(?NomParti) = 'fr')
       ?parti p:P1813 [ ps:P1813 ?NomCourt ].
