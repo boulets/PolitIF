@@ -1,29 +1,9 @@
-/* global Slots PolitifCache wikidataUrl dbpediaUrl dateToHtml splitOnce ucfirst nullableDate requete_profil_biographie requete_profil_description requete_profil_mandats requete_profil_partiPolitique extractIdFromWikidataUrl requete_profil_enfants requete_profil_fratrie genrerFonction extractGenderFromWikidataUrl */
-
-function setLinkPoliticianOrHide(key, { id, nom, isPolitician = false }) {
-  if (nom) {
-    if (isPolitician) {
-      return Slots.setLink(key, `profil.html#${id}-${nom}`, nom)
-    } else {
-      return Slots.setText(key, nom)
-    }
-  } else {
-    return Slots.hide(key)
-  }
-}
+/* global Slots PolitifCache wikidataUrl dbpediaUrl dateToHtml splitOnce ucfirst nullableDate requete_profil_biographie requete_profil_description requete_profil_mandats requete_profil_partiPolitique extractIdFromWikidataUrl requete_profil_enfants requete_profil_fratrie genrerFonction extractGenderFromWikidataUrl checkHashOrRedirect setLinkPoliticianOrHide */
 
 function update() {
+  checkHashOrRedirect()
+
   const hash = document.location.hash.slice(1)
-
-  const re = /^Q\d+-.+$/
-  if (!hash.match(re)) {
-    // redirection vers la page d'accueil (ou alors redir vers une 404.html ?)
-    document.location.replace("index.html")
-    // Utiliser .assign(…) pour ne pas retirer la page invalide de l'historique client,
-    // mais est-ce une propriété vraiment désirable ?
-    return // quitter la méthode update() sans rien faire
-  }
-
   const p = splitOnce(decodeURIComponent(hash), '-')
   const id = p.length > 0 ? p[0] : ''
   const nameWhileLoading = p.length > 1 ? p[1] : ''
