@@ -222,17 +222,19 @@ function requete_parti_general(idParti) {
     }
 
     # Siège
-    OPTIONAL { ?parti p:P159 ?SiegeStatement. }
     OPTIONAL {
-      ?SiegeStatement pq:P669/rdfs:label ?SiegeRue.
-      FILTER(lang(?SiegeRue) = 'fr')
-    }
-    OPTIONAL { ?SiegeStatement pq:P670 ?SiegeNumero. }
-    OPTIONAL { ?SiegeStatement pq:P281 ?SiegeCodePostal. }
-    OPTIONAL { ?SiegeStatement pq:P580 ?SiegeStartTime. }
-    OPTIONAL {
-      ?SiegeStatement ps:P159/rdfs:label ?SiegeVille.
-      FILTER(lang(?SiegeVille) = 'fr')
+      ?parti p:P159 ?SiegeStatement.
+      OPTIONAL {
+        ?SiegeStatement pq:P669/rdfs:label ?SiegeRue.
+        FILTER(lang(?SiegeRue) = 'fr')
+      }
+      OPTIONAL { ?SiegeStatement pq:P670 ?SiegeNumero. }
+      OPTIONAL { ?SiegeStatement pq:P281 ?SiegeCodePostal. }
+      OPTIONAL { ?SiegeStatement pq:P580 ?SiegeStartTime. }
+      OPTIONAL {
+        ?SiegeStatement ps:P159/rdfs:label ?SiegeVille.
+        FILTER(lang(?SiegeVille) = 'fr')
+      }
     }
 
     # Logo

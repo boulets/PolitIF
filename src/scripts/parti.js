@@ -79,8 +79,8 @@ function renderParti(parti) {
     const href = 'https://www.openstreetmap.org/search?query=' + encodeURIComponent(adr).replace(/%20/g, '+')
     if (adr) {
       const html = parti.siege.date
-        ? `${escapeHtml(adr)} (depuis le ${dateToHtml(parti.siege.date)})`
-        : `${escapeHtml(adr)}`
+        ? `${ucfirst(escapeHtml(adr))} (depuis le ${dateToHtml(parti.siege.date)})`
+        : `${ucfirst(escapeHtml(adr))}`
       Slots.setHtml('siege', `<a target="_blank" rel="noreferrer noopener" title="Ouvrir dans OpenStreetMap" href="${href}">${html}</a>`)
     } else {
       Slots.hide('siege')
@@ -107,8 +107,7 @@ function renderParti(parti) {
   }
 
   if (parti.siteWeb) {
-    Slots.setText('site-web', parti.siteWeb.replace(/^https?:\/\/([^/]+).*$/, '$1'))
-    Slots.setAttr('site-web', 'href', parti.siteWeb)
+    Slots.setLink('site-web', parti.siteWeb, parti.siteWeb.replace(/^(https?:\/\/)?(www\.)?([^/]+).*$/, '$3'))
   } else {
     Slots.hide('site-web')
   }
