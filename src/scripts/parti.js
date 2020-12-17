@@ -1,4 +1,4 @@
-/* global Slots PolitifCache escapeHtml splitOnce wikidataUrl dbpediaUrl dateToHtml nullableDate ucfirst requete_parti_general requete_parti_description requete_parti_ideologies extractIdFromWikidataUrl requete_parti_personnalites */
+/* global Slots PolitifCache escapeHtml splitOnce wikidataUrl dbpediaUrl dateToHtml nullableDate ucfirst requete_parti_general requete_parti_description requete_parti_ideologies extractIdFromWikidataUrl requete_parti_personnalites requete_parti_chairpeople wikidataUrlFromId */
 
 function adresseToText({ numero, rue, ville, codePostal }) {
   if (numero && rue && ville && codePostal) {
@@ -25,7 +25,7 @@ function update() {
   if (nameWhileLoading) {
     document.title = `Polit'IF – ${nameWhileLoading}`
     Slots.setText('nom', nameWhileLoading)
-    Slots.setLink('urlwikidata', `https://wikidata.org/wiki/${id}`, nameWhileLoading)
+    Slots.setLink('urlwikidata', wikidataUrlFromId(id), nameWhileLoading)
   } else {
     document.title = 'Polit\'IF'
     Slots.markLoading('nom')
@@ -148,40 +148,32 @@ function renderPartiPersonnalites(personnalites) {
 }
 
 function renderPartiChairpeople(chairpeople) {
-  const liens = chairpeople.map(({ id, nom, debut, fin }) => ({
-    href: `profil.html#${id}-${ucfirst(nom)}`,
-    text: ucfirst(nom),
-  }))
-  Slots.setListOfLinks('présidents', liens)
-  /**const chairpeopleList = Slots.get('présidents')
+  const chairpeopleList = Slots.get('tous-les-presidents')
   chairpeopleList.innerHTML = ''
 
   const ul = document.createElement('ul')
   chairpeopleList.appendChild(ul)
 
   chairpeople.forEach(chairperson => {
-    const { id, nom, debut, fin} = chairperson
+    const { id, nom, debut, fin } = chairperson
     if (!nom) { return } // skip
-
     const li = document.createElement('li')
-
-    if (debut && fin) {
-      li.innerHTML = `<a href="https://wikidata.org/wiki/${id}"></a>`
-      li.innerHTML = `<b></b> du ${dateToHtml(debut)} au ${dateToHtml(fin)}`
-    } else if (debut) {
-      li.innerHTML = `<a href="https://wikidata.org/wiki/${id}"></a>`
-      li.innerHTML = `<b></b> à partir du ${dateToHtml(debut)}`
-    } else if (fin) {
-      li.innerHTML = `<a href="https://wikidata.org/wiki/${id}"></a>`
-      li.innerHTML = `<b></b> jusqu'au ${dateToHtml(fin)}`
-    } else {
-      li.innerHTML = `<a href="https://wikidata.org/wiki/${id}"></a>`
-      li.innerHTML = '<b></b>'
-    }
-    li.querySelector('a').innerText = ucfirst(nom)
-    li.querySelector('b').innerText = ucfirst(nom)
+    const period = periodToHtml(debut, fin)
+    li.innerHTML = `<a href="profil.html#${id}-${ucfirst(nom)}">${escapeHtml(ucfirst(nom))}</a>${period}`
     ul.appendChild(li)
-  })*/
+  })
+}
+
+function periodToHtml(debut, fin) {
+  if (debut && fin) {
+    return ` du ${dateToHtml(debut)} au ${dateToHtml(fin)}`
+  } else if (debut) {
+    return ` à partir du ${dateToHtml(debut)}`
+  } else if (fin) {
+    return ` jusqu'au ${dateToHtml(fin)}`
+  } else {
+    return ''
+  }
 }
 
 async function fetchParti(id) {
@@ -298,8 +290,8 @@ async function fetchPartiChairpeople(id) {
     .map(chairperson => ({
       id: extractIdFromWikidataUrl(chairperson.politicien?.value),
       nom: chairperson.NomPoliticien?.value,
-      debut: chairperson.DateEntreePosition?.value,
-      fin: chairperson.DateSortiePosition?.value,
+      debut: nullableDate(chairperson.DateEntreePosition?.value),
+      fin: nullableDate(chairperson.DateSortiePosition?.value),
     }))
     .filter(nom => nom) // filtrer null, undefined, vide
   PolitifCache.set(cacheKey, chairpeople)
