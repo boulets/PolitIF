@@ -12,7 +12,12 @@ async function fetchPresidents() {
       dateSortie: new Date(data.DateSortiePosition?.value)
     })
   })
-  console.log(presidents)
+  presidents.forEach(async (data) => {
+    const url2 = wikidataUrl(requete_presidents_image(data.id))
+    const reponse2 = await fetch(url2).then(res => res.json())
+    const image = reponse2.results.bindings[0].Image?.value
+    Object.defineProperty(data, "image", {value: image})
+  })
   return presidents
 }
 

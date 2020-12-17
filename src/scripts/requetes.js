@@ -397,3 +397,12 @@ function requete_presidents() {
     }
     ORDER BY ASC(?DateEntreePosition)`
 }
+
+function requete_presidents_image(idPresident) {
+  return `SELECT DISTINCT ?President?Image WHERE {
+    BIND(wd:${idPresident} AS ?President)
+
+    OPTIONAL { ?President wdt:P18 ?Image. }
+    }
+    LIMIT 1`
+}
