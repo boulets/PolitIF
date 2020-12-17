@@ -9,6 +9,7 @@
 
 .timeline {
   list-style: none;
+  margin-left: 70px;
   display: flex;
   flex-direction: column;
 }
@@ -86,7 +87,7 @@
   position: absolute;
   font-size: 12px;
   line-height: var(--size);
-  width: 100px;
+  width: 80px;
   text-align: right;
   right: 16px;
   font-weight: bold;
