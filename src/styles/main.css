@@ -125,6 +125,10 @@ main.sheet {
   border-radius: 0px 0px 3px 3px;
 }
 
+.sheet h2 {
+  margin-bottom: 0.3em;
+}
+
 [hidden] {
   display: none !important;
 }

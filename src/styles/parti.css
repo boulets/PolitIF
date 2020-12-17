@@ -3,7 +3,3 @@
   border-left-color: var(--couleur-parti, white);
   transition: border-left-color 400ms ease;
 }
-
-.parti .nom {
-  margin-bottom: 0.3em;
-}
