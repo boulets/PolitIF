@@ -392,26 +392,18 @@ function requete_parti_alignement(idParti) {
 
 function requete_presidents() {
   return `SELECT DISTINCT ?President ?PresidentLabel ?DateEntreePosition ?DateSortiePosition WHERE {
-    BIND(wd:Q142 AS ?pays)
-    ?pays p:P35 ?chefDetatStat.
+    wd:Q142 p:P35 ?chefDetatStat.
     ?chefDetatStat ps:P35 ?President.
-    OPTIONAL {
-    ?chefDetatStat pq:P580 ?DateEntreePosition.
-    }
-    OPTIONAL {
-    ?chefDetatStat pq:P582 ?DateSortiePosition.
-    }
+    OPTIONAL { ?chefDetatStat pq:P580 ?DateEntreePosition. }
+    OPTIONAL { ?chefDetatStat pq:P582 ?DateSortiePosition. }
 
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],fr". }
-    }
-    ORDER BY ASC(?DateEntreePosition)`
+    ?President rdfs:label ?PresidentLabel.
+    FILTER(lang(?PresidentLabel) = 'fr')
+  } ORDER BY DESC(?DateEntreePosition)`
 }
 
 function requete_presidents_image(idPresident) {
-  return `SELECT DISTINCT ?President?Image WHERE {
-    BIND(wd:${idPresident} AS ?President)
-
-    OPTIONAL { ?President wdt:P18 ?Image. }
-    }
-    LIMIT 1`
+  return `SELECT ?Image WHERE {
+    OPTIONAL { wd:${idPresident} wdt:P18 ?Image. }
+  } LIMIT 1`
 }

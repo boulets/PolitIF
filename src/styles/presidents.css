@@ -1,85 +1,93 @@
+.timeline-container {
+  display: grid;
+  place-items: center;
+}
 
-.container ul {
+.timeline {
   list-style: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 1px 100px;
-  color: #000;
-  font-size: 13px;
+  display: flex;
+  flex-direction: column;
 }
 
-.container ul:before {
-  content: '';
-  width: 1px;
-  height: 100%;
-  position: absolute;
-  border-left: 2px dashed #000;
-
-}
-
-.container ul li:not(:first-child) {
-  margin-top: 0px;
-}
-
-.container ul li {
+.timeline-element {
   position: relative;
-  margin-left: 30px ;
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 14px;
-  border-radius: 6px;
-  width: 250px;
-  box-shadow: 0 0 4px rgba(0, 0, 0, .12), 0 2px 2px rgba(0, 0, 0, .08)
 }
 
-.container ul li > span {
+.timeline-element .card {
+  margin: 8px;
+  margin-left: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: white;
+  box-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.1);
+  transition: all 500ms ease;
+}
+
+.timeline-element .card:hover {
+  box-shadow: 0 3px 9px hsla(0, 0%, 0%, 0.2);
+  transition: all 100ms ease;
+}
+
+.timeline-element .card .title {
+  padding: 8px;
+  font-size: 1em;
+}
+
+.timeline-element .card img {
+  grid-area: icon;
+  object-fit: cover;
+  object-position: top center;
+  height: 4em;
+  width: 4em;
+}
+.timeline-element .card img[src$="svg"],
+.timeline-element .card img[src$="png"] {
+  object-fit: contain;
+  object-position: center;
+  padding: 8px;
+}
+
+.timeline-element .number {
+  --size: 12px;
   width: 2px;
   height: 100%;
-  background: #000;
-  left: -30px;
-  top: 0;
+  background-color: black;
+  left: -24px;
+  top: calc(-0.5 * var(--size));
   position: absolute;
 }
-.container ul li > span:before, .container ul li > span:after {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: 2px solid #000;
+
+.timeline-element .number::before,
+.timeline-element .number::after {
+  content: "";
+  width: var(--size);
+  height: var(--size);
+  border-radius: 999px;
+  border: 2px solid black;
   position: absolute;
-  background: #86b7e7;
-  left: -5px;
+  background-color: white;
+  left: calc(-0.5 * var(--size) + 1px);
   top: 0;
 }
-.container ul li span:after {
+
+.timeline-element .number::after {
   top: 100%;
 }
-.container ul li > div {
-  margin-left: 10px;
-}
-.container div .title, .container div .type {
-  font-weight: 600;
-  font-size: 12px;
-}
-.container div .info {
-  font-weight: 300;
-}
-.container div > div {
-  margin-top: 5px;
-}
-.container span.number {
-  height: 100%;
-}
-.container span.number span {
+
+.timeline-element .number .date-debut,
+.timeline-element .number .date-fin {
   position: absolute;
-  font-size: 10px;
-  left: -35px;
+  font-size: 12px;
+  line-height: var(--size);
+  width: 100px;
+  text-align: right;
+  right: 16px;
   font-weight: bold;
 }
-.container span.number span:first-child {
-  top: 0;
-}
-.container span.number span:last-child {
+
+.timeline-element .number .date-debut {
   top: 100%;
 }
