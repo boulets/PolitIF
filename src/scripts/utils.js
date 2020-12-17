@@ -174,3 +174,7 @@ function genrerFonction(genre, fonction) {
     return fonction
   }
 }
+
+function wikidataUrlFromId(id) {
+  return `https://wikidata.org/wiki/${encodeURIComponent(id)}`
+}
