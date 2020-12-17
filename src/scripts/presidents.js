@@ -1,23 +1,20 @@
 async function fetchPresidents() {
-  var presidents = [];
   const url = wikidataUrl(requete_presidents())
   const reponse = await fetch(url).then(res => res.json())
   const donnees = reponse.results.bindings
-  console.log(donnees)
-  donnees.forEach((data) => {
-    presidents.push({
-      id : data.President.value.substr(data.President.value.lastIndexOf("/")+1),
-      title : data.PresidentLabel.value,
-      dateEntree: new Date(data.DateEntreePosition.value),
-      dateSortie: new Date(data.DateSortiePosition?.value)
-    })
-  })
-  presidents.forEach(async (data) => {
-    const url2 = wikidataUrl(requete_presidents_image(data.id))
-    const reponse2 = await fetch(url2).then(res => res.json())
-    const image = reponse2.results.bindings[0].Image?.value
-    Object.defineProperty(data, "image", {value: image})
-  })
+  const presidents = donnees.map((x) => ({
+    id: extractIdFromWikidataUrl(x.President?.value),
+    nom: x.PresidentLabel?.value,
+    dateEntree: nullableDate(x.DateEntreePosition?.value),
+    dateSortie: nullableDate(x.DateSortiePosition?.value),
+  }))
+  await Promise.all(presidents.map(async (x) => {
+    const url = wikidataUrl(requete_presidents_image(x.id))
+    const reponse = await fetch(url).then(res => res.json())
+    const image = reponse.results.bindings[0].Image?.value
+    x.image = image
+  }))
+  console.log(presidents)
   return presidents
 }
 
@@ -26,36 +23,31 @@ async function init() {
 }
 init()
 
-
 function renderTimeline(presidents) {
-  var previousDate = 0;
-  const timeline = document.getElementById("timeline");
-  var card;
-  presidents.forEach((president) => {
-    if(previousDate !== 1900 + president.dateEntree?.getYear())
-    {
-      card = createElementFromHtml(`
-        <li>
-          <div class="title"><a href='profil.html#${president.id}-${president.title}'>${president.title}</a></div>
-          <span class="number">
-                <span>${1900 + president.dateEntree?.getYear()}</span>
-                <span>${1900 + president.dateSortie?.getYear()}</span>
-          </span>
-        </li>
-        `)
-    } else {
-      card = createElementFromHtml(`
-        <li>
-          <div class="title"><a href='profil.html#${president.id}-${president.title}'>${president.title}</a></div>
-          <span class="number">
-                <span></span>
-                <span>${1900 + president.dateSortie?.getYear()}</span>
-          </span>
-        </li>
-        `)
-    }
+  const timeline = document.getElementById('timeline')
+  timeline.innerHTML = ''
 
-    previousDate=1900 + president.dateSortie?.getYear()
+  let previousDate = null
+  let isFirst = true
+  for (const president of presidents) {
+    const anneeDebut = president.dateEntree?.getFullYear()
+    const anneeFin = president.dateSortie?.getFullYear()
+    const collapseWithPrev = (previousDate === anneeFin)
+    const texteFin = isFirst ? (anneeFin ? anneeFin : 'en mandat') : (collapseWithPrev ? '' : anneeFin)
+    const card = createElementFromHtml(`
+      <li class="timeline-element">
+        <a class="card" href="profil.html#${president.id}-${president.nom}">
+          <img src="${president.image}?width=200px" />
+          <div class="title">${president.nom}</div>
+        </a>
+        <span class="number">
+          <span class="date-fin" ${collapseWithPrev ? 'hidden="true"' : ''}>${texteFin}</span>
+          <span class="date-debut">${anneeDebut}</span>
+        </span>
+      </li>`)
+
     timeline.append(card)
-  })
+    isFirst = false
+    previousDate = anneeDebut
+  }
 }
