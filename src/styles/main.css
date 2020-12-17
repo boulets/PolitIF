@@ -168,6 +168,16 @@ a:hover {
   text-decoration: underline solid black 2px;
 }
 
+a[href^="http://"]::after,
+a[href^="https://"]::after {
+  content: " [↗︎]";
+  text-decoration: none;
+
+  vertical-align: super;
+  font-size: 0.8em;
+  line-height: 1;
+}
+
 .sr-only {
   border: 0;
   clip: rect(0, 0, 0, 0);
