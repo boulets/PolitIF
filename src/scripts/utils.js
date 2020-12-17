@@ -179,6 +179,9 @@ function genrerFonction(genre, fonction) {
   }
 }
 
+function wikidataUrlFromId(id) {
+  return `https://wikidata.org/wiki/${encodeURIComponent(id)}`
+}
 
 function adresseToText({ numero, rue, ville, codePostal }) {
   if (numero && rue && ville && codePostal) {

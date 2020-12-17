@@ -88,7 +88,7 @@ function Slots_setLink(key, href, text) {
  * @param {Array<Record<'href' | 'text', string>>} values
  * @param {'ul' | 'ol'} type
  */
-function Slots_setListOfLinks(key, values, type = 'ul') {
+function Slots_setListOfLinks(key, values, { type = 'ul' } = {}) {
   if (values !== null && values !== undefined && Array.isArray(values)) {
     Slots_showSlot(key)
     const element = Slots_getSlot(key)

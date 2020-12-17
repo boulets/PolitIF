@@ -276,6 +276,17 @@ function requete_parti_personnalites(idPArti) {
   ORDER BY DESC(?importance)
   LIMIT 5`
 }
+function requete_parti_chairpeople(idParti) {
+  return `SELECT ?politicien ?NomPoliticien ?DateEntreePosition ?DateSortiePosition WHERE {
+    BIND(wd:${idParti} AS ?parti)
+    ?parti p:P488 ?polStat.
+    ?polStat ps:P488 ?politicien.
+    ?politicien rdfs:label ?NomPoliticien.
+    FILTER(lang(?NomPoliticien) = 'fr')
+    OPTIONAL { ?polStat pq:P580 ?DateEntreePosition. }
+    OPTIONAL { ?polStat pq:P582 ?DateSortiePosition. }
+  } ORDER BY DESC(?DateEntreePosition)`
+}
 
 function requete_profil_fratrie(idProfil) {
   return `SELECT ?id ?nom ?isPolitician WHERE {
