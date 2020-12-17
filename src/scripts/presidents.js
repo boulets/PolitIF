@@ -1,4 +1,4 @@
-/* global wikidataUrl requete_presidents extractIdFromWikidataUrl nullableDate requete_presidents_image createElementFromHtml */
+/* global wikidataUrl requete_presidents extractIdFromWikidataUrl nullableDate requete_presidents_image createElementFromHtml escapeHtml */
 
 async function fetchPresidents() {
   const url = wikidataUrl(requete_presidents())
@@ -40,9 +40,9 @@ function renderTimeline(presidents) {
     const texteFin = isFirst ? (anneeFin ? anneeFin : 'en mandat') : (collapseWithPrev ? '' : anneeFin)
     const card = createElementFromHtml(`
       <li class="timeline-element">
-        <a class="card" href="profil.html#${president.id}-${president.nom}">
+        <a class="card" href="profil.html#${president.id}-${encodeURIComponent(president.nom)}">
           <img src="${president.image}?width=200px" />
-          <div class="title">${president.nom}</div>
+          <div class="title">${escapeHtml(president.nom)}</div>
         </a>
         <span class="number">
           <span class="date-fin" ${collapseWithPrev ? 'hidden="true"' : ''}>${texteFin}</span>

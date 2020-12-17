@@ -1,3 +1,4 @@
+/* global Slots */
 /* eslint-disable no-unused-vars */
 
 // Constants
@@ -179,6 +180,9 @@ function genrerFonction(genre, fonction) {
   }
 }
 
+function wikidataUrlFromId(id) {
+  return `https://wikidata.org/wiki/${encodeURIComponent(id)}`
+}
 
 function adresseToText({ numero, rue, ville, codePostal }) {
   if (numero && rue && ville && codePostal) {
@@ -214,4 +218,16 @@ function checkHashOrRedirect(pattern = /^Q\d+(-|$)/) {
     // mais est-ce une propriété vraiment désirable ?
   }
   return valid
+}
+
+function periodToHtml(debut, fin) {
+  if (debut && fin) {
+    return ` du ${dateToHtml(debut)} au ${dateToHtml(fin)}`
+  } else if (debut) {
+    return ` à partir du ${dateToHtml(debut)}`
+  } else if (fin) {
+    return ` jusqu'au ${dateToHtml(fin)}`
+  } else {
+    return ''
+  }
 }

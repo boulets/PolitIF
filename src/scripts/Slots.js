@@ -88,23 +88,29 @@ function Slots_setLink(key, href, text) {
  * @param {Array<Record<'href' | 'text', string>>} values
  * @param {'ul' | 'ol'} type
  */
-function Slots_setListOfLinks(key, values, type = 'ul') {
+function Slots_setListOfLinks(key, values, { type = 'ul' } = {}) {
   if (values !== null && values !== undefined && Array.isArray(values)) {
     Slots_showSlot(key)
     const element = Slots_getSlot(key)
     element.removeAttribute('loading')
     element.innerHTML = ''
     const listEl = document.createElement(type)
-    for (const { href, text } of values) {
+    for (const v of values) {
+      const { href, text } = v
+      const { after = '', before = '' } = v
+      const { htmlAfter = '', htmlBefore = '' } = v
+
+      const t = before + text + after
       const li = document.createElement('li')
       if (href === null || href === undefined) {
-        li.innerText = text
+        li.innerText = t
       } else {
         const a = document.createElement('a')
         a.href = href
-        a.innerText = text
+        a.innerText = t
         li.appendChild(a)
       }
+      li.innerHTML = htmlBefore + li.innerHTML + htmlAfter
       listEl.appendChild(li)
     }
     element.appendChild(listEl)

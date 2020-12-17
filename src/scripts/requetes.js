@@ -16,20 +16,48 @@ function serviceEntitySearch(recherche, prop) {
       ${prop} wikibase:apiOutputItem mwapi:item.
     }`
 }
+function serviceEntitySearch2(recherche, prop, precision = 10) {
+  const rech = recherche.replace(/"/g, ' ').toLocaleLowerCase()
+  return `SERVICE wikibase:mwapi {
+      bd:serviceParam wikibase:endpoint "fr.wikipedia.org";
+                      wikibase:api "Search";
+                      wikibase:limit ${precision};
+                      mwapi:srsearch "${rech}".
+      ?pageTitle wikibase:apiOutput mwapi:title.
+    }
+    SERVICE wikibase:mwapi {
+      bd:serviceParam wikibase:endpoint "www.wikidata.org";
+                      wikibase:api "EntitySearch";
+                      mwapi:search ?pageTitle;
+                      mwapi:language "fr".
+      ${prop} wikibase:apiOutputItem mwapi:item.
+    }`
+}
 
-function requete_recherche_politicien(recherche, n = 1) {
-  return `SELECT ?politician ?NomPoliticien WHERE {
+function requete_recherche_politiciens(recherche, n = 1) {
+  return `SELECT DISTINCT ?politician ?NomPoliticien WHERE {
     # Tous les politiciens de nationalités françaises
     ?politician wdt:P106/wdt:P279? wd:Q82955.
     ?politician wdt:P27 wd:Q142.
-
-    ${serviceEntitySearch(recherche, '?politician')}
+    ?politician wdt:P569 ?DateNaissance.
+    FILTER(year(?DateNaissance) > 1700)
     ?politician rdfs:label ?NomPoliticien.
     FILTER(LANG(?NomPoliticien) = 'fr')
+    ${filterRechercheParTexte(recherche, '?NomPoliticien')}
+  } LIMIT ${n}`
+}
 
-    # Filtres
+function requete_recherche_politicien_rapide(recherche, n = 1) {
+  return `SELECT DISTINCT ?politician ?NomPoliticien WHERE {
+    # Tous les politiciens de nationalités françaises
+    ?politician wdt:P106/wdt:P279? wd:Q82955.
+    ?politician wdt:P27 wd:Q142.
     ?politician wdt:P569 ?DateNaissance.
-    FILTER(year(?DateNaissance) > 1789)
+    FILTER(year(?DateNaissance) > 1700)
+    ${serviceEntitySearch2(recherche, '?politician', 1 + (n - 1) * 2)}
+    ?politician rdfs:label ?NomPoliticien.
+    FILTER(LANG(?NomPoliticien) = 'fr')
+    ${filterRechercheParTexte(recherche, '?NomPoliticien')}
   } LIMIT ${n}`
 }
 
@@ -276,6 +304,17 @@ function requete_parti_personnalites(idPArti) {
   ORDER BY DESC(?importance)
   LIMIT 5`
 }
+function requete_parti_chairpeople(idParti) {
+  return `SELECT ?politicien ?NomPoliticien ?DateEntreePosition ?DateSortiePosition WHERE {
+    BIND(wd:${idParti} AS ?parti)
+    ?parti p:P488 ?polStat.
+    ?polStat ps:P488 ?politicien.
+    ?politicien rdfs:label ?NomPoliticien.
+    FILTER(lang(?NomPoliticien) = 'fr')
+    OPTIONAL { ?polStat pq:P580 ?DateEntreePosition. }
+    OPTIONAL { ?polStat pq:P582 ?DateSortiePosition. }
+  } ORDER BY DESC(?DateEntreePosition)`
+}
 
 function requete_profil_fratrie(idProfil) {
   return `SELECT ?id ?nom ?isPolitician WHERE {
@@ -349,18 +388,19 @@ function requete_ideologies_derivees(idIdeologie) {
 }
 
 function requete_profil_partiPolitique(idProfil) {
-  return `SELECT ?politician ?NomPoliticien ?Parti ?NomParti WHERE {
+  return `SELECT ?Parti ?NomParti ?DateDebut ?DateFin WHERE {
     BIND(wd:${idProfil} AS ?politician)
-    # Nom prénom
-    ?politician rdfs:label ?NomPoliticien.
 
     # Partis Politiques
-    ?politician wdt:P102 ?Parti.
-    ?Parti rdfs:label ?NomParti.
+    ?politician p:P102 ?PartiStatement.
+    ?PartiStatement ps:P102 ?Parti.
 
-    FILTER(lang(?NomPoliticien) = 'fr')
+    ?Parti rdfs:label ?NomParti.
     FILTER(lang(?NomParti) = 'fr')
-  }`
+
+    OPTIONAL { ?PartiStatement pq:P580 ?DateDebut. }
+    OPTIONAL { ?PartiStatement pq:P582 ?DateFin. }
+  } ORDER BY DESC(?DateDebut) (!bound(?DateDebut))`
 }
 
 function requete_parti_alignement(idParti) {

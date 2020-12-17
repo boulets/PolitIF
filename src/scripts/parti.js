@@ -1,4 +1,4 @@
-/* global Slots PolitifCache escapeHtml splitOnce wikidataUrl dbpediaUrl dateToHtml nullableDate ucfirst requete_parti_general requete_parti_description requete_parti_ideologies extractIdFromWikidataUrl requete_parti_personnalites adresseToText checkHashOrRedirect coherentUrl setLinkPoliticianOrHide */
+/* global Slots PolitifCache escapeHtml splitOnce wikidataUrl dbpediaUrl dateToHtml nullableDate ucfirst requete_parti_general requete_parti_description requete_parti_ideologies extractIdFromWikidataUrl requete_parti_personnalites requete_parti_chairpeople adresseToText checkHashOrRedirect setLinkPoliticianOrHide wikidataUrlFromId coherentUrl periodToHtml */
 
 function update() {
   checkHashOrRedirect()
@@ -15,7 +15,7 @@ function update() {
   if (nameWhileLoading) {
     document.title = `Polit'IF – ${nameWhileLoading}`
     Slots.setText('nom', nameWhileLoading)
-    Slots.setLink('urlwikidata', `https://wikidata.org/wiki/${id}`, nameWhileLoading)
+    Slots.setLink('urlwikidata', wikidataUrlFromId(id), nameWhileLoading)
   } else {
     document.title = 'Polit\'IF'
     Slots.markLoading('nom')
@@ -28,6 +28,7 @@ function update() {
     }),
     fetchPartiIdeologies(id).then(renderPartiIdeologies),
     fetchPartiPersonnalites(id).then(renderPartiPersonnalites),
+    fetchPartiChairpeople(id).then(renderPartiChairpeople),
   ])
 }
 
@@ -128,6 +129,23 @@ function renderPartiPersonnalites(personnalites) {
   Slots.setListOfLinks('membres-importants', liens)
 }
 
+function renderPartiChairpeople(chairpeople) {
+  const chairpeopleList = Slots.get('tous-les-presidents')
+  chairpeopleList.innerHTML = ''
+
+  const ul = document.createElement('ul')
+  chairpeopleList.appendChild(ul)
+
+  chairpeople.forEach(chairperson => {
+    const { id, nom, debut, fin } = chairperson
+    if (!nom) { return } // skip
+    const li = document.createElement('li')
+    const period = periodToHtml(debut, fin)
+    li.innerHTML = `<a href="profil.html#${id}-${encodeURIComponent(ucfirst(nom))}">${escapeHtml(ucfirst(nom))}</a>${period}`
+    ul.appendChild(li)
+  })
+}
+
 async function fetchParti(id) {
   const cacheKey = `parti/${id}`
   const inCache = PolitifCache.get(cacheKey, (x) => {
@@ -226,4 +244,28 @@ async function fetchPartiPersonnalites(id) {
     .filter(nom => nom) // filtrer null, undefined, vide
   PolitifCache.set(cacheKey, personnalites)
   return personnalites
+}
+
+async function fetchPartiChairpeople(id) {
+  const cacheKey = `parti/${id}/chairpeople`
+  const inCache = PolitifCache.get(cacheKey, (a) => {
+    a.forEach(x => {
+      x.debut = nullableDate(x.debut)
+      x.fin = nullableDate(x.fin)
+    })
+  })
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_parti_chairpeople(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const chairpeople = reponse.results.bindings
+    .map(chairperson => ({
+      id: extractIdFromWikidataUrl(chairperson.politicien?.value),
+      nom: chairperson.NomPoliticien?.value,
+      debut: nullableDate(chairperson.DateEntreePosition?.value),
+      fin: nullableDate(chairperson.DateSortiePosition?.value),
+    }))
+    .filter(nom => nom) // filtrer null, undefined, vide
+  PolitifCache.set(cacheKey, chairpeople)
+  return chairpeople
 }
