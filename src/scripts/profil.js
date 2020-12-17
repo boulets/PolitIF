@@ -23,6 +23,7 @@ function update() {
   if (nameWhileLoading) {
     document.title = `Polit'IF – ${nameWhileLoading}`
     Slots.setText('nom', nameWhileLoading)
+    Slots.setLink('urlwikidata', `https://wikidata.org/wiki/${id}`, nameWhileLoading)
   } else {
     document.title = 'Polit\'IF'
     Slots.markLoading('nom')
