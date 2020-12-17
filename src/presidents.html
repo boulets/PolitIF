@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="styles/reset.css" />
     <link rel="stylesheet" href="styles/typography.css" />
     <link rel="stylesheet" href="styles/main.css" />
-    <link rel="stylesheet" href="styles/colonnes.css" />
-    <link rel="stylesheet" href="styles/loading.css" />
+    <link rel="stylesheet" href="styles/presidents.css" />
   </head>
 
   <body>
@@ -24,32 +23,18 @@
       </div>
     </header>
 
-    <main class="sheet ideologie colonnes" data-key="couleur">
-      <div class="colonne-principale">
-        <h2 class="nom" data-key="nom"></h2>
-
-        <div data-key="description"></div>
+    <div class="sheet timeline-container">
+      <h2 class="timeline-title">Présidents français depuis 1947</h2>
+      <ul class="timeline" id="timeline"></ul>
+      <div class="timeline-spinner-container" id="spinner">
+        <svg class="timeline-spinner" viewBox="0 0 50 50">
+          <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+        </svg>
       </div>
+    </div>
 
-      <div class="colonne-secondaire">
-        <img data-key="image-logo" src="" alt="">
-
-        <div data-contains-slot="ideologies-parentes">
-          <h3>Idéologies parentes</h3>
-          <div data-key="ideologies-parentes"></div>
-        </div>
-
-        <div data-contains-slot="ideologies-derivees">
-          <h3>Idéologies dérivées</h3>
-          <div data-key="ideologies-derivees"></div>
-        </div>
-      </div>
-    </main>
 
     <footer>
-      <div>
-        <b>Source des données :</b> <span data-key="urlwikidata"></span> sur Wikidata
-      </div>
       <div class="drapeau-francais">
         <span class="sr-only">Drapeau français</span>
       </div>
@@ -58,7 +43,7 @@
     <script src="scripts/Slots.js"></script>
     <script src="scripts/utils.js"></script>
     <script src="scripts/requetes.js"></script>
-    <script src="scripts/ideologie.js"></script>
+    <script src="scripts/presidents.js"></script>
   </body>
 
 </html>

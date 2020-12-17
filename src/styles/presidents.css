@@ -1,0 +1,152 @@
+.timeline-container {
+  display: grid;
+  place-items: center;
+}
+
+.timeline-title {
+  padding: 0.5em;
+}
+
+.timeline {
+  list-style: none;
+  margin-left: 70px;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-element {
+  position: relative;
+}
+
+.timeline-element .card {
+  margin: 8px;
+  margin-left: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: white;
+  box-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.1);
+  transition: all 500ms ease;
+}
+
+.timeline-element .card:hover {
+  box-shadow: 0 3px 9px hsla(0, 0%, 0%, 0.2);
+  transition: all 100ms ease;
+}
+
+.timeline-element .card .title {
+  padding: 8px;
+  font-size: 1em;
+}
+
+.timeline-element .card img {
+  grid-area: icon;
+  object-fit: cover;
+  object-position: top center;
+  height: 4em;
+  width: 4em;
+}
+.timeline-element .card img[src$="svg"],
+.timeline-element .card img[src$="png"] {
+  object-fit: contain;
+  object-position: center;
+  padding: 8px;
+}
+
+.timeline-element .number {
+  --size: 12px;
+  width: 2px;
+  height: 100%;
+  background-color: black;
+  left: -24px;
+  top: calc(-0.5 * var(--size));
+  position: absolute;
+}
+
+.timeline-element .number::before,
+.timeline-element .number::after {
+  content: "";
+  width: var(--size);
+  height: var(--size);
+  border-radius: 999px;
+  border: 2px solid black;
+  position: absolute;
+  background-color: white;
+  left: calc(-0.5 * var(--size) + 1px);
+  top: 0;
+}
+
+.timeline-element .number::after {
+  top: 100%;
+}
+
+.timeline-element .number .date-debut,
+.timeline-element .number .date-fin {
+  position: absolute;
+  font-size: 12px;
+  line-height: var(--size);
+  width: 80px;
+  text-align: right;
+  right: 16px;
+  font-weight: bold;
+}
+
+.timeline-element .number .date-debut {
+  top: 100%;
+}
+
+/* https://codepen.io/supah/pen/BjYLdW */
+.timeline-spinner-container {
+  height: 50vmin;
+  width: 50vmin;
+  padding: 20vmin;
+  display: grid;
+  place-items: center;
+  color: black;
+  animation: spinnerColor 2s ease infinite;
+}
+
+.timeline-spinner {
+  animation: spinnerRotate 2s linear infinite;
+}
+
+.timeline-spinner .path {
+  stroke: currentColor;
+  stroke-linecap: round;
+  animation: spinnerDash 1.5s ease-in-out infinite;
+}
+
+@keyframes spinnerColor {
+  0%,
+  40%,
+  100% {
+    color: #000091;
+  }
+  50%,
+  90% {
+    color: #ef4135;
+  }
+}
+
+@keyframes spinnerRotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinnerDash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}

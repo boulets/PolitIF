@@ -3,11 +3,11 @@
 const classesIdeologies = ['wd:Q12909644', 'wd:Q179805'].join(' ')
 
 function filterRechercheParTexte(recherche, prop) {
-  const rech = recherche.toLocaleLowerCase().replace(/"/g, ' ')
+  const rech = recherche.replace(/"/g, ' ').toLocaleLowerCase()
   return `FILTER(contains(lcase(${prop}), "${rech}")).`
 }
 function serviceEntitySearch(recherche, prop) {
-  const rech = recherche.replace(/"/g, ' ')
+  const rech = recherche.replace(/"/g, ' ').toLocaleLowerCase()
   return `SERVICE wikibase:mwapi {
       bd:serviceParam wikibase:endpoint "www.wikidata.org";
                       wikibase:api "EntitySearch";
@@ -390,4 +390,22 @@ function requete_parti_alignement(idParti) {
 
     SERVICE wikibase:label { bd:serviceParam wikibase:language "fr" }
   }`
+}
+
+function requete_presidents() {
+  return `SELECT DISTINCT ?President ?PresidentLabel ?DateEntreePosition ?DateSortiePosition WHERE {
+    wd:Q142 p:P35 ?chefDetatStat.
+    ?chefDetatStat ps:P35 ?President.
+    OPTIONAL { ?chefDetatStat pq:P580 ?DateEntreePosition. }
+    OPTIONAL { ?chefDetatStat pq:P582 ?DateSortiePosition. }
+
+    ?President rdfs:label ?PresidentLabel.
+    FILTER(lang(?PresidentLabel) = 'fr')
+  } ORDER BY DESC(?DateEntreePosition)`
+}
+
+function requete_presidents_image(idPresident) {
+  return `SELECT ?Image WHERE {
+    OPTIONAL { wd:${idPresident} wdt:P18 ?Image. }
+  } LIMIT 1`
 }

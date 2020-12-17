@@ -1,18 +1,8 @@
-/* global Slots PolitifCache escapeHtml splitOnce wikidataUrl dbpediaUrl dateToHtml nullableDate ucfirst requete_parti_general requete_parti_description requete_parti_ideologies extractIdFromWikidataUrl requete_parti_personnalites requete_parti_chairpeople wikidataUrlFromId */
-
-function adresseToText({ numero, rue, ville, codePostal }) {
-  if (numero && rue && ville && codePostal) {
-    return `${numero} ${rue}, ${ville} ${codePostal}`
-  } else if (numero && rue && ville) {
-    return `${numero} ${rue}, ${ville}`
-  } else if (rue && ville) {
-    return `${rue}, ${ville}`
-  } else if (ville) {
-    return ville
-  }
-}
+/* global Slots PolitifCache escapeHtml splitOnce wikidataUrl dbpediaUrl dateToHtml nullableDate ucfirst requete_parti_general requete_parti_description requete_parti_ideologies extractIdFromWikidataUrl requete_parti_personnalites requete_parti_chairpeople adresseToText checkHashOrRedirect setLinkPoliticianOrHide wikidataUrlFromId coherentUrl */
 
 function update() {
+  checkHashOrRedirect()
+
   const hash = document.location.hash.slice(1)
   const p = splitOnce(decodeURIComponent(hash), '-')
   const id = p.length > 0 ? p[0] : ''
@@ -46,7 +36,6 @@ function init() {
   update()
   window.addEventListener('hashchange', () => update())
 }
-
 init()
 
 function renderParti(parti) {
@@ -63,16 +52,8 @@ function renderParti(parti) {
     Slots.hide('date-dissolution')
   }
 
-  if (parti.president.id) {
-    Slots.setLink('president', `profil.html#${parti.president.id}-${encodeURIComponent(parti.president.nom)}`, parti.president.nom)
-  } else {
-    Slots.hide('president')
-  }
-  if (parti.fondateur.id) {
-    Slots.setLink('fondateur', `profil.html#${parti.fondateur.id}-${encodeURIComponent(parti.fondateur.nom)}`, parti.fondateur.nom)
-  } else {
-    Slots.hide('fondateur')
-  }
+  setLinkPoliticianOrHide('president', parti.president)
+  setLinkPoliticianOrHide('fondateur', parti.fondateur)
 
   parti.positionnement ? Slots.setText('positionnement', ucfirst(parti.positionnement)) : Slots.hide('positionnement')
   if (parti.siege) {
@@ -108,7 +89,8 @@ function renderParti(parti) {
   }
 
   if (parti.siteWeb) {
-    Slots.setLink('site-web', parti.siteWeb, parti.siteWeb.replace(/^(https?:\/\/)?(www\.)?([^/]+).*$/, '$3'))
+    parti.siteWeb = coherentUrl(parti.siteWeb)
+    Slots.setLink('site-web', parti.siteWeb, parti.siteWeb.replace(/^(https?:\/\/)?(www\.)?(.*\.[^/]*).*$/, '$3'))
   } else {
     Slots.hide('site-web')
   }
@@ -196,10 +178,12 @@ async function fetchParti(id) {
     president: {
       id: extractIdFromWikidataUrl(donnees?.President?.value),
       nom: donnees?.NomPresident?.value,
+      isPolitician: true,
     },
     fondateur: {
       id: extractIdFromWikidataUrl(donnees?.Fondateur?.value),
       nom: donnees?.NomFondateur?.value,
+      isPolitician: true,
     },
     dateCreation: nullableDate(donnees?.DateCreation?.value),
     dateDissolution: nullableDate(donnees?.DateDissolution?.value),

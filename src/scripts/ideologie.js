@@ -1,6 +1,8 @@
-/* global Slots PolitifCache splitOnce requete_ideologie requete_ideologie_description requete_ideologies_parentes requete_ideologies_derivees wikidataUrl dbpediaUrl extractIdFromWikidataUrl ucfirst */
+/* global Slots PolitifCache splitOnce requete_ideologie requete_ideologie_description requete_ideologies_parentes requete_ideologies_derivees wikidataUrl dbpediaUrl extractIdFromWikidataUrl ucfirst checkHashOrRedirect */
 
 function update() {
+  checkHashOrRedirect()
+
   const hash = document.location.hash.slice(1)
   const p = splitOnce(decodeURIComponent(hash), '-')
   const id = p.length > 0 ? p[0] : ''
@@ -31,7 +33,6 @@ function init() {
   update()
   window.addEventListener('hashchange', () => update())
 }
-
 init()
 
 function renderIdeologie(ideologie) {

@@ -125,6 +125,10 @@ main.sheet {
   border-radius: 0px 0px 3px 3px;
 }
 
+.sheet h2 {
+  margin-bottom: 0.3em;
+}
+
 [hidden] {
   display: none !important;
 }
@@ -168,6 +172,19 @@ a:hover {
   text-decoration: underline solid black 2px;
 }
 
+a[href^="http://"]::after,
+a[href^="https://"]::after
+{
+  display: inline;
+  content: "X";
+  color: transparent;
+  background-position: center center;
+  background-image: url("../img/ext-link.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  /* vertical-align: super; */
+}
+
 .sr-only {
   border: 0;
   clip: rect(0, 0, 0, 0);
@@ -186,4 +203,16 @@ a:hover {
   overflow: visible;
   position: static;
   width: auto;
+}
+
+/** Styles spécifiques aux pages */
+main.profil img.signature {
+  max-height: 200px;
+  margin: 16px auto;
+}
+
+main.parti {
+  border-left: 5px solid white;
+  border-left-color: var(--couleur-parti, white);
+  transition: border-left-color 400ms ease;
 }
