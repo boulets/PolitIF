@@ -84,6 +84,10 @@ function extractIdFromWikidataUrl(url) {
   return url?.match(/entity\/(Q\d+)$/)?.[1]
 }
 
+function coherentUrl(url) {
+    return url.match(/^https?:\/\//) ? url : `http://${url}`
+}
+
 function extractGenderFromWikidataUrl(url) {
   const genders = {
     Q6581097: 'M',
