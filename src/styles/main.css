@@ -35,9 +35,13 @@ header .logo img {
   width: auto;
   transition: transform 400ms ease;
 }
-header a {
+header .brand a {
   color: inherit !important;
-  text-decoration: none;
+  text-decoration: none !important;
+}
+
+header .brand a:hover h1 {
+  text-decoration: underline;
 }
 
 header a.logo:hover img {
@@ -46,10 +50,6 @@ header a.logo:hover img {
 
 header .logo:hover img:hover {
   transform: scale(1.15);
-}
-
-header a:hover h1 {
-  text-decoration: underline;
 }
 
 header p {
