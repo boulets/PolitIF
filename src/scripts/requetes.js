@@ -54,13 +54,6 @@ function requete_recherche_partis(recherche, n = 1) {
     }
   }
   LIMIT ${n}`
-    }
-
-    FILTER(?matched=true)
-  } ORDER BY
-    (!bound(?NomCourt)) asc(?NomCourt)
-    (!bound(?NomOfficiel)) asc(?NomOfficiel)
-  LIMIT ${n}`
 }
 
 
