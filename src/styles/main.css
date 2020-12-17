@@ -204,3 +204,15 @@ a[href^="https://"]::after
   position: static;
   width: auto;
 }
+
+/** Styles spécifiques aux pages */
+main.profil img.signature {
+  max-height: 200px;
+  margin: 16px auto;
+}
+
+main.parti {
+  border-left: 5px solid white;
+  border-left-color: var(--couleur-parti, white);
+  transition: border-left-color 400ms ease;
+}
