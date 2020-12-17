@@ -31,8 +31,7 @@
       <ul>
         <li>
           <div>
-            <div class="title">Vincent Auriol</div>
-            <div class="info">Let's make coolest things in css</div>
+            <aside class="home-cards"></aside>
           </div>
           <span class="number">
             <span>1947</span>
@@ -63,6 +62,7 @@
       </ul>
     </div>
 
+
     <footer>
       <div class="drapeau-francais">
         <span class="sr-only">Drapeau français</span>
@@ -75,6 +75,15 @@
     <script src="scripts/accueil.js"></script>
     <script src="scripts/recherche.js"></script>
 
+    <script>
+      homecards([
+        featuredTopic(
+          'Q3052772', 'Emmanuel Macron', 'profil',
+          'Q23731823', 'La République en marche', 'parti',
+          'http://commons.wikimedia.org/wiki/Special:FilePath/Emmanuel%20Macron%20%2837374335081%29%20%28cropped%29.jpg?width=200px'
+        )
+      ])
+    </script>
   </body>
 
 </html>
