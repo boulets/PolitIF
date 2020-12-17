@@ -388,18 +388,19 @@ function requete_ideologies_derivees(idIdeologie) {
 }
 
 function requete_profil_partiPolitique(idProfil) {
-  return `SELECT ?politician ?NomPoliticien ?Parti ?NomParti WHERE {
+  return `SELECT ?Parti ?NomParti ?DateDebut ?DateFin WHERE {
     BIND(wd:${idProfil} AS ?politician)
-    # Nom prénom
-    ?politician rdfs:label ?NomPoliticien.
 
     # Partis Politiques
-    ?politician wdt:P102 ?Parti.
-    ?Parti rdfs:label ?NomParti.
+    ?politician p:P102 ?PartiStatement.
+    ?PartiStatement ps:P102 ?Parti.
 
-    FILTER(lang(?NomPoliticien) = 'fr')
+    ?Parti rdfs:label ?NomParti.
     FILTER(lang(?NomParti) = 'fr')
-  }`
+
+    OPTIONAL { ?PartiStatement pq:P580 ?DateDebut. }
+    OPTIONAL { ?PartiStatement pq:P582 ?DateFin. }
+  } ORDER BY DESC(?DateDebut) (!bound(?DateDebut))`
 }
 
 function requete_parti_alignement(idParti) {

@@ -1,4 +1,4 @@
-/* global Slots PolitifCache wikidataUrl dbpediaUrl dateToHtml splitOnce ucfirst nullableDate requete_profil_biographie requete_profil_description requete_profil_mandats requete_profil_partiPolitique extractIdFromWikidataUrl requete_profil_enfants requete_profil_fratrie genrerFonction extractGenderFromWikidataUrl checkHashOrRedirect setLinkPoliticianOrHide wikidataUrlFromId */
+/* global Slots PolitifCache wikidataUrl dbpediaUrl dateToHtml splitOnce ucfirst nullableDate requete_profil_biographie requete_profil_description requete_profil_mandats requete_profil_partiPolitique extractIdFromWikidataUrl requete_profil_enfants requete_profil_fratrie genrerFonction extractGenderFromWikidataUrl checkHashOrRedirect setLinkPoliticianOrHide wikidataUrlFromId periodToHtml */
 
 function update() {
   checkHashOrRedirect()
@@ -125,27 +125,23 @@ function renderPositions(positions, genre = 'M') {
     if (!nom) { return } // skip
 
     const li = document.createElement('li')
-
-    if (debut && fin) {
-      li.innerHTML = `<b></b> du ${dateToHtml(debut)} au ${dateToHtml(fin)}`
-    } else if (debut) {
-      li.innerHTML = `<b></b> à partir du ${dateToHtml(debut)}`
-    } else if (fin) {
-      li.innerHTML = `<b></b> jusqu'au ${dateToHtml(fin)}`
-    } else {
-      li.innerHTML = '<b></b>'
-    }
-
+    li.innerHTML = `<b></b>${periodToHtml(debut, fin)}`
     li.querySelector('b').innerText = ucfirst(genrerFonction(genre, nom)) + (of ? ` de ${of}` : '')
     ul.appendChild(li)
   })
 }
 
 function renderPartis(partis) {
+  // les partis spéciaux sont affichés mais ne sont pas liés
+  const partisSpeciaux = [
+    'Q327591', // sans étiquette
+    'Q2415493', // non-inscrit
+  ]
   if (partis && Array.isArray(partis) && partis.length > 0) {
-    const liens = partis.map(({ id, nom }) => ({
-      href: `parti.html#${id}-${nom}`,
-      text: nom,
+    const liens = partis.map(({ id, nom, debut, fin }) => ({
+      href: partisSpeciaux.includes(id) ? null : `parti.html#${id}-${nom}`,
+      text: ucfirst(nom),
+      htmlAfter: periodToHtml(debut, fin),
     }))
     Slots.setListOfLinks('profil-liste-partis', liens)
   } else {
@@ -236,7 +232,12 @@ async function fetchMandatsProfil(id) {
 
 async function fetchPartisOfProfil(id) {
   const cacheKey = `profil/${id}/partis`
-  const inCache = PolitifCache.get(cacheKey)
+  const inCache = PolitifCache.get(cacheKey, (a) => {
+    a.forEach(x => {
+      x.debut = nullableDate(x.debut)
+      x.fin = nullableDate(x.fin)
+    })
+  })
   if (inCache) { return inCache }
 
   const url = wikidataUrl(requete_profil_partiPolitique(id))
@@ -244,6 +245,8 @@ async function fetchPartisOfProfil(id) {
   const partis = reponse.results.bindings.map(parti => ({
     id: extractIdFromWikidataUrl(parti.Parti?.value),
     nom: parti.NomParti?.value,
+    debut: nullableDate(parti.DateDebut?.value),
+    fin: nullableDate(parti.DateFin?.value),
   }))
   PolitifCache.set(cacheKey, partis)
   return partis
