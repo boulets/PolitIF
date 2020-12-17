@@ -438,3 +438,13 @@ function requete_presidents_image(idPresident) {
     OPTIONAL { wd:${idPresident} wdt:P18 ?Image. }
   } LIMIT 1`
 }
+
+function requete_profil_scolarite(id) {
+  return `SELECT ?NomEcole ?DateEntree ?DateSortie WHERE {
+    wd:Q3052772 p:P69 ?EcoleStatement.
+    ?EcoleStatement ps:P69/rdfs:label ?NomEcole.
+    FILTER(lang(?NomEcole) = 'fr')
+    OPTIONAL { ?EcoleStatement pq:P580 ?DateEntree. }
+    OPTIONAL { ?EcoleStatement pq:P582 ?DateSortie. }
+  } ORDER BY DESC(?DateEntree)`
+}
