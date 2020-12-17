@@ -62,10 +62,16 @@ function Slots_setListOrMissing(key, values, type = 'ul') {
   } else {
     element.innerHTML = ''
     const listEl = document.createElement(type)
-    for (const x of values) {
+    for (const v of values) {
       const li = document.createElement('li')
-      li.innerText = x
       listEl.appendChild(li)
+      if (typeof v === 'string') {
+        li.innerText = v
+      } else {
+        const { text, htmlAfter = '', htmlBefore = '' } = v
+        li.innerText = text
+        li.innerHTML = htmlBefore + li.innerHTML + htmlAfter
+      }
     }
     element.appendChild(listEl)
   }
