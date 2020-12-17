@@ -16,20 +16,48 @@ function serviceEntitySearch(recherche, prop) {
       ${prop} wikibase:apiOutputItem mwapi:item.
     }`
 }
+function serviceEntitySearch2(recherche, prop, precision = 10) {
+  const rech = recherche.replace(/"/g, ' ').toLocaleLowerCase()
+  return `SERVICE wikibase:mwapi {
+      bd:serviceParam wikibase:endpoint "fr.wikipedia.org";
+                      wikibase:api "Search";
+                      wikibase:limit ${precision};
+                      mwapi:srsearch "${rech}".
+      ?pageTitle wikibase:apiOutput mwapi:title.
+    }
+    SERVICE wikibase:mwapi {
+      bd:serviceParam wikibase:endpoint "www.wikidata.org";
+                      wikibase:api "EntitySearch";
+                      mwapi:search ?pageTitle;
+                      mwapi:language "fr".
+      ${prop} wikibase:apiOutputItem mwapi:item.
+    }`
+}
 
-function requete_recherche_politicien(recherche, n = 1) {
-  return `SELECT ?politician ?NomPoliticien WHERE {
+function requete_recherche_politiciens(recherche, n = 1) {
+  return `SELECT DISTINCT ?politician ?NomPoliticien WHERE {
     # Tous les politiciens de nationalités françaises
     ?politician wdt:P106/wdt:P279? wd:Q82955.
     ?politician wdt:P27 wd:Q142.
-
-    ${serviceEntitySearch(recherche, '?politician')}
-    ?politician rdfs:label ?NomPoliticien.
-    FILTER(LANG(?NomPoliticien) = 'fr')
-
-    # Filtres
     ?politician wdt:P569 ?DateNaissance.
     FILTER(year(?DateNaissance) > 1789)
+    ?politician rdfs:label ?NomPoliticien.
+    FILTER(LANG(?NomPoliticien) = 'fr')
+    ${filterRechercheParTexte(recherche, '?NomPoliticien')}
+  } LIMIT ${n}`
+}
+
+function requete_recherche_politicien_rapide(recherche, n = 1) {
+  return `SELECT DISTINCT ?politician ?NomPoliticien WHERE {
+    # Tous les politiciens de nationalités françaises
+    ?politician wdt:P106/wdt:P279? wd:Q82955.
+    ?politician wdt:P27 wd:Q142.
+    ?politician wdt:P569 ?DateNaissance.
+    FILTER(year(?DateNaissance) > 1789)
+    ${serviceEntitySearch2(recherche, '?politician', 1 + (n - 1) * 2)}
+    ?politician rdfs:label ?NomPoliticien.
+    FILTER(LANG(?NomPoliticien) = 'fr')
+    ${filterRechercheParTexte(recherche, '?NomPoliticien')}
   } LIMIT ${n}`
 }
 

@@ -1,4 +1,4 @@
-/* global Slots PolitifCache requete_recherche_partis requete_recherche_politicien requete_recherche_ideologies wikidataUrl extractIdFromWikidataUrl ucfirst */
+/* global Slots PolitifCache requete_recherche_partis requete_recherche_politiciens requete_recherche_politicien_rapide requete_recherche_ideologies wikidataUrl extractIdFromWikidataUrl ucfirst */
 
 const tousLesResultats = {}
 
@@ -23,11 +23,11 @@ const searchResultsContainer = document.getElementById('searchResultsContainer')
 const searchButton = document.getElementById('searchButton')
 const search = document.getElementById('search')
 
-function creerFonctionRecherche(type, fonctionRequete, mapper) {
-  return (q, n = 1) => submitSearch(q, n, type, fonctionRequete, mapper)
+function creerFonctionRecherche(type, fonctionRequete, mapper, opts) {
+  return (q, n = 1) => submitSearch(q, n, type, fonctionRequete, mapper, opts)
 }
 
-function submitSearch(q, n, type, fonctionRequete, mapper) {
+function submitSearch(q, n, type, fonctionRequete, mapper, { forceSetResults = false } = {}) {
   // logr(`${q} ${n} ${type}`)
   if (enableAborts) {
     const toAbort = Object.keys(pendingPromises).filter((k) => k.split(':', 3)[2] !== q)
@@ -57,7 +57,7 @@ function submitSearch(q, n, type, fonctionRequete, mapper) {
 
   const inCache = PolitifCache.get(`recherche/${k}`)
   if (inCache) {
-    afficherResultats(type, inCache)
+    afficherResultats(type, inCache, { forceSetResults })
     // logr(`in cache ${k}`)
     return
   }
@@ -78,7 +78,7 @@ function submitSearch(q, n, type, fonctionRequete, mapper) {
       if (search.value === q) {
         delete abortControllers[k]
         delete pendingPromises[k]
-        afficherResultats(type, resultats)
+        afficherResultats(type, resultats, { forceSetResults })
       } else {
         if (enableAborts) {
           throw new Error('failed to cancel')
@@ -100,14 +100,15 @@ function submitSearch(q, n, type, fonctionRequete, mapper) {
   })
 }
 
-function afficherResultats(type, resultats, forceSetResults = false) {
+function afficherResultats(type, resultats, { forceSetResults = false } = {}) {
   const prevLength = tousLesResultats[type]?.length || 0
   const nextLength = resultats.length
-  if (nextLength < prevLength && !forceSetResults) {
+  if (nextLength <= prevLength && !forceSetResults) {
     // logr(`skip ${type} ${resultats.length}`)
     return
+  } else {
+    tousLesResultats[type] = resultats
   }
-  tousLesResultats[type] = resultats
 
   const shouldRestoreFocus = searchResultsContainer.matches(':focus-within')
   const shouldRestoreFocusToHref = document.activeElement.href
@@ -138,25 +139,23 @@ function afficherResultats(type, resultats, forceSetResults = false) {
 }
 
 function definirMeilleurResultat() {
+  // const hasResults = Object.values(tousLesResultats).findIndex(x => x.length > 0) !== -1
   const type = SEARCH_TYPES.filter(t => tousLesResultats[t]?.length > 0)[0]
   const premier = tousLesResultats[type]?.[0]
+  const isLastQuery = Object.values(pendingPromises).length === 0
 
   if (premier && search.value.length > 0) {
-    searchAutocomplete.innerHTML = `${search.value} — ${premier.nom}`
+    searchAutocomplete.innerText = `${search.value} — ${premier.nom}`
     meilleurResultat = { ...premier, type }
   } else {
-    searchAutocomplete.innerHTML = ''
+    searchAutocomplete.innerText = ''
     meilleurResultat = null
 
     if (search.value.length > 0) {
-      const noResults = Object.values(tousLesResultats).findIndex(x => x.length > 0) === -1
-      if (noResults) {
-        const isLastQuery = Object.values(pendingPromises).length === 0
-        if (isLastQuery) {
-          searchAutocomplete.innerHTML = `${search.value} — Aucun résultat`
-        } else {
-          searchAutocomplete.innerHTML = `${search.value} — Recherche…`
-        }
+      if (isLastQuery) {
+        searchAutocomplete.innerText = `${search.value} — Aucun résultat`
+      } else {
+        searchAutocomplete.innerText = `${search.value} — Recherche…`
       }
     }
   }
@@ -168,10 +167,15 @@ function goToFirstResult() {
   }
 }
 
-const chercherProfil = creerFonctionRecherche('profil', requete_recherche_politicien, (x) => ({
+const chercherProfil = creerFonctionRecherche('profil', requete_recherche_politiciens, (x) => ({
   nom: x.NomPoliticien.value,
   id: extractIdFromWikidataUrl(x.politician.value)
 }))
+
+const chercherProfilRapide = creerFonctionRecherche('profil', requete_recherche_politicien_rapide, (x) => ({
+  nom: x.NomPoliticien.value,
+  id: extractIdFromWikidataUrl(x.politician.value)
+}), { forceSetResults: true })
 
 const chercherParti = creerFonctionRecherche('parti', requete_recherche_partis, (x) => ({
   nom: x.NomParti.value,
@@ -188,6 +192,8 @@ function init() {
 
   const submitProfil1 = throttle((x) => chercherProfil(x, 1), 500, { leading: false, trailing: true })
   const submitProfil5 = throttle((x) => chercherProfil(x, 5), 900, { leading: false, trailing: true })
+  const submitProfilRapide1 = throttle((x) => chercherProfilRapide(x, 1), 500, { leading: false, trailing: true })
+  const submitProfilRapide5 = throttle((x) => chercherProfilRapide(x, 5), 900, { leading: false, trailing: true })
   const submitPartis1 = throttle((x) => chercherParti(x, 1), 500, { leading: false, trailing: true })
   const submitPartis5 = throttle((x) => chercherParti(x, 5), 900, { leading: false, trailing: true })
   const submitIdeologies1 = throttle((x) => chercherIdeologie(x, 1), 500, { leading: false, trailing: true })
@@ -216,15 +222,17 @@ function init() {
   search.addEventListener('input', () => {
     const q = search.value.toLocaleLowerCase()
     if (q.length > 0) {
-      searchAutocomplete.innerHTML = `${search.value} — Recherche…`
+      searchAutocomplete.innerText = `${search.value} — Recherche…`
       submitProfil1(q)
-      submitProfil5(q)
+      // submitProfil5(q)
+      submitProfilRapide1(q)
+      submitProfilRapide5(q)
       submitPartis1(q)
       submitPartis5(q)
       submitIdeologies1(q)
       submitIdeologies5(q)
     } else {
-      searchAutocomplete.innerHTML = ''
+      searchAutocomplete.innerText = ''
       if (enableAborts) {
         Object.entries(abortControllers).forEach(([k, ac]) => {
           ac.abort()
