@@ -1,4 +1,4 @@
-/* global Slots PolitifCache escapeHtml splitOnce wikidataUrl dbpediaUrl dateToHtml nullableDate ucfirst requete_parti_general requete_parti_description requete_parti_ideologies extractIdFromWikidataUrl requete_parti_personnalites requete_parti_chairpeople adresseToText checkHashOrRedirect setLinkPoliticianOrHide wikidataUrlFromId coherentUrl */
+/* global Slots PolitifCache escapeHtml splitOnce wikidataUrl dbpediaUrl dateToHtml nullableDate ucfirst requete_parti_general requete_parti_description requete_parti_ideologies extractIdFromWikidataUrl requete_parti_personnalites requete_parti_chairpeople adresseToText checkHashOrRedirect setLinkPoliticianOrHide wikidataUrlFromId coherentUrl periodToHtml */
 
 function update() {
   checkHashOrRedirect()
@@ -144,18 +144,6 @@ function renderPartiChairpeople(chairpeople) {
     li.innerHTML = `<a href="profil.html#${id}-${ucfirst(nom)}">${escapeHtml(ucfirst(nom))}</a>${period}`
     ul.appendChild(li)
   })
-}
-
-function periodToHtml(debut, fin) {
-  if (debut && fin) {
-    return ` du ${dateToHtml(debut)} au ${dateToHtml(fin)}`
-  } else if (debut) {
-    return ` à partir du ${dateToHtml(debut)}`
-  } else if (fin) {
-    return ` jusqu'au ${dateToHtml(fin)}`
-  } else {
-    return ''
-  }
 }
 
 async function fetchParti(id) {
