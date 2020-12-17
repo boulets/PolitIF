@@ -74,7 +74,7 @@ function renderParti(parti) {
 
   parti.positionnement ? Slots.setText('positionnement', ucfirst(parti.positionnement)) : Slots.hide('positionnement')
   if (parti.siege) {
-    const adr = adresseToText(parti.siege)
+    const adr = ucfirst(adresseToText(parti.siege))
     const href = 'https://www.openstreetmap.org/search?query=' + encodeURIComponent(adr).replace(/%20/g, '+')
     if (adr) {
       const html = parti.siege.date
