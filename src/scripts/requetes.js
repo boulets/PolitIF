@@ -20,7 +20,7 @@ function serviceEntitySearch(recherche, prop) {
 function requete_recherche_politicien(recherche, n = 1) {
   return `SELECT ?politician ?NomPoliticien WHERE {
     # Tous les politiciens de nationalités françaises
-    ?politician wdt:P106/wdt:P279 wd:Q82955.
+    ?politician wdt:P106/wdt:P279? wd:Q82955.
     ?politician wdt:P27 wd:Q142.
 
     ${serviceEntitySearch(recherche, '?politician')}
