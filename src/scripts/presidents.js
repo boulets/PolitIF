@@ -1,0 +1,54 @@
+async function fetchPresidents() {
+  var presidents = [];
+  const url = wikidataUrl(requete_presidents())
+  const reponse = await fetch(url).then(res => res.json())
+  const donnees = reponse.results.bindings
+  donnees.forEach((data) => {
+    presidents.push({
+      title : data.PresidentLabel.value,
+      dateEntree: new Date(data.DateEntreePosition.value),
+      dateSortie: new Date(data.DateSortiePosition?.value)
+    })
+  })
+  console.log(presidents)
+  return presidents
+}
+
+async function init() {
+  renderTimeline(await fetchPresidents())
+}
+init()
+
+
+function renderTimeline(presidents) {
+  var previousDate = 0;
+  const timeline = document.getElementById("timeline");
+  var card;
+  presidents.forEach((president) => {
+    if(previousDate !== 1900 + president.dateEntree?.getYear())
+    {
+      card = createElementFromHtml(`
+        <li>
+          <div class="title">${president.title}</div>
+          <span class="number">
+                <span>${1900 + president.dateEntree?.getYear()}</span>
+                <span>${1900 + president.dateSortie?.getYear()}</span>
+          </span>
+        </li>
+        `)
+    } else {
+      card = createElementFromHtml(`
+        <li>
+          <div class="title">${president.title}</div>
+          <span class="number">
+                <span></span>
+                <span>${1900 + president.dateSortie?.getYear()}</span>
+          </span>
+        </li>
+        `)
+    }
+
+    previousDate=1900 + president.dateSortie?.getYear()
+    timeline.append(card)
+  })
+}
