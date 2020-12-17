@@ -143,6 +143,7 @@
 }
 
 .home-card {
+  position: relative;
   display: grid;
   grid-template-columns: 4em 1fr;
   grid-template-rows: 2em 2em;
@@ -164,8 +165,8 @@
   grid-area: icon;
   object-fit: cover;
   object-position: top center;
-  height: 4em;
-  width: 4em;
+  height: 4rem;
+  width: 4rem;
 }
 .home-card__icon[src$="svg"],
 .home-card__icon[src$="png"] {
@@ -194,6 +195,16 @@
   font-size: 1.1em;
   font-weight: 400;
   padding-top: 8px;
+}
+
+/* extends the clickable area on the picture */
+.home-card__title::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4rem;
+  width: calc(4rem + 6px);
 }
 
 .home-card__subtitle {
