@@ -2,6 +2,16 @@
 
 function update() {
   const hash = document.location.hash.slice(1)
+
+  const re = /^Q\d+-.+$/
+  if (!hash.match(re)) {
+    // redirection vers la page d'accueil (ou alors redir vers une 404.html ?)
+    document.location.replace("index.html")
+    // Utiliser .assign(…) pour ne pas retirer la page invalide de l'historique client,
+    // mais est-ce une propriété vraiment désirable ?
+    return // quitter la méthode update() sans rien faire
+  }
+
   const p = splitOnce(decodeURIComponent(hash), '-')
   const id = p.length > 0 ? p[0] : ''
   const nameWhileLoading = p.length > 1 ? p[1] : ''
