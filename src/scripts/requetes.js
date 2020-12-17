@@ -122,6 +122,8 @@ function requete_profil_mandats(idProfil) {
     UNION
     {?pos wdt:P31+ wd:Q303618} # Diplomate
     UNION
+    {?pos wdt:P279+ wd:Q83307} # Ministre
+    UNION
     {?pos wdt:P279+ wd:Q2269913} # Président du sénat
     UNION
     {
