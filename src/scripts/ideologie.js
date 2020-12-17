@@ -10,10 +10,10 @@ function update() {
   const slots = ['description', 'image-logo', 'ideologies-derivees', 'ideologies-parentes']
   slots.forEach(key => Slots.markLoading(key))
 
-  if  (nameWhileLoading) {
+  if (nameWhileLoading) {
     document.title = `Polit'IF – ${nameWhileLoading}`
     Slots.setText('nom', nameWhileLoading)
-    Slots.setLink('urlwikidata', `https://wikidata.org/wiki/${id}`,nameWhileLoading)
+    Slots.setLink('urlwikidata', `https://wikidata.org/wiki/${id}`, nameWhileLoading)
   } else {
     document.title = 'Polit\'IF'
     Slots.markLoading('nom')
