@@ -103,6 +103,9 @@ footer {
   justify-content: center;
   margin-top: auto;
   padding: 24px;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
 }
 
 main {
