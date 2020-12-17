@@ -85,7 +85,7 @@ function extractIdFromWikidataUrl(url) {
 }
 
 function coherentUrl(url) {
-    return url.match(/^https?:\/\//) ? url : `http://${url}`
+  return url.match(/^https?:\/\//) ? url : `http://${url}`
 }
 
 function extractGenderFromWikidataUrl(url) {
@@ -177,4 +177,41 @@ function genrerFonction(genre, fonction) {
     }
     return fonction
   }
+}
+
+
+function adresseToText({ numero, rue, ville, codePostal }) {
+  if (numero && rue && ville && codePostal) {
+    return `${numero} ${rue}, ${ville} ${codePostal}`
+  } else if (numero && rue && ville) {
+    return `${numero} ${rue}, ${ville}`
+  } else if (rue && ville) {
+    return `${rue}, ${ville}`
+  } else if (ville) {
+    return ville
+  }
+}
+
+function setLinkPoliticianOrHide(key, { id, nom, isPolitician = false }) {
+  if (nom) {
+    if (isPolitician) {
+      return Slots.setLink(key, `profil.html#${id}-${encodeURIComponent(nom)}`, nom)
+    } else {
+      return Slots.setText(key, nom)
+    }
+  } else {
+    return Slots.hide(key)
+  }
+}
+
+function checkHashOrRedirect(pattern = /^Q\d+(-|$)/) {
+  const hash = document.location.hash.slice(1)
+  const valid = hash.match(pattern)
+  if (!valid) {
+    // redirection vers la page d'accueil (ou alors redir vers une 404.html ?)
+    document.location.replace('index.html')
+    // Utiliser .assign(…) pour ne pas retirer la page invalide de l'historique client,
+    // mais est-ce une propriété vraiment désirable ?
+  }
+  return valid
 }
