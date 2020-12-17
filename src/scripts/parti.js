@@ -75,12 +75,12 @@ function renderParti(parti) {
 
   parti.positionnement ? Slots.setText('positionnement', ucfirst(parti.positionnement)) : Slots.hide('positionnement')
   if (parti.siege) {
-    const adr = ucfirst(adresseToText(parti.siege))
+    const adr = adresseToText(parti.siege)
     const href = 'https://www.openstreetmap.org/search?query=' + encodeURIComponent(adr).replace(/%20/g, '+')
     if (adr) {
       const html = parti.siege.date
-        ? `${escapeHtml(adr)} (depuis le ${dateToHtml(parti.siege.date)})`
-        : `${escapeHtml(adr)}`
+        ? `${ucfirst(escapeHtml(adr))} (depuis le ${dateToHtml(parti.siege.date)})`
+        : `${ucfirst(escapeHtml(adr))}`
       Slots.setHtml('siege', `<a target="_blank" rel="noreferrer noopener" title="Ouvrir dans OpenStreetMap" href="${href}">${html}</a>`)
     } else {
       Slots.hide('siege')
