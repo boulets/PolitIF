@@ -144,6 +144,9 @@ function renderPartiChairpeople(chairpeople) {
     li.innerHTML = `<a href="profil.html#${id}-${encodeURIComponent(ucfirst(nom))}">${escapeHtml(ucfirst(nom))}</a>${period}`
     ul.appendChild(li)
   })
+  if (chairpeople.length === 0) {
+    Slots.hide('tous-les-presidents')
+  }
 }
 
 async function fetchParti(id) {
@@ -161,7 +164,7 @@ async function fetchParti(id) {
   const donnees = reponse.results.bindings[0]
 
   const res = {
-    nom: donnees?.NomParti?.value,
+    nom: donnees?.NomParti?.value ?? '?',
     logo: donnees?.ImageLogo?.value,
     president: {
       id: extractIdFromWikidataUrl(donnees?.President?.value),
