@@ -438,3 +438,73 @@ function requete_presidents_image(idPresident) {
     OPTIONAL { wd:${idPresident} wdt:P18 ?Image. }
   } LIMIT 1`
 }
+
+function requete_president_actuel() {
+  return `SELECT DISTINCT ?president ?presidentLabel ?positionLabel ?startTime WHERE {
+    # Récupération du statement "officeholder président français"
+    BIND (wd:Q191954 AS ?position).
+    ?position p:P1308 ?presidentStatement.
+
+    # Récupération des infos du statement
+    ?presidentStatement ps:P1308 ?president.
+    OPTIONAL {
+      ?presidentStatement pq:P580 ?startTime.
+    }
+
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr". }
+  }`
+}
+
+function requete_premier_ministre_actuel() {
+  return `SELECT DISTINCT ?primeMinister ?primeMinisterLabel ?positionLabel ?startTime WHERE {
+    # Récupération du statement "officeholder premier ministre français"
+    BIND (wd:Q1587677 AS ?position).
+    ?position p:P1308 ?primeMinisterStatement.
+
+    # Récupération des infos du statement
+    ?primeMinisterStatement ps:P1308 ?primeMinister.
+    OPTIONAL {
+      ?primeMinisterStatement pq:P580 ?startTime.
+    }
+
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr". }
+  }`
+}
+
+function requete_ministres_actuels() {
+  return `SELECT DISTINCT ?minister ?ministerLabel ?positionLabel ?startTime WHERE {
+    # Tous les ministres français
+    {
+      ?minister wdt:P39/wdt:P2389?/wdt:P31+ wd:Q14037025.
+    } UNION {
+      ?minister wdt:P39 ?position1.
+      ?position1 wdt:P279+ wd:Q83307.
+      ?position1 wdt:P1001 wd:Q142.
+    }
+
+    # Récupération de leurs positions de ministres
+    ?minister p:P39 ?positionStat.
+    ?positionStat ps:P39 ?position.
+    {
+      ?position wdt:P2389?/wdt:P31+ wd:Q14037025.
+    } UNION {
+      ?position wdt:P279+ wd:Q83307.
+      ?position wdt:P1001 wd:Q142.
+    }
+
+    #Seulement ceux avec un start time
+    ?positionStat pq:P580 ?startTime.
+
+    # Mais sans end time
+    FILTER NOT EXISTS {
+      ?positionStat pq:P582 ?endTime.
+    }
+
+    # Et qui ne sont pas chef.fe de gouvernement
+    FILTER NOT EXISTS {
+      ?positionStat ps:P39/wdt:P279* wd:Q15135541.
+    }
+
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr". }
+  }`
+}

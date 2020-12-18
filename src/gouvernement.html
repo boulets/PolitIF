@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Polit'IF</title>
+    <title>Polit'IF - Gouvernement actuel</title>
     <link rel="icon" type="image/svg+xml" href="img/logo.svg" />
     <link rel="stylesheet" href="styles/reset.css" />
     <link rel="stylesheet" href="styles/typography.css" />
@@ -23,10 +23,28 @@
     </header>
 
     <main class="sheet">
+
       <h2>Gouvernement français actuel</h2>
-      <h3>Président·e de la République</h3>
-      <h3>Chef·fe du gouvernement</h3>
-      <h3>Ministres et ministres délégué·e·s</h3>
+
+      <div data-contains-slot="president-lien">
+        <h3>Président·e de la République</h3>
+        <p>
+            <a class="personne" data-key="president-lien"></a> - <span data-key="president-info"></span>
+        </p>
+      </div>
+
+      <div data-contains-slot="premier-ministre-lien">
+        <h3>Chef·fe du gouvernement</h3>
+        <p>
+          <a class="personne" data-key="premier-ministre-lien"></a> - <span data-key="premier-ministre-info"></span>
+        </p>
+      </div>
+
+      <div data-contains-slot="liste-ministres">
+        <h3>Ministres et ministres délégué·e·s</h3>
+        <p data-key="liste-ministres"></p>
+      </div>
+
     </main>
 
     <footer>
@@ -36,4 +54,8 @@
     </footer>
   </body>
 
+  <script src="scripts/Slots.js"></script>
+  <script src="scripts/utils.js"></script>
+  <script src="scripts/requetes.js"></script>
+  <script src="scripts/gouvernement.js"></script>
 </html>
