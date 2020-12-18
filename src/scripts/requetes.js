@@ -57,7 +57,7 @@ function requete_recherche_politicien_rapide(recherche, n = 1) {
     ${serviceEntitySearch2(recherche, '?politician', 1 + (n - 1) * 2)}
     ?politician rdfs:label ?NomPoliticien.
     FILTER(LANG(?NomPoliticien) = 'fr')
-    ${filterRechercheParTexte(recherche, '?NomPoliticien')}
+    #${filterRechercheParTexte(recherche, '?NomPoliticien')}
   } LIMIT ${n}`
 }
 
@@ -88,12 +88,21 @@ function requete_recherche_partis(recherche, n = 1) {
   LIMIT ${n}`
 }
 
-function requete_recherche_ideologies(recherche, n = 1) {
+function requete_recherche_ideologies_rapide(recherche, n = 1) {
   return `SELECT ?ideologie ?NomIdeologie WHERE {
     ?ideologie wdt:P31 ?c. VALUES ?c { ${classesIdeologies} }
     ${serviceEntitySearch(recherche, '?ideologie')}
     ?ideologie rdfs:label ?NomIdeologie.
     FILTER(LANG(?NomIdeologie) = 'fr')
+  } LIMIT ${n}`
+}
+
+function requete_recherche_ideologies(recherche, n = 1) {
+  return `SELECT ?ideologie ?NomIdeologie WHERE {
+    ?ideologie wdt:P31 ?c. VALUES ?c { ${classesIdeologies} }
+    ?ideologie rdfs:label ?NomIdeologie.
+    FILTER(LANG(?NomIdeologie) = 'fr')
+    ${filterRechercheParTexte(recherche, '?NomIdeologie')}
   } LIMIT ${n}`
 }
 
