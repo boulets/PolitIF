@@ -6,7 +6,7 @@ const DBPEDIA_API = 'https://dbpedia.org/sparql'
 const WIKIDATA_API = 'https://query.wikidata.org/sparql'
 
 /** Durée de vie en cache (en secondes) */
-let CACHE_TTL = 0 // 5 * 60
+const CACHE_TTL = 5 * 60
 const CACHE_PREFIX = 'politif_cache__'
 
 if (CACHE_TTL > 0) {
@@ -25,10 +25,13 @@ Object.keys(localStorage)
   .filter(id => id.startsWith(CACHE_PREFIX))
   .forEach(id => {
     const now = Date.now()
-    const timestamp = localStorage[id]?.timestamp
-    if (!timestamp || (timestamp > now)) {
-      // Stale cache
-      delete localStorage[id]
+    const x = localStorage[id]
+    if (x) {
+      const timestamp = JSON.parse(x)?.timestamp
+      if (!timestamp || (timestamp < now)) {
+        // Stale cache
+        delete localStorage[id]
+      }
     }
   })
 
