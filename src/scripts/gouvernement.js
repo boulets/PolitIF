@@ -1,3 +1,5 @@
+/* global Slots setLinkPoliticianOrHide ucfirst dateToString PolitifCache nullableDate wikidataUrl requete_president_actuel extractIdFromWikidataUrl requete_premier_ministre_actuel requete_ministres_actuels */
+
 function update() {
   renderLoadingGouvernement()
 
@@ -53,7 +55,7 @@ function renderMinistres() {
 // Fetching informations
 
 async function fetchPresidentActuel() {
-  const cacheKey = "gouvernement/president"
+  const cacheKey = 'gouvernement/president'
   const inCache = PolitifCache.get(cacheKey, (x) => {
     x.debut = nullableDate(x.debut)
   })
@@ -75,7 +77,7 @@ async function fetchPresidentActuel() {
 }
 
 async function fetchPremierMinistreActuel() {
-  const cacheKey = "gouvernement/premier-ministre"
+  const cacheKey = 'gouvernement/premier-ministre'
   const inCache = PolitifCache.get(cacheKey, (x) => {
     x.debut = nullableDate(x.debut)
   })
@@ -97,7 +99,7 @@ async function fetchPremierMinistreActuel() {
 }
 
 async function fetchListeMinistresActuels() {
-  const cacheKey = "gouvernement/ministres"
+  const cacheKey = 'gouvernement/ministres'
   const inCache = PolitifCache.get(cacheKey, (a) => {
     a.forEach(x => {
       x.debut = nullableDate(x.debut)
