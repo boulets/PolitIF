@@ -22,29 +22,81 @@
       </div>
     </header>
 
-    <main class="sheet">
+    <style>
+      .gouvernement {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
 
+      h2 {
+        text-align: center;
+      }
+
+      .president,
+      .premier-ministre {
+        margin-top: 16px;
+        padding-left: 1.5em;
+      }
+
+      .gouvernement a {
+        color: black;
+        font-weight: bold;
+      }
+
+      .gouvernement a:hover {
+        color: #000091;
+        text-decoration-color: #000091;
+      }
+
+      .liste-ministres ul {
+        margin: 0;
+        padding: 0;
+        margin-top: 16px;
+
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(30ch, 1fr));
+        gap: 1em;
+      }
+
+      .liste-ministres li {
+        position: relative;
+        box-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.2);
+        background-color: white;
+        border-radius: 5px;
+        overflow: hidden;
+        transition: all 500ms ease;
+        padding: 8px;
+      }
+
+      .liste-ministres li:hover {
+        box-shadow: 0 3px 9px hsla(0, 0%, 0%, 0.2);
+        transition: all 100ms ease;
+      }
+
+    </style>
+
+    <main class="sheet gouvernement">
       <h2>Gouvernement français actuel</h2>
 
       <div data-contains-slot="president-lien">
         <h3>Président·e de la République</h3>
-        <p>
-            <a class="personne" data-key="president-lien"></a> - <span data-key="president-info"></span>
+        <p class="president">
+          <a data-key="president-lien"></a> — <span data-key="president-info"></span>
         </p>
       </div>
 
       <div data-contains-slot="premier-ministre-lien">
         <h3>Chef·fe du gouvernement</h3>
-        <p>
-          <a class="personne" data-key="premier-ministre-lien"></a> - <span data-key="premier-ministre-info"></span>
+        <p class="premier-ministre">
+          <a data-key="premier-ministre-lien"></a> — <span data-key="premier-ministre-info"></span>
         </p>
       </div>
 
       <div data-contains-slot="liste-ministres">
         <h3>Ministres et ministres délégué·e·s</h3>
-        <p data-key="liste-ministres"></p>
+        <div class="liste-ministres" data-key="liste-ministres"></div>
       </div>
-
     </main>
 
     <footer>
@@ -58,4 +110,5 @@
   <script src="scripts/utils.js"></script>
   <script src="scripts/requetes.js"></script>
   <script src="scripts/gouvernement.js"></script>
+
 </html>

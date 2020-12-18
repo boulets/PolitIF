@@ -1,4 +1,4 @@
-/* global Slots setLinkPoliticianOrHide ucfirst dateToString PolitifCache nullableDate wikidataUrl requete_president_actuel extractIdFromWikidataUrl requete_premier_ministre_actuel requete_ministres_actuels */
+/* global Slots setLinkPoliticianOrHide ucfirst dateToString PolitifCache nullableDate wikidataUrl requete_president_actuel extractIdFromWikidataUrl requete_premier_ministre_actuel requete_ministres_actuels dateToHtml */
 
 function update() {
   renderLoadingGouvernement()
@@ -48,8 +48,17 @@ function renderPremierMinistre(premierMinistre) {
   }
 }
 
-function renderMinistres() {
-
+function renderMinistres(ministres) {
+  if (ministres.length > 0) {
+    Slots.setListOfLinks('liste-ministres', ministres.map(m => ({
+      href: `profil.html#${m.id}-${m.nom}`,
+      text: m.nom,
+      htmlAfter: `<br/>${ucfirst(m.position)} depuis le ${dateToHtml(m.debut)}`,
+    })))
+  } else {
+    Slots.setText('liste-ministres', 'Pas de ministres')
+    // Slots.hide('liste-ministres')
+  }
 }
 
 // Fetching informations
@@ -72,7 +81,7 @@ async function fetchPresidentActuel() {
     debut: nullableDate(donnees?.startTime?.value)
   }
 
-  PolitifCache.set(president)
+  PolitifCache.set(cacheKey, president)
   return president
 }
 
@@ -94,7 +103,7 @@ async function fetchPremierMinistreActuel() {
     debut: nullableDate(donnees?.startTime?.value)
   }
 
-  PolitifCache.set(premierMinistre)
+  PolitifCache.set(cacheKey, premierMinistre)
   return premierMinistre
 }
 
@@ -116,6 +125,6 @@ async function fetchListeMinistresActuels() {
     debut: nullableDate(element.startTime?.value)
   }))
 
-  PolitifCache.set(ministres)
+  PolitifCache.set(cacheKey, ministres)
   return ministres
 }

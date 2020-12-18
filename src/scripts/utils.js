@@ -6,7 +6,7 @@ const DBPEDIA_API = 'https://dbpedia.org/sparql'
 const WIKIDATA_API = 'https://query.wikidata.org/sparql'
 
 /** Durée de vie en cache (en secondes) */
-let CACHE_TTL = 0 // 5 * 60
+let CACHE_TTL = 5 * 60
 const CACHE_PREFIX = 'politif_cache__'
 
 if (CACHE_TTL > 0) {
