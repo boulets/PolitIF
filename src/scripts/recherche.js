@@ -75,10 +75,9 @@ function submitSearch(q, n, type, fonctionRequete, mapper, { forceSetResults = f
       const resultats = res.results.bindings.map(mapper)
       PolitifCache.set(`recherche/${k}`, resultats)
 
-      if (search.value === q) {
+      if (search.value.toLocaleLowerCase() === q.toLocaleLowerCase()) {
         delete abortControllers[k]
         delete pendingPromises[k]
-        console.log(forceSetResults, resultats.length, k)
         afficherResultats(type, resultats, { forceSetResults: forceSetResults && (resultats.length > 0) })
       } else {
         if (enableAborts) {
@@ -193,6 +192,19 @@ const chercherIdeologieRapide = creerFonctionRecherche('ideologie', requete_rech
   id: extractIdFromWikidataUrl(x.ideologie.value)
 }))
 
+function resetResults() {
+  if (enableAborts) {
+    Object.entries(abortControllers).forEach(([k, ac]) => {
+      ac.abort()
+      delete abortControllers[k]
+    })
+  }
+  Object.keys(tousLesResultats).forEach(type => {
+    delete tousLesResultats[type]
+    afficherResultats(type, [], { forceSetResults: true })
+  })
+}
+
 function init() {
   SEARCH_TYPES.forEach(type => Slots.hide(`resultats-${type}s`))
 
@@ -226,6 +238,7 @@ function init() {
   search.addEventListener('input', () => {
     const q = search.value.toLocaleLowerCase()
     if (q.length > 0) {
+      resetResults()
       searchAutocomplete.innerText = `${search.value} — Recherche…`
       submitProfil1(q)
       submitProfil5(q)
@@ -235,16 +248,7 @@ function init() {
       submitIdeologiesRapide5(q)
     } else {
       searchAutocomplete.innerText = ''
-      if (enableAborts) {
-        Object.entries(abortControllers).forEach(([k, ac]) => {
-          ac.abort()
-          delete abortControllers[k]
-        })
-      }
-      Object.keys(tousLesResultats).forEach(type => {
-        delete tousLesResultats[type]
-        afficherResultats(type, [], { forceSetResults: true })
-      })
+      resetResults()
     }
   })
 
