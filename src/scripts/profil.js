@@ -1,4 +1,4 @@
-/* global Slots PolitifCache wikidataUrl dbpediaUrl dateToHtml splitOnce ucfirst nullableDate requete_profil_biographie requete_profil_description requete_profil_mandats requete_profil_partiPolitique extractIdFromWikidataUrl requete_profil_enfants requete_profil_fratrie genrerFonction extractGenderFromWikidataUrl checkHashOrRedirect setLinkPoliticianOrHide wikidataUrlFromId periodToHtml */
+/* global Slots PolitifCache wikidataUrl dbpediaUrl dateToHtml splitOnce ucfirst nullableDate requete_profil_biographie requete_profil_description requete_profil_mandats requete_profil_partiPolitique extractIdFromWikidataUrl requete_profil_enfants requete_profil_fratrie genrerFonction extractGenderFromWikidataUrl checkHashOrRedirect setLinkPoliticianOrHide wikidataUrlFromId periodToHtml requete_profil_scolarite periodToHtmlShort */
 
 function update() {
   checkHashOrRedirect()
@@ -55,7 +55,8 @@ function update() {
         Slots.hide('fratrie')
       }
     }),
-    fetchPartisOfProfil(id).then(renderPartis)
+    fetchPartisOfProfil(id).then(renderPartis),
+    fetchScolariteOfProfil(id).then(renderScolarite),
   ]).then(() => {
     console.log(profilComplet)
   })
@@ -141,11 +142,22 @@ function renderPartis(partis) {
     const liens = partis.map(({ id, nom, debut, fin }) => ({
       href: partisSpeciaux.includes(id) ? null : `parti.html#${id}-${nom}`,
       text: ucfirst(nom),
-      htmlAfter: periodToHtml(debut, fin),
+      htmlAfter: periodToHtmlShort(debut, fin),
     }))
     Slots.setListOfLinks('profil-liste-partis', liens)
   } else {
     Slots.hide('profil-liste-partis')
+  }
+}
+
+function renderScolarite(scolarite) {
+  if (scolarite && Array.isArray(scolarite) && scolarite.length > 0) {
+    Slots.setList('profil-formation', scolarite.map(({ nom, debut, fin }) => ({
+      text: ucfirst(nom),
+      htmlAfter: periodToHtmlShort(debut, fin, { year: 'numeric' }),
+    })))
+  } else {
+    Slots.hide('profil-formation')
   }
 }
 
@@ -162,7 +174,7 @@ async function fetchProfil(id) {
   const donnees = reponse.results.bindings[0]
 
   const res = {
-    nom: donnees?.NomPoliticien?.value,
+    nom: donnees?.NomPoliticien?.value ?? '?',
     dateNaissance: nullableDate(donnees?.DateDeNaissance?.value),
     lieuNaissance: donnees?.NomLieuDeNaissance?.value,
     dateDeces: nullableDate(donnees?.DateDeDeces?.value),
@@ -282,4 +294,25 @@ async function fetchFratrieOfProfil(id) {
   }))
   PolitifCache.set(cacheKey, v)
   return v
+}
+
+async function fetchScolariteOfProfil(id) {
+  const cacheKey = `profil/${id}/scolarite`
+  const inCache = PolitifCache.get(cacheKey, (a) => {
+    a.forEach(x => {
+      x.debut = nullableDate(x.debut)
+      x.fin = nullableDate(x.fin)
+    })
+  })
+  if (inCache) { return inCache }
+
+  const url = wikidataUrl(requete_profil_scolarite(id))
+  const reponse = await fetch(url).then(res => res.json())
+  const ecoles = reponse.results.bindings.map(ecole => ({
+    nom: ecole.NomEcole?.value,
+    debut: nullableDate(ecole.DateEntree?.value),
+    fin: nullableDate(ecole.DateSortie?.value),
+  }))
+  PolitifCache.set(cacheKey, ecoles)
+  return ecoles
 }

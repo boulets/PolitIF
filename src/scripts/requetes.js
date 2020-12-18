@@ -508,3 +508,13 @@ function requete_ministres_actuels() {
     SERVICE wikibase:label { bd:serviceParam wikibase:language "fr". }
   }`
 }
+
+function requete_profil_scolarite(id) {
+  return `SELECT ?NomEcole ?DateEntree ?DateSortie WHERE {
+    wd:${id} p:P69 ?EcoleStatement.
+    ?EcoleStatement ps:P69/rdfs:label ?NomEcole.
+    FILTER(lang(?NomEcole) = 'fr')
+    OPTIONAL { ?EcoleStatement pq:P580 ?DateEntree. }
+    OPTIONAL { ?EcoleStatement pq:P582 ?DateSortie. }
+  } ORDER BY DESC(?DateEntree)`
+}

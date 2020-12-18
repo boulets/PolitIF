@@ -231,3 +231,16 @@ function periodToHtml(debut, fin) {
     return ''
   }
 }
+
+function periodToHtmlShort(debut, fin, fmt = { year: 'numeric', month: 'short' }) {
+  const formatter = x => x.toLocaleString('fr-FR', fmt)
+  if (debut && fin) {
+    return ` (${formatter(debut)} – ${formatter(fin)})`
+  } else if (debut) {
+    return ` (depuis ${formatter(debut)})`
+  } else if (fin) {
+    return ` (jusqu'à ${formatter(fin)})`
+  } else {
+    return ''
+  }
+}

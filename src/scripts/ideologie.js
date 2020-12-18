@@ -1,4 +1,4 @@
-/* global Slots PolitifCache splitOnce requete_ideologie requete_ideologie_description requete_ideologies_parentes requete_ideologies_derivees wikidataUrl dbpediaUrl extractIdFromWikidataUrl ucfirst checkHashOrRedirect */
+/* global Slots PolitifCache splitOnce requete_ideologie requete_ideologie_description requete_ideologies_parentes requete_ideologies_derivees wikidataUrl dbpediaUrl extractIdFromWikidataUrl ucfirst checkHashOrRedirect wikidataUrlFromId */
 
 function update() {
   checkHashOrRedirect()
@@ -77,7 +77,7 @@ async function fetchIdeologie(id) {
   const donnees = reponse.results.bindings[0]
 
   const res = {
-    nom: donnees?.Nom?.value,
+    nom: donnees?.Nom?.value ?? '?',
     image: donnees?.image?.value,
     flag: donnees?.flagimage?.value,
   }
