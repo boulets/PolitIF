@@ -154,7 +154,7 @@ function renderScolarite(scolarite) {
   if (scolarite && Array.isArray(scolarite) && scolarite.length > 0) {
     Slots.setList('profil-formation', scolarite.map(({ nom, debut, fin }) => ({
       text: ucfirst(nom),
-      htmlAfter: periodToHtmlShort(debut, fin),
+      htmlAfter: periodToHtmlShort(debut, fin, { year: 'numeric' }),
     })))
   } else {
     Slots.hide('profil-formation')

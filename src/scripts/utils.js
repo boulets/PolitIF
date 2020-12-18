@@ -232,14 +232,14 @@ function periodToHtml(debut, fin) {
   }
 }
 
-function periodToHtmlShort(debut, fin) {
-  const formatter = x => x.toLocaleString('fr-FR', { year: 'numeric', month: 'short' })
+function periodToHtmlShort(debut, fin, fmt = { year: 'numeric', month: 'short' }) {
+  const formatter = x => x.toLocaleString('fr-FR', fmt)
   if (debut && fin) {
     return ` (${formatter(debut)} – ${formatter(fin)})`
   } else if (debut) {
     return ` (depuis ${formatter(debut)})`
   } else if (fin) {
-    return ` (jusqu'au ${formatter(fin)})`
+    return ` (jusqu'à ${formatter(fin)})`
   } else {
     return ''
   }
