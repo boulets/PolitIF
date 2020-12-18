@@ -50,11 +50,28 @@ function renderPremierMinistre(premierMinistre) {
 
 function renderMinistres(ministres) {
   if (ministres.length > 0) {
-    Slots.setListOfLinks('liste-ministres', ministres.map(m => ({
-      href: `profil.html#${m.id}-${m.nom}`,
-      text: m.nom,
-      htmlAfter: `<br/>${ucfirst(m.position)} depuis le ${dateToHtml(m.debut)}`,
-    })))
+    const slot = Slots.get('liste-ministres')
+    slot.innerHTML = ''
+    const ul = document.createElement('ul')
+    slot.appendChild(ul)
+    ministres.forEach(m => {
+      const a = document.createElement('a')
+      a.classList.add('nom')
+      a.innerText = m.nom
+      a.href = `profil.html#${m.id}-${m.nom}`
+
+      const infos = document.createElement('div')
+      infos.innerHTML = `${ucfirst(m.position)} depuis le ${dateToHtml(m.debut)}`
+
+      const lienExt = document.createElement('a')
+      lienExt.href = `profil.html#${m.id}-${m.nom}`
+      lienExt.appendChild(a)
+      lienExt.appendChild(infos)
+
+      const li = document.createElement('li')
+      li.appendChild(lienExt)
+      ul.appendChild(li)
+    })
   } else {
     Slots.setText('liste-ministres', 'Pas de ministres')
     // Slots.hide('liste-ministres')
