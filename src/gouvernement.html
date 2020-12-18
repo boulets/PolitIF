@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Polit'IF - Gouvernement actuel</title>
+    <link rel="icon" type="image/svg+xml" href="img/logo.svg" />
+    <link rel="stylesheet" href="styles/reset.css" />
+    <link rel="stylesheet" href="styles/typography.css" />
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+
+  <body>
+    <header>
+      <div class="brand">
+        <a href="index.html" class="logo" title="Retourner à l'accueil">
+          <img src="img/logo.svg" alt="" />
+          <h1>Polit’IF</h1>
+        </a>
+        <p class="h3">Le moteur de recherche de la politique française</p>
+      </div>
+    </header>
+
+    <style>
+      .gouvernement {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      h2 {
+        text-align: center;
+      }
+
+      .president,
+      .premier-ministre {
+        margin-top: 16px;
+        padding-left: 1.5em;
+      }
+
+      .gouvernement a.nom,
+      .gouvernement .nom a {
+        color: inherit !important;
+        font-weight: bold;
+      }
+
+      .gouvernement a.nom:hover,
+      .gouvernement .nom a:hover {
+        color: #000091 !important;
+        text-decoration-color: #000091;
+      }
+
+      .liste-ministres ul {
+        margin: 0;
+        padding: 0;
+        margin-top: 16px;
+
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(30ch, 1fr));
+        gap: 1em;
+      }
+
+      .liste-ministres li {
+        position: relative;
+        box-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.2);
+        background-color: white;
+        border-radius: 5px;
+        overflow: hidden;
+        transition: all 500ms ease;
+      }
+
+      .liste-ministres li:hover {
+        box-shadow: 0 3px 9px hsla(0, 0%, 0%, 0.2);
+        transition: all 100ms ease;
+      }
+
+      .liste-ministres li>a {
+        padding: 8px;
+        display: block;
+        color: inherit !important;
+        text-decoration: none;
+      }
+
+    </style>
+
+    <main class="sheet gouvernement">
+      <h2>Gouvernement français actuel</h2>
+
+      <div data-contains-slot="president-lien">
+        <h3>Président·e de la République</h3>
+        <p class="president">
+          <span class="nom" data-key="president-lien"></span> — <span data-key="president-info"></span>
+        </p>
+      </div>
+
+      <div data-contains-slot="premier-ministre-lien">
+        <h3>Chef·fe du gouvernement</h3>
+        <p class="premier-ministre">
+          <span class="nom" data-key="premier-ministre-lien"></span> — <span data-key="premier-ministre-info"></span>
+        </p>
+      </div>
+
+      <div data-contains-slot="liste-ministres">
+        <h3>Ministres et ministres délégué·e·s</h3>
+        <div class="liste-ministres" data-key="liste-ministres"></div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="drapeau-francais">
+        <span class="sr-only">Drapeau français</span>
+      </div>
+    </footer>
+  </body>
+
+  <script src="scripts/Slots.js"></script>
+  <script src="scripts/utils.js"></script>
+  <script src="scripts/requetes.js"></script>
+  <script src="scripts/gouvernement.js"></script>
+
+</html>
