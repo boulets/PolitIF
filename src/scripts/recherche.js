@@ -1,4 +1,4 @@
-/* global Slots PolitifCache requete_recherche_partis requete_recherche_politiciens requete_recherche_politicien_rapide requete_recherche_ideologies wikidataUrl extractIdFromWikidataUrl ucfirst */
+/* global Slots PolitifCache requete_recherche_partis requete_recherche_politiciens requete_recherche_politicien_rapide requete_recherche_ideologies wikidataUrl extractIdFromWikidataUrl ucfirst requete_recherche_ideologies_rapide */
 
 const tousLesResultats = {}
 
@@ -27,7 +27,7 @@ function creerFonctionRecherche(type, fonctionRequete, mapper, opts) {
   return (q, n = 1) => submitSearch(q, n, type, fonctionRequete, mapper, opts)
 }
 
-function submitSearch(q, n, type, fonctionRequete, mapper, { forceSetResults = false } = {}) {
+function submitSearch(q, n, type, fonctionRequete, mapper, { forceSetResults = false, reverse = false } = {}) {
   // logr(`${q} ${n} ${type}`)
   if (enableAborts) {
     const toAbort = Object.keys(pendingPromises).filter((k) => k.split(':', 3)[2] !== q)
@@ -73,6 +73,7 @@ function submitSearch(q, n, type, fonctionRequete, mapper, { forceSetResults = f
     if (r.ok) {
       const res = await r.json()
       const resultats = res.results.bindings.map(mapper)
+      if (reverse) { resultats.reverse() }
       PolitifCache.set(`recherche/${k}`, resultats)
 
       if (search.value.toLocaleLowerCase() === q.toLocaleLowerCase()) {
@@ -175,7 +176,7 @@ const chercherProfil = creerFonctionRecherche('profil', requete_recherche_politi
 const chercherProfilRapide = creerFonctionRecherche('profil', requete_recherche_politicien_rapide, (x) => ({
   nom: x.NomPoliticien.value,
   id: extractIdFromWikidataUrl(x.politician.value)
-}), { forceSetResults: true })
+}), { forceSetResults: true, reverse: true })
 
 const chercherParti = creerFonctionRecherche('parti', requete_recherche_partis, (x) => ({
   nom: x.NomParti.value,
@@ -209,7 +210,8 @@ function init() {
   SEARCH_TYPES.forEach(type => Slots.hide(`resultats-${type}s`))
 
   const submitProfil1 = throttle((x) => chercherProfil(x, 1), 500, { leading: false, trailing: true })
-  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 500, { leading: false, trailing: true })
+  // const submitProfil5 = throttle((x) => chercherProfil(x, 5), 500, { leading: false, trailing: true })
+  const submitProfilRapide1 = throttle((x) => chercherProfilRapide(x, 1), 500, { leading: false, trailing: true })
   const submitProfilRapide5 = throttle((x) => chercherProfilRapide(x, 5), 500, { leading: false, trailing: true })
   const submitPartis5 = throttle((x) => chercherParti(x, 5), 500, { leading: false, trailing: true })
   const submitIdeologies5 = throttle((x) => chercherIdeologie(x, 5), 500, { leading: false, trailing: true })
@@ -241,7 +243,8 @@ function init() {
       resetResults()
       searchAutocomplete.innerText = `${search.value} — Recherche…`
       submitProfil1(q)
-      submitProfil5(q)
+      submitProfilRapide1(q)
+      // submitProfil5(q)
       submitProfilRapide5(q)
       submitPartis5(q)
       submitIdeologies5(q)
