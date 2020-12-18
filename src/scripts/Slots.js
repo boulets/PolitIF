@@ -33,7 +33,6 @@ function Slots_setHtmlOrMissing(key, value) {
   Slots_showSlot(key)
   const element = Slots_getSlot(key)
   if (value === null || value === undefined) {
-    console.warn('wtf')
     element.innerHTML = EMPTY_PLACEHOLDER
   } else {
     element.innerHTML = value
@@ -45,7 +44,6 @@ function Slots_setTextOrMissing(key, value) {
   Slots_showSlot(key)
   const element = Slots_getSlot(key)
   if (value === null || value === undefined) {
-    console.warn('wtf')
     element.innerHTML = EMPTY_PLACEHOLDER
   } else {
     element.innerText = value
@@ -57,7 +55,6 @@ function Slots_setListOrMissing(key, values, type = 'ul') {
   Slots_showSlot(key)
   const element = Slots_getSlot(key)
   if (values === null || values === undefined || !Array.isArray(values)) {
-    console.warn('wtf')
     element.innerHTML = EMPTY_PLACEHOLDER
   } else {
     element.innerHTML = ''
