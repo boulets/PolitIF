@@ -1,0 +1,58 @@
+.gouvernement {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+h2 {
+  text-align: center;
+}
+
+.president,
+.premier-ministre {
+  margin-top: 16px;
+  padding-left: 1.5em;
+}
+
+.gouvernement a.nom,
+.gouvernement .nom a {
+  color: inherit !important;
+  font-weight: bold;
+}
+
+.gouvernement a.nom:hover,
+.gouvernement .nom a:hover {
+  color: #000091 !important;
+  text-decoration-color: #000091;
+}
+
+.liste-ministres ul {
+  margin: 0;
+  padding: 0;
+  margin-top: 16px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(30ch, 1fr));
+  gap: 1em;
+}
+
+.liste-ministres li {
+  position: relative;
+  box-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.2);
+  background-color: white;
+  border-radius: 5px;
+  overflow: hidden;
+  transition: all 500ms ease;
+}
+
+.liste-ministres li:hover {
+  box-shadow: 0 3px 9px hsla(0, 0%, 0%, 0.2);
+  transition: all 100ms ease;
+}
+
+.liste-ministres li > a {
+  padding: 8px;
+  display: block;
+  color: inherit !important;
+  text-decoration: none;
+}
