@@ -1,5 +1,3 @@
-const EMPTY_PLACEHOLDER = '?'
-
 function Slots_getSlot(key) {
   const element = document.querySelector(`[data-key=${key}]`)
   if (element !== null) {
@@ -29,36 +27,31 @@ function Slots_showSlot(key) {
   }
 }
 
-function Slots_setHtmlOrMissing(key, value) {
-  Slots_showSlot(key)
+function Slots_setHtml(key, value) {
   const element = Slots_getSlot(key)
-  if (value === null || value === undefined) {
-    element.innerHTML = EMPTY_PLACEHOLDER
-  } else {
+  if (value != null) {
+    Slots_showSlot(key)
     element.innerHTML = value
+    element.removeAttribute('loading')
   }
-  element.removeAttribute('loading')
 }
 
-function Slots_setTextOrMissing(key, value) {
-  Slots_showSlot(key)
+function Slots_setText(key, value) {
   const element = Slots_getSlot(key)
-  if (value === null || value === undefined) {
-    element.innerHTML = EMPTY_PLACEHOLDER
-  } else {
+  if (value != null) {
+    Slots_showSlot(key)
     element.innerText = value
+    element.removeAttribute('loading')
   }
-  element.removeAttribute('loading')
 }
 
-function Slots_setListOrMissing(key, values, type = 'ul') {
+function Slots_setList(key, values, type = 'ul') {
   Slots_showSlot(key)
   const element = Slots_getSlot(key)
-  if (values === null || values === undefined || !Array.isArray(values)) {
-    element.innerHTML = EMPTY_PLACEHOLDER
-  } else {
+  if (values != null && Array.isArray(values)) {
     element.innerHTML = ''
     const listEl = document.createElement(type)
+    element.appendChild(listEl)
     for (const v of values) {
       const li = document.createElement('li')
       listEl.appendChild(li)
@@ -70,9 +63,8 @@ function Slots_setListOrMissing(key, values, type = 'ul') {
         li.innerHTML = htmlBefore + li.innerHTML + htmlAfter
       }
     }
-    element.appendChild(listEl)
+    element.removeAttribute('loading')
   }
-  element.removeAttribute('loading')
 }
 
 function Slots_setLink(key, href, text) {
@@ -117,6 +109,10 @@ function Slots_setListOfLinks(key, values, { type = 'ul' } = {}) {
       listEl.appendChild(li)
     }
     element.appendChild(listEl)
+  }
+
+  if (values.length === 0) {
+    Slots_hide(key)
   }
 }
 
@@ -168,13 +164,13 @@ function Slots_markLoaded(key) {
 const Slots = {
   get: (key) => Slots_getSlot(key),
 
-  setHtml: (key, html) => Slots_setHtmlOrMissing(key, html),
-  setText: (key, text) => Slots_setTextOrMissing(key, text),
-  setList: (key, list) => Slots_setListOrMissing(key, list),
+  setHtml: Slots_setHtml,
+  setText: Slots_setText,
+  setList: Slots_setList,
   setListOfLinks: Slots_setListOfLinks,
-  setAttr: (key, attr, value) => Slots_setAttr(key, attr, value),
-  setImage: (key, src, alt = '') => Slots_setImage(key, src, alt),
-  setLink: (key, href, text) => Slots_setLink(key, href, text),
+  setAttr: Slots_setAttr,
+  setImage: Slots_setImage,
+  setLink: Slots_setLink,
 
   markLoading: (key) => Slots_markLoading(key),
   markLoaded: (key) => Slots_markLoaded(key),
