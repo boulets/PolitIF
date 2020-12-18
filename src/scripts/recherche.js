@@ -78,7 +78,8 @@ function submitSearch(q, n, type, fonctionRequete, mapper, { forceSetResults = f
       if (search.value === q) {
         delete abortControllers[k]
         delete pendingPromises[k]
-        afficherResultats(type, resultats, { forceSetResults })
+        console.log(forceSetResults, resultats.length, k)
+        afficherResultats(type, resultats, { forceSetResults: forceSetResults && (resultats.length > 0) })
       } else {
         if (enableAborts) {
           throw new Error('failed to cancel')
@@ -187,17 +188,20 @@ const chercherIdeologie = creerFonctionRecherche('ideologie', requete_recherche_
   id: extractIdFromWikidataUrl(x.ideologie.value)
 }))
 
+const chercherIdeologieRapide = creerFonctionRecherche('ideologie', requete_recherche_ideologies_rapide, (x) => ({
+  nom: x.NomIdeologie.value,
+  id: extractIdFromWikidataUrl(x.ideologie.value)
+}))
+
 function init() {
   SEARCH_TYPES.forEach(type => Slots.hide(`resultats-${type}s`))
 
   const submitProfil1 = throttle((x) => chercherProfil(x, 1), 500, { leading: false, trailing: true })
-  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 900, { leading: false, trailing: true })
-  const submitProfilRapide1 = throttle((x) => chercherProfilRapide(x, 1), 500, { leading: false, trailing: true })
-  const submitProfilRapide5 = throttle((x) => chercherProfilRapide(x, 5), 900, { leading: false, trailing: true })
-  const submitPartis1 = throttle((x) => chercherParti(x, 1), 500, { leading: false, trailing: true })
-  const submitPartis5 = throttle((x) => chercherParti(x, 5), 900, { leading: false, trailing: true })
-  const submitIdeologies1 = throttle((x) => chercherIdeologie(x, 1), 500, { leading: false, trailing: true })
-  const submitIdeologies5 = throttle((x) => chercherIdeologie(x, 5), 900, { leading: false, trailing: true })
+  const submitProfil5 = throttle((x) => chercherProfil(x, 5), 500, { leading: false, trailing: true })
+  const submitProfilRapide5 = throttle((x) => chercherProfilRapide(x, 5), 500, { leading: false, trailing: true })
+  const submitPartis5 = throttle((x) => chercherParti(x, 5), 500, { leading: false, trailing: true })
+  const submitIdeologies5 = throttle((x) => chercherIdeologie(x, 5), 500, { leading: false, trailing: true })
+  const submitIdeologiesRapide5 = throttle((x) => chercherIdeologieRapide(x, 5), 500, { leading: false, trailing: true })
 
   searchButton.addEventListener('click', goToFirstResult)
 
@@ -224,13 +228,11 @@ function init() {
     if (q.length > 0) {
       searchAutocomplete.innerText = `${search.value} — Recherche…`
       submitProfil1(q)
-      // submitProfil5(q)
-      submitProfilRapide1(q)
+      submitProfil5(q)
       submitProfilRapide5(q)
-      submitPartis1(q)
       submitPartis5(q)
-      submitIdeologies1(q)
       submitIdeologies5(q)
+      submitIdeologiesRapide5(q)
     } else {
       searchAutocomplete.innerText = ''
       if (enableAborts) {
