@@ -174,7 +174,7 @@ async function fetchProfil(id) {
   const donnees = reponse.results.bindings[0]
 
   const res = {
-    nom: donnees?.NomPoliticien?.value,
+    nom: donnees?.NomPoliticien?.value ?? '?',
     dateNaissance: nullableDate(donnees?.DateDeNaissance?.value),
     lieuNaissance: donnees?.NomLieuDeNaissance?.value,
     dateDeces: nullableDate(donnees?.DateDeDeces?.value),
