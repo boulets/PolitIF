@@ -514,7 +514,7 @@ function requete_ministres_actuels() {
       ?positionStat ps:P39/wdt:P279* wd:Q15135541.
     }
 
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr". }
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "fr,en". }
   }`
 }
 
